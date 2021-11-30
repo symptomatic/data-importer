@@ -1281,6 +1281,24 @@ export function ImportComponent(props){
     }
   }
 
+  function digestData(importBuffer){
+    if(!importBuffer){
+      importBuffer = Session.get('importBuffer');
+    }
+
+    console.log('digestData.mappingAlgorithm', mappingAlgorithm)
+    console.log('digestData.importBuffer', importBuffer)
+
+    switch (mappingAlgorithm) {
+      case 0:
+        MedicalRecordImporter.importBundle(importBuffer, "http://localhost:3000/baseR4");        
+        break;
+    
+      default:
+        break;
+    }
+  }
+
   function scanData(previewBuffer, cumulative){
     if(!previewBuffer){
       previewBuffer = Session.get('previewBuffer');
@@ -1830,6 +1848,7 @@ export function ImportComponent(props){
             <CardHeader title="Step 2 - Raw Data" style={{cursor: 'pointer'}} onClick={ setShowPreviewData.bind(this, true)} />
             <StyledCard style={{height: window.innerHeight - 300}} width={cardWidth + 'px'}>
               <RawDataCard
+                previewMode={showPreviewData}
                 readyToImport={readyToImport}
                 progressMax={importQueueLength}
                 progressValue={progressValue}
@@ -1838,6 +1857,7 @@ export function ImportComponent(props){
                 fileExtension={fileExtension}
                 // onImportFile={importFile.bind(this)}
                 onScanData={scanData}
+                onDigestData={digestData}
                 onChangeMappingAlgorithm={changeMappingAlgorithm}
                 onMapData={mapData}
               />

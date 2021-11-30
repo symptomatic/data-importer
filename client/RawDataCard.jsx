@@ -89,6 +89,7 @@ function RawDataCard(props){
     progressMax, 
     mappingAlgorithm,
     readyToImport,
+    previewMode,
     importBuffer, 
     fileExtension,
     onImportFile,
@@ -143,6 +144,11 @@ function RawDataCard(props){
       props.onMapData();
     }
   }
+  function digestData(){
+    if(typeof props.onDigestData === "function"){
+      props.onDigestData();
+    }
+  }
   function handleScanData(){
     if(typeof props.onScanData === "function"){
       props.onScanData();
@@ -172,6 +178,26 @@ function RawDataCard(props){
 
   logger.trace('RawDataCard.progress', progressValue, progressMax)
 
+  let previewButton;
+  let digestButton;
+  if(previewMode){
+    digestButton = <Button 
+      id='mapData'
+      onClick={ handleMapData.bind(this)}
+      color="primary"
+      variant="contained"
+      fullWidth                
+    >Map</Button>   
+    previewButton = <Button id="skipBtn" fullWidth variant="contained" onClick={noMapCopyToPreviewBuffer.bind(this)} >Preview</Button>
+  } else {
+    digestButton = <Button 
+      id='mapData'
+      onClick={ digestData.bind(this)}
+      color="primary"
+      variant="contained"
+      fullWidth                
+    >Digest</Button>   
+  }
   let percentageComplete = 0;
   let previewComponents;
   if(readyToImport){
@@ -264,19 +290,13 @@ function RawDataCard(props){
           >Scan</Button>   
         </Grid> */}
         <Grid item md={4} style={{paddingRight: '10px'}}>
-          <Button 
-            id='mapData'
-            onClick={ handleMapData.bind(this)}
-            color="primary"
-            variant="contained"
-            fullWidth                
-          >Map</Button>   
+          { digestButton }
         </Grid>
         <Grid item md={4} style={{paddingLeft: '10px'}}>
           <Button id="clearImportQueueBtn" fullWidth variant="contained" onClick={clearPreviewBuffer.bind(this)} >Clear</Button>             
         </Grid>
         <Grid item md={4} style={{paddingLeft: '10px'}}>
-          <Button id="skipBtn" fullWidth variant="contained" onClick={noMapCopyToPreviewBuffer.bind(this)} >Skip</Button>             
+          { previewButton }
         </Grid>
       </Grid>
     </CardContent>
@@ -293,9 +313,11 @@ RawDataCard.propTypes = {
   fileExtension: PropTypes.string,
   mappingAlgorithm: PropTypes.number,
   readyToImport: PropTypes.bool,
+  previewMode: PropTypes.bool,
   progressValue: PropTypes.number,
 
   onScanData: PropTypes.func,
+  onDigestData: PropTypes.func,
   onEditorChange: PropTypes.func,
   onChangeMappingAlgorithm: PropTypes.func,
   onImportFile: PropTypes.func,
@@ -308,7 +330,8 @@ RawDataCard.defaultProps = {
   progressMax: 0,
   importBuffer: "",
   readyToImport: false,
-  fileExtension: 'json'
+  previewMode: false,
+  fileExtension: 'json'  
 }
 
 
