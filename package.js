@@ -1,6 +1,6 @@
 Package.describe({
   name: 'symptomatic:data-importer',
-  version: '0.11.0',
+  version: '0.12.0',
   summary: 'Data Importer)',
   git: 'http://github.com/symptomatic/data-importer',
   documentation: 'README.md'
@@ -11,7 +11,7 @@ Package.onUse(function(api) {
 
   api.use('meteor-base@1.4.0');
   api.use('ecmascript@0.15.0');
-  api.use('react-meteor-data@2.1.2');
+  api.use('react-meteor-data@2.4.0');
 
   api.use('session');
   api.use('mongo');
