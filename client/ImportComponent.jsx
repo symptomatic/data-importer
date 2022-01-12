@@ -29,7 +29,7 @@ import { Random } from 'meteor/random';
 import { HTTP } from 'meteor/http';
 
 import { browserHistory } from 'react-router';
-import { get, uniq, cloneDeep } from 'lodash';
+import { get, set, has, uniq, cloneDeep } from 'lodash';
 import moment from 'moment';
 
 import { parseString } from 'xml2js';
@@ -1289,11 +1289,36 @@ export function ImportComponent(props){
     console.log('digestData.mappingAlgorithm', mappingAlgorithm)
     console.log('digestData.importBuffer', importBuffer)
 
+    let proxyUrl = get(Meteor, 'settings.public.interfaces.fhirRelay.channel.endpoint', 'http://localhost:3000/baseR4')
+
+
     switch (mappingAlgorithm) {
       case 0:
-        MedicalRecordImporter.importBundle(importBuffer, "http://localhost:3000/baseR4");        
+        MedicalRecordImporter.importBundle(importBuffer, get(Meteor, 'settings.public.interfaces.fhirRelay.channel.endpoint', "http://localhost:3000/baseR4"));        
         break;
-    
+      case 12:
+        if(proxyUrl){
+          let assembledUrl = proxyUrl;
+          if(has(importBuffer, 'id')){
+              assembledUrl = proxyUrl + '/Bundle/' + get(importBuffer, 'id');
+              console.log('PUT ' + assembledUrl)
+              HTTP.put(assembledUrl, {data: importBuffer}, function(error, result){
+                  if(error){
+                      alert(JSON.stringify(error.message));
+                  }
+              })
+          } else {
+              assembledUrl = proxyUrl + '/Bundle';
+              console.log('POST ' + assembledUrl)
+              HTTP.post(assembledUrl, {data: importBuffer}, function(error, result){
+                  if(error){
+                      alert(JSON.stringify(error.message));
+                  }
+              })
+          }    
+        }
+        break;
+      
       default:
         break;
     }
@@ -1670,6 +1695,9 @@ export function ImportComponent(props){
   function sendToDataWarehouse(){
     console.log('Sending to data warehouse....');
 
+    // replace with fetch to /metadata route
+    // which will return Meteor.settings.private.fhir.rest object instead
+
     let resourceList = get(Meteor, 'settings.public.capabilityStatement.resourceTypes');
     if(Array.isArray(resourceList)){
       resourceList.forEach(function(resourceType){
@@ -1759,7 +1787,7 @@ export function ImportComponent(props){
   if(showPreviewData){
     columnWidth = 3;
     previewDataContent = <Grid item md={columnWidth} style={{width: '100%'}}>
-      <CardHeader title="Step 3 - Preview Data" style={{cursor: 'pointer'}} onClick={ setShowPreviewData.bind(this, false)} />
+      <CardHeader title="Step 2.1 - Preview Data" style={{cursor: 'pointer'}} onClick={ setShowPreviewData.bind(this, false)} />
       <StyledCard style={{height: window.innerHeight - 300}} width={cardWidth + 'px'}>
         <PreviewDataCard
           readyToImport={readyToImport}
@@ -1778,7 +1806,7 @@ export function ImportComponent(props){
   }
   return(
 
-      <PageCanvas id="ImportCanvas" headerHeight={headerHeight} style={{height: window.innerHeight }} paddingLeft={paddingWidth} paddingRight={paddingWidth} >
+      <PageCanvas id="ImportCanvas" style={{height: window.innerHeight }} paddingLeft={paddingWidth} paddingRight={paddingWidth} >
 
         <Grid container spacing={8}>
           <Grid item md={columnWidth} style={{width: '100%', marginBottom: marginBottom + 'px'}}>
@@ -1865,7 +1893,7 @@ export function ImportComponent(props){
           </Grid>
           { previewDataContent }
           <Grid item md={columnWidth} style={{marginBottom: '80px', width: '100%'}}>
-            <CardHeader title="Step 4 - Collection Preview" />
+            <CardHeader title="Step 3 - Collection Preview" />
             <StyledCard style={{marginBottom: '20px'}} width={cardWidth + 'px'}>
               <CollectionManagement
                 mode="additive"

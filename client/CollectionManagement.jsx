@@ -2,7 +2,7 @@
 // http://www.dropzonejs.com/
 
 import React from 'react';
-import { useTracker } from '@ledgy/react-meteor-data';
+import { useTracker } from 'meteor/react-meteor-data';
 import PropTypes from 'prop-types';
 
 import { FhirUtilities } from 'meteor/clinical:hl7-fhir-data-infrastructure';

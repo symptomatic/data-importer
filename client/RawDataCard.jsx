@@ -22,6 +22,8 @@ import {
 } from '@material-ui/core';
 import PropTypes from 'prop-types';
 
+import { get, set, has, uniq, cloneDeep } from 'lodash';
+
 // import AceEditor from "react-ace";
 // import "ace-builds/src-noconflict/mode-json";
 // import "ace-builds/src-noconflict/theme-tomorrow";
@@ -276,6 +278,7 @@ function RawDataCard(props){
           <MenuItem value={9} id="import-algorithm-menu-item-9" key="import-algorithm-menu-item-9" >Inpatient Prospective Payment System File</MenuItem>
           <MenuItem value={10} id="import-algorithm-menu-item-10" key="import-algorithm-menu-item-10" >SANER Hospital File</MenuItem>
           <MenuItem value={11} id="import-algorithm-menu-item-11" key="import-algorithm-menu-item-11" >LOINC Questionnaire</MenuItem>
+          <MenuItem value={12} id="import-algorithm-menu-item-12" key="import-algorithm-menu-item-11" >FHIR Bundle (Collection)</MenuItem>
         </Select>
       </FormControl>
 

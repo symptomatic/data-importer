@@ -134,7 +134,7 @@ export function ImportPage(props){
 
   return(
     <PageCanvas id="ImportPage" headerHeight={headerHeight} paddingLeft={20} paddingRight={20} >
-      <MuiThemeProvider theme={muiTheme} headerHeight={headerHeight} paddingLeft={20} paddingRight={20} >
+      <MuiThemeProvider theme={muiTheme} paddingLeft={20} paddingRight={20} >
         <ImportComponent />
       </MuiThemeProvider>
     </PageCanvas>
