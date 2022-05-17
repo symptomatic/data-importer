@@ -7,6 +7,21 @@ This package includes file system readers, so is intended for use with Electron 
 Copyright 2020, Symptomatic, All rights reserved.
 
 
+#### Installation
+
+```
+git clone https://github.com/clinical-meteor/node-on-fhir
+cd node-on-fhir
+cd packages
+
+git clone https://github.com/symptomatic/data-importer
+
+cd ..
+meteor add symptomatic:data-importer
+
+meteor run
+```
+
 
 #### Bulk Data Links  
 https://docs.google.com/presentation/d/14ZHmam9hwz6-SsCG1YqUIQnJ56bvSqEatebltgEVR6c/edit#slide=id.g8c17644f87_23_919  
