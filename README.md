@@ -1,4 +1,4 @@
-## Data Management Module (Import / Export)
+## Data Importer
 
 NOTE:  THIS PACKAGE IS NOT INTENDED TO BE RUN ON GALAXY
 This package includes file system readers, so is intended for use with Electron builds.  Remove before deploying to Galaxy.
