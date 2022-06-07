@@ -1,4 +1,4 @@
-## Data Management Module (Import / Export)
+## Data Importer
 
 NOTE:  THIS PACKAGE IS NOT INTENDED TO BE RUN ON GALAXY
 This package includes file system readers, so is intended for use with Electron builds.  Remove before deploying to Galaxy.
@@ -6,6 +6,21 @@ This package includes file system readers, so is intended for use with Electron 
 
 Copyright 2020, Symptomatic, All rights reserved.
 
+
+#### Installation
+
+```
+git clone https://github.com/clinical-meteor/node-on-fhir
+cd node-on-fhir
+cd packages
+
+git clone https://github.com/symptomatic/data-importer
+
+cd ..
+meteor add symptomatic:data-importer
+
+meteor run
+```
 
 
 #### Bulk Data Links  
