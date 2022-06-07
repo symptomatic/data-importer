@@ -497,7 +497,7 @@ var eventHandlers = {
 
 
 //============================================================================
-// Helper Components
+// HELPER COMPONENTS
 
 function TabContainer(props) {
   return (
@@ -510,6 +510,42 @@ TabContainer.propTypes = {
   children: PropTypes.node.isRequired,
 };
 
+// ===================================================================================================================
+// HELPER FUNCTIONS
+
+function pluralizeResourceName(resourceTypeString){
+  var pluralized = '';
+  switch (resourceTypeString) {
+    case 'Binary':          
+      pluralized = 'Binaries';
+      break;
+    case 'Library':      
+      pluralized = 'Libraries';
+      break;
+    case 'SupplyDelivery':      
+      pluralized = 'SupplyDeliveries';
+      break;
+    case 'ImagingStudy':      
+      pluralized = 'ImagingStudies';
+      break;        
+    case 'FamilyMemberHistory':      
+      pluralized = 'FamilyMemberHistories';
+      break;        
+    case 'ResearchStudy':      
+      pluralized = 'ResearchStudies';
+      break;        
+    default:
+      pluralized = resourceTypeString + 's';
+      break;
+  }
+
+  return pluralized;
+}
+
+
+// ===================================================================================================================
+// SESSIONS
+
 
 Session.setDefault('fileExtension', 'json');
 Session.setDefault('importBuffer', '');
@@ -519,7 +555,6 @@ Session.setDefault('mappingAlgorithm', 1);
 
 
 
-// ===================================================================================================================
 // ===================================================================================================================
 // MAIN COMPONENT
 
@@ -551,6 +586,8 @@ export function ImportComponent(props){
   let [previewBuffer, setPreviewBuffer] = useState(""); 
 
   let [autoSelectFirstPatient, setAutoSelectFirstPatient] = useState(false);
+
+  let [selectedCollectionsToExport, setCollectionsToExport] = useState({});
 
   
   
@@ -626,9 +663,12 @@ export function ImportComponent(props){
     paginationCount = importQueue.length;
   }
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
+  function handleChangePage(event, newPage){
+    if(typeof onSetPage === "function"){
+      onSetPage(newPage);
+    }
+  }
+
 
   let paginationFooter;
   if(!props.disablePagination){
@@ -1622,33 +1662,51 @@ export function ImportComponent(props){
   function sendEachToServer(){
     console.log("Sending collection preview to data warehouse....");
     
-    collectionNames.forEach(function(name){
-      
-      if(window[name]){
-        if(window[name].find().count()){
-          window[name].find().forEach(function(record){
-            console.log('----------------------------------')
-            console.log('record', record)
-            if(get(record, 'id')){
-              let putUrl = get(Meteor, 'settings.public.interfaces.fhirRelay.channel.endpoint') + '/' + FhirUtilities.singularizeResourceName(name) + "/" + get(record, 'id');
-              console.log('PUT ' + putUrl)
-              
-              HTTP.put(putUrl, {data: record}, function(error, result){
-                if(error) {console.log('HTTP.put.error', error)}
-                if(result) {console.log('HTTP.put.result', result)}
-              })
-            } else {
-              let postUrl = get(Meteor, 'settings.public.interfaces.fhirRelay.channel.endpoint') + '/' + FhirUtilities.singularizeResourceName(name);
-              console.log('POST ' + postUrl)
-              HTTP.post(postUrl, {data: record}, function(error, result){
-                if(error) {console.log('HTTP.put.error', error)}
-                if(result) {console.log('HTTP.put.result', result)}
+    if(typeof selectedCollectionsToExport === "object"){
+      Object.keys(selectedCollectionsToExport).forEach(function(resourceName){
+        
+
+        if(selectedCollectionsToExport[resourceName] === true){
+          let collectionName = pluralizeResourceName(resourceName);
+          console.log('collectionName', collectionName);
+          
+          if(window[collectionName]){
+            if(window[collectionName].find().count()){
+              window[collectionName].find().forEach(function(record){
+                console.log('----------------------------------')
+                console.log('record', record);
+                let channelUrl = get(Meteor, 'settings.public.interfaces.fhirRelay.channel.endpoint');
+                console.log('channelUrl.length', channelUrl.length);
+                
+                if(channelUrl[channelUrl.length] === "/"){
+                  channelUrl = channelUrl.substring(0, channelUrl.length - 1);
+
+                }
+                console.log('channelUrl', channelUrl);
+
+                if(get(record, 'id')){
+                  let putUrl = channelUrl + '/' + resourceName + "/" + get(record, 'id');
+                  console.log('PUT ' + putUrl)
+                  
+                  HTTP.put(putUrl, {data: record}, function(error, result){
+                    if(error) {console.log('HTTP.put.error', error)}
+                    if(result) {console.log('HTTP.put.result', result)}
+                  })
+                } else {
+                  let postUrl = channelUrl + '/' + resourceName;
+                  console.log('POST ' + postUrl)
+                  HTTP.post(postUrl, {data: record}, function(error, result){
+                    if(error) {console.log('HTTP.put.error', error)}
+                    if(result) {console.log('HTTP.put.result', result)}
+                  })
+                }
               })
             }
-          })
+          }
         }
-      }
-    })
+
+      })
+    }
   }
   function sendTransactionBundleToServer(){
     console.log("Sending transaction bundle to data warehouse....");
@@ -1906,6 +1964,10 @@ export function ImportComponent(props){
                 displayPubSubEnabled={false}
                 noDataMessage="Please select a file to import."
                 preview={resourcePreview}
+                onSelectionChange={function(selectionState){
+                  console.log('onSelectionChange', selectionState)
+                  setCollectionsToExport(selectionState);
+                }}
               />
             </StyledCard>
             <DynamicSpacer />

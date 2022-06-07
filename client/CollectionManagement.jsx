@@ -130,6 +130,32 @@ Meteor.call('getServerStats', function(error, result){
 
 export function CollectionManagement(props){
 
+  let { 
+    displayIcons,
+    displayImportCheckmarks,
+    displayExportCheckmarks,
+    displayPubSubEnabled,
+    displayClientCount,
+    displayLocalClientCount,
+    displayServerCount,
+    displayInit,
+    displayDrop,
+    displaySync,
+    displayImportButton,
+    displayExportButton,
+    displayDropButton,
+    displayPreview,
+    selectedPatientId,
+    resourceTypes,
+    mode,
+    exportFileType,
+    noDataMessage,
+    preview,
+    tableSize,
+    onSelectionChange,
+    onSelectedExportChange,
+    ...otherProps 
+  } = props;
 
 
   let data = {
@@ -208,9 +234,9 @@ export function CollectionManagement(props){
 
   logger.trace('CollectionManagement.data', data)
 
-  function setToggleImportState(collection, isInputChecked){
+  function setToggleImportState(resourceName, isInputChecked){
     let toggleStates = Session.get('toggleImportStates');
-    toggleStates[collection] = isInputChecked;
+    toggleStates[resourceName] = isInputChecked;
     Session.set('toggleImportStates', toggleStates);
   }
   function setToggleExportState(collection, isInputChecked){
@@ -220,523 +246,228 @@ export function CollectionManagement(props){
     Session.set('toggleExportStates', toggleExportStates);
   }
   function toggleAllImports(event, isInputChecked){
-    console.log('toggleAllImports', isInputChecked, get(this, 'data.collections.checkedImports.d'));
+    console.log('toggleAllImports', isInputChecked, get(data, 'collections.checkedImports.importsAll'));
 
-    setToggleImportState('importsAll', isInputChecked)
-    setToggleImportState('AllergyIntolerance', isInputChecked)
-    setToggleImportState('Appointment', isInputChecked)
-    setToggleImportState('Bundle', isInputChecked)
-    setToggleImportState('CarePlan', isInputChecked)
-    setToggleImportState('CareTeam', isInputChecked)
-    setToggleImportState('Claim', isInputChecked)
-    setToggleImportState('ClinicalDocument', isInputChecked)
-    setToggleImportState('CodeSystem', isInputChecked)
-    setToggleImportState('Condition', isInputChecked)
-    setToggleImportState('Consent', isInputChecked)
-    setToggleImportState('Contract', isInputChecked)
-    setToggleImportState('Communication', isInputChecked)
-    setToggleImportState('CommunicationResponse', isInputChecked)
-    setToggleImportState('CommunicationRequest', isInputChecked)
-    setToggleImportState('ClinicalImpression', isInputChecked)
-    setToggleImportState('Device', isInputChecked)
-    setToggleImportState('DiagnosticReport', isInputChecked)
-    setToggleImportState('DocumentReference', isInputChecked)
-    setToggleImportState('Endpoint', isInputChecked)
-    setToggleImportState('Encounter', isInputChecked)
-    setToggleImportState('ExplanationOfBenefit', isInputChecked)
-    setToggleImportState('FamilyMemberHistory', isInputChecked)
-    setToggleImportState('Goal', isInputChecked)
-    setToggleImportState('HealthcareService', isInputChecked)
-    setToggleImportState('Immunization', isInputChecked)
-    setToggleImportState('InsurancePlan', isInputChecked)
-    setToggleImportState('ImagingStudy', isInputChecked)
-    setToggleImportState('List', isInputChecked)
-    setToggleImportState('Location', isInputChecked)
-    setToggleImportState('Measure', isInputChecked)
-    setToggleImportState('MeasureReport', isInputChecked)
-    setToggleImportState('Medication', isInputChecked)
-    setToggleImportState('MedicationOrder', isInputChecked)
-    setToggleImportState('MedicationStatement', isInputChecked)
-    setToggleImportState('MessageHeader', isInputChecked)
-    setToggleImportState('Network', isInputChecked)
-    setToggleImportState('Observation', isInputChecked)
-    setToggleImportState('Organization', isInputChecked)
-    setToggleImportState('OrganizationAffiliation', isInputChecked)
-    setToggleImportState('Patient', isInputChecked)
-    setToggleImportState('Person', isInputChecked)
-    setToggleImportState('Practitioner', isInputChecked)
-    setToggleImportState('PractitionerRole', isInputChecked)
-    setToggleImportState('Procedure', isInputChecked)
-    setToggleImportState('ProcedureRequest', isInputChecked)
-    setToggleImportState('Provenance', isInputChecked)
-    setToggleImportState('Questionnaire', isInputChecked)
-    setToggleImportState('QuestionnaireResponse', isInputChecked)
-    setToggleImportState('Restriction', isInputChecked)
-    setToggleImportState('RelatedPerson', isInputChecked)
-    setToggleImportState('RiskAssessment', isInputChecked)
-    setToggleImportState('SearchParameter', isInputChecked)
-    setToggleImportState('Schedule', isInputChecked)
-    setToggleImportState('ServiceRequest', isInputChecked)
-    setToggleImportState('Sequence', isInputChecked)
-    setToggleImportState('StructureDefinition', isInputChecked)
-    setToggleImportState('Task', isInputChecked)
-    setToggleImportState('ValueSet', isInputChecked);
-    setToggleImportState('VerificationResult', isInputChecked);
+    setToggleImportState('importsAll', isInputChecked);
 
-    //------------------------------------------------------------
-    // TODO: Refactor using the following
-
-    // setToggleImportState(resourceName, isInputChecked);
-
+    supportedResources.forEach(function(resourceName){
+      setToggleImportState(resourceName, isInputChecked)
+    });
   }
-
   
+  var methods = {};
+  supportedResources.forEach(function(resourceType){
+    methods["toggle" + pluralizeResourceName(resourceType)] = function(event, isInputChecked){
+      console.log('event', event.currentTarget.value)
+      console.log('isInputChecked', isInputChecked)
+      setToggleImportState(resourceType, isInputChecked)
+      if(typeof onSelectionChange === "function"){
+        console.log('onSelectionChange')
+        onSelectionChange(Session.get('toggleImportStates'))
+      }
+    }
+  })
 
-  // REFACTOR (DONT DELETE)
-  // var collectionNamesToParse = [];
-  // var methods = {};
-  // collectionNamesToParse.forEach(function(collectionName){
-  //   methods["toggle" + singularizeResourceName(collectionName)] = function(event, isInputChecked){
-  //     setToggleImportState(singularizeResourceName(collectionName), isInputChecked)
-  //   }
-  // })
-
-  function toggleAllergies(event, isInputChecked){    
-    setToggleImportState('AllergyIntolerance', isInputChecked)
-  };
-  function toggleAppointments(event, isInputChecked){    
-    setToggleImportState('Appointment', isInputChecked)
-  };
-  function toggleBundles(event, isInputChecked){    
-    setToggleImportState('Bundle', isInputChecked)
-  };
-  function toggleCarePlans(event, isInputChecked){    
-    setToggleImportState('CarePlan', isInputChecked)
-  };
-  function toggleCareTeams(event, isInputChecked){    
-    setToggleImportState('CareTeam', isInputChecked)
-  };
-  function toggleClaims(event, isInputChecked){    
-    setToggleImportState('Claim', isInputChecked)
-  };
-  function toggleClinicalDocuments(event, isInputChecked){    
-    setToggleImportState('ClinicalDocument', isInputChecked)
-  };
-  function toggleCodeSystems(event, isInputChecked){    
-    setToggleImportState('CodeSystem', isInputChecked)
-  };
-  function toggleConditions(event, isInputChecked){    
-    setToggleImportState('Condition', isInputChecked)
-  };
-  function toggleConsents(event, isInputChecked){    
-    setToggleImportState('Consent', isInputChecked)
-  };
-  function toggleContracts(event, isInputChecked){    
-    setToggleImportState('Contract', isInputChecked)
-  };
-  function toggleCommunications(event, isInputChecked){    
-    setToggleImportState('Communication', isInputChecked)
-  };
-  function toggleCommunicationResponses(event, isInputChecked){    
-    setToggleImportState('CommunicationResponse', isInputChecked)
-  };
-  function toggleCommunicationRequests(event, isInputChecked){    
-    setToggleImportState('CommunicationRequest', isInputChecked)
-  };
-  function toggleClinicalImpressions(event, isInputChecked){    
-    setToggleImportState('ClinicalImpression', isInputChecked)
-  };
-  function toggleDevices(event, isInputChecked){    
-    setToggleImportState('Device', isInputChecked)
-  };
-  function toggleDiagnosticReports(event, isInputChecked){    
-    setToggleImportState('DiagnosticReport', isInputChecked)
-  };
-    function toggleDocumentReferences(event, isInputChecked){    
-    setToggleImportState('DocumentReference', isInputChecked)
-  };
-  function toggleEncounters(event, isInputChecked){    
-    setToggleImportState('Encounter', isInputChecked)
-  };
-  function toggleEndpoints(event, isInputChecked){    
-    setToggleImportState('Endpoint', isInputChecked)
-  };
-  function toggleExplanationOfBenefit(event, isInputChecked){    
-    setToggleImportState('ExplanationOfBenefit', isInputChecked)
-  };
-  function toggleFamilyMemberHistories(event, isInputChecked){    
-    setToggleImportState('FamilyMemberHistory', isInputChecked)
-  };
-  function toggleGoals(event, isInputChecked){
-    setToggleImportState('Goal', isInputChecked)
-  };
-  function toggleHealthcareServices(event, isInputChecked){
-    setToggleImportState('HealthcareService', isInputChecked)
-  };
-  function toggleImmunizations(event, isInputChecked){
-    setToggleImportState('Immunization', isInputChecked)
-  };
-  function toggleInsurancePlans(event, isInputChecked){
-    setToggleImportState('InsurancePlan', isInputChecked)
-  };
-  function toggleImmagingStudies(event, isInputChecked){    
-    setToggleImportState('ImagingStudy', isInputChecked)
-  };
-  function toggleLists(event, isInputChecked){
-    setToggleImportState('List', isInputChecked)
-  };
-  function toggleLocations(event, isInputChecked){
-    setToggleImportState('Location', isInputChecked)
-  };
-  function toggleMeasures(event, isInputChecked){    
-    setToggleImportState('Measure', isInputChecked)
-  };
-  function toggleMeasureReports(event, isInputChecked){    
-    setToggleImportState('MeasureReport', isInputChecked)
-  };
-  function toggleMedications(event, isInputChecked){    
-    setToggleImportState('Medication', isInputChecked)
-  };
-  function toggleMedicationOrders(event, isInputChecked){    
-    setToggleImportState('MedicationOrder', isInputChecked)
-  };
-  function toggleMedicationStatements(event, isInputChecked){    
-    setToggleImportState('MedicationStatement', isInputChecked)
-  };
-  function toggleMessageHeaders(event, isInputChecked){    
-    setToggleImportState('MessageHeader', isInputChecked)
-  };
-  function toggleMeasures(event, isInputChecked){    
-    setToggleImportState('Measure', isInputChecked)
-  };
-  function toggleNetworks(event, isInputChecked){    
-    setToggleImportState('Network', isInputChecked)
-  };
-  function toggleObservations(event, isInputChecked){    
-    setToggleImportState('Observation', isInputChecked)
-  };
-  function toggleOrganizations(event, isInputChecked){    
-    setToggleImportState('Organization', isInputChecked)
-  };
-  function toggleOrganizationAffiliations(event, isInputChecked){    
-    setToggleImportState('OrganizationAffiliation', isInputChecked)
-  };
-  function togglePatients(event, isInputChecked){    
-    setToggleImportState('Patient', isInputChecked)
-  };
-  function togglePersons(event, isInputChecked){    
-    setToggleImportState('Person', isInputChecked)
-  };
-  function togglePractitioners(event, isInputChecked){    
-    setToggleImportState('Practitioner', isInputChecked)
-  };
-  function togglePractitionerRoles(event, isInputChecked){    
-    setToggleImportState('PractitionerRole', isInputChecked)
-  };
-  function toggleProcedures(event, isInputChecked){    
-    setToggleImportState('Procedure', isInputChecked)
-  };
-  function toggleProcedureRequests(event, isInputChecked){    
-    setToggleImportState('ProcedureRequest', isInputChecked)
-  };
-  function toggleProvenances(event, isInputChecked){    
-    setToggleImportState('Provenance', isInputChecked)
-  };
-  function toggleQuestionnaires(event, isInputChecked){    
-    setToggleImportState('Questionnaire', isInputChecked)
-  };
-  function toggleQuestionnaireResponses(event, isInputChecked){    
-    setToggleImportState('QuestionnaireResponse', isInputChecked)
-  };
-  function toggleRelatedPersons(event, isInputChecked){    
-    setToggleImportState('RelatedPerson', isInputChecked)
-  };
-  function toggleRestrictions(event, isInputChecked){    
-    setToggleImportState('Restriction', isInputChecked)
-  };
-  function toggleRiskAssessments(event, isInputChecked){    
-    setToggleImportState('RiskAssessment', isInputChecked)
-  };
-  function toggleSearchParameters(event, isInputChecked){    
-    setToggleImportState('SearchParameter', isInputChecked)
-  };
-  function toggleSchedules(event, isInputChecked){    
-    setToggleImportState('Schedule', isInputChecked)
-  };
-  function toggleServiceRequests(event, isInputChecked){    
-    setToggleImportState('ServiceRequest', isInputChecked)
-  };
-  function toggleSequences(event, isInputChecked){    
-    setToggleImportState('Sequence', isInputChecked)
-  };
-  function toggleStructureDefinitions(event, isInputChecked){    
-    setToggleImportState('StructureDefinition', isInputChecked)
-  };
-  function toggleTasks(event, isInputChecked){    
-    setToggleImportState('Task', isInputChecked)
-  };
-  function toggleValueSets(event, isInputChecked){    
-    setToggleImportState('ValueSet', isInputChecked)
-  };
-  function toggleVerificationResults(event, isInputChecked){    
-    setToggleImportState('VerificationResult', isInputChecked)
-  };
-
-  //------------------------------------------------------------
-  // TODO: Refactor using the following
-
-  // toggleImportState(event, isInputChecked, resourceName){    
-  //   setToggleImportState(resourceName, isInputChecked)
-  // };
+  console.log('methods', methods);
 
 
   function toggleAllExports(isInputChecked, event, ){
     console.log('toggleAllExports', isInputChecked, get(this, 'data.collections.checkedExports.exportsAll'));
 
     setToggleExportState('exportsAll', isInputChecked)
-    setToggleExportState('AllergyIntolerance', isInputChecked)
-    setToggleExportState('Appointment', isInputChecked)
-    setToggleExportState('Bundle', isInputChecked)
-    setToggleExportState('CarePlan', isInputChecked)
-    setToggleExportState('CareTeam', isInputChecked)
-    setToggleExportState('Claim', isInputChecked)
-    setToggleExportState('ClinicalDocument', isInputChecked)
-    setToggleExportState('CodeSystem', isInputChecked)
-    setToggleExportState('Condition', isInputChecked)
-    setToggleExportState('Consent', isInputChecked)
-    setToggleExportState('Contract', isInputChecked)
-    setToggleExportState('Communication', isInputChecked)
-    setToggleExportState('CommunicationResponse', isInputChecked)
-    setToggleExportState('CommunicationRequest', isInputChecked)
-    setToggleExportState('ClinicalImpression', isInputChecked)
-    setToggleExportState('Device', isInputChecked)
-    setToggleExportState('DiagnosticReport', isInputChecked)
-    setToggleExportState('DocumentReference', isInputChecked)
-    setToggleExportState('Encounter', isInputChecked)
-    setToggleExportState('Endpoint', isInputChecked)
-    setToggleExportState('ExplanationOfBenefit', isInputChecked)
-    setToggleExportState('FamilyMemberHistory', isInputChecked)
-    setToggleExportState('Goal', isInputChecked)
-    setToggleExportState('HealthcareService', isInputChecked)
-    setToggleExportState('Immunization', isInputChecked)
-    setToggleExportState('InsurancePlan', isInputChecked)
-    setToggleExportState('ImagingStudy', isInputChecked)
-    setToggleExportState('List', isInputChecked)
-    setToggleExportState('Location', isInputChecked)
-    setToggleExportState('Measure', isInputChecked)
-    setToggleExportState('MeasureReport', isInputChecked)
-    setToggleExportState('Medication', isInputChecked)
-    setToggleExportState('MedicationOrder', isInputChecked)
-    setToggleExportState('MedicationStatement', isInputChecked)
-    setToggleExportState('MessageHeader', isInputChecked)
-    setToggleExportState('Network', isInputChecked)
-    setToggleExportState('Observation', isInputChecked)
-    setToggleExportState('Organization', isInputChecked)
-    setToggleExportState('OrganizationAffiliation', isInputChecked)
-    setToggleExportState('Patient', isInputChecked)
-    setToggleExportState('Person', isInputChecked)
-    setToggleExportState('Practitioner', isInputChecked)
-    setToggleExportState('PractitionerRole', isInputChecked)
-    setToggleExportState('Procedure', isInputChecked)
-    setToggleExportState('ProcedureRequest', isInputChecked)
-    setToggleExportState('Provenance', isInputChecked)
-    setToggleExportState('Questionnaire', isInputChecked)
-    setToggleExportState('QuestionnaireResponse', isInputChecked)
-    setToggleExportState('RelatedPerson', isInputChecked)
-    setToggleExportState('Restriction', isInputChecked)
-    setToggleExportState('RiskAssessment', isInputChecked)
-    setToggleExportState('SearchParameter', isInputChecked)
-    setToggleExportState('Schedule', isInputChecked)
-    setToggleExportState('ServiceRequest', isInputChecked)
-    setToggleExportState('Sequence', isInputChecked)
-    setToggleExportState('StructureDefinition', isInputChecked)
-    setToggleExportState('Task', isInputChecked)
-    setToggleExportState('ValueSet', isInputChecked)
-    setToggleExportState('VerificationResult', isInputChecked)
 
-    //------------------------------------------------------------
-    // TODO: Refactor using the following
+    supportedResources.forEach(function(resourceName){
+      setToggleExportState(resourceName, isInputChecked)
+    });
+  }
 
-    // setToggleImportState(resourceName, isInputChecked);
-
-  }
-  function toggleAllergiesExport(event, isInputChecked){    
-    setToggleExportState('AllergyIntolerance', isInputChecked)
-  };
-  function toggleAppointmentsExport(event, isInputChecked){    
-    setToggleExportState('Appointment', isInputChecked)
-  };
-  function toggleBundlesExport(event, isInputChecked){    
-    setToggleExportState('Bundle', isInputChecked)
-  };
-  function toggleCarePlansExport(event, isInputChecked){    
-    setToggleExportState('CarePlan', isInputChecked)
-  };
-  function toggleCareTeamsExport(event, isInputChecked){    
-    setToggleExportState('CareTeam', isInputChecked)
-  };
-  function toggleClaimsExport(event, isInputChecked){    
-    setToggleExportState('Claim', isInputChecked)
-  };
-  function toggleClinicalDocumentsExport(event, isInputChecked){    
-    setToggleExportState('ClinicalDocument', isInputChecked)
-  };
-  function toggleCodeSystemsExport(event, isInputChecked){    
-    setToggleExportState('CodeSystem', isInputChecked)
-  };
-  function toggleConditionsExport(event, isInputChecked){    
-    setToggleExportState('Condition', isInputChecked)
-  };
-  function toggleConsentsExport(event, isInputChecked){    
-    setToggleExportState('Consent', isInputChecked)
-  };
-  function toggleContractsExport(event, isInputChecked){    
-    setToggleExportState('Contract', isInputChecked)
-  };
-  function toggleCommunicationsExport(event, isInputChecked){    
-    setToggleExportState('Communication', isInputChecked)
-  };
-  function toggleCommunicationResponsesExport(event, isInputChecked){    
-    setToggleExportState('CommunicationResponse', isInputChecked)
-  };
-  function toggleCommunicationRequestsExport(event, isInputChecked){    
-    setToggleExportState('CommunicationRequest', isInputChecked)
-  };
-  function toggleClinicalImpressionsExport(event, isInputChecked){    
-    setToggleExportState('ClinicalImpression', isInputChecked)
-  };
-  function toggleDevicesExport(event, isInputChecked){    
-    setToggleExportState('Device', isInputChecked)
-  };
-  function toggleDiagnosticReportsExport(event, isInputChecked){    
-    setToggleExportState('DiagnosticReport', isInputChecked)
-  };
-    function toggleDocumentReferencesExport(event, isInputChecked){    
-    setToggleExportState('DocumentReference', isInputChecked)
-  };
-  function toggleEncountersExport(event, isInputChecked){    
-    setToggleExportState('Encounter', isInputChecked)
-  };
-  function toggleEndpointsExport(event, isInputChecked){    
-    setToggleExportState('Endpoint', isInputChecked)
-  };
-  function toggleExplanationOfBenefitsExport(event, isInputChecked){    
-    setToggleExportState('ExplanationOfBenefit', isInputChecked)
-  };
-  function toggleFamilyMemberHistoriesExport(event, isInputChecked){    
-    setToggleExportState('FamilyMemberHistory', isInputChecked)
-  };
-  function toggleGoalsExport(event, isInputChecked){
-    setToggleExportState('Goal', isInputChecked)
-  };
-  function toggleHealthcareServicesExport(event, isInputChecked){
-    setToggleExportState('HealthcareService', isInputChecked)
-  };
-  function toggleImmunizationsExport(event, isInputChecked){
-    setToggleExportState('Immunization', isInputChecked)
-  };
-  function toggleInsurancePlansExport(event, isInputChecked){
-    setToggleExportState('InsurancePlan', isInputChecked)
-  };
-  function toggleImagingStudiesExport(event, isInputChecked){    
-    setToggleExportState('ImagingStudy', isInputChecked)
-  };
-  function toggleListsExport(event, isInputChecked){
-    setToggleExportState('List', isInputChecked)
-  };
-  function toggleLocationsExport(event, isInputChecked){
-    setToggleExportState('Location', isInputChecked)
-  };
-  function toggleMeasuresExport(event, isInputChecked){    
-    setToggleExportState('Measure', isInputChecked)
-  };
-  function toggleMeasureReportsExport(event, isInputChecked){    
-    setToggleExportState('MeasureReport', isInputChecked)
-  };
-  function toggleMedicationsExport(event, isInputChecked){    
-    setToggleExportState('Medication', isInputChecked)
-  };
-  function toggleMedicationOrdersExport(event, isInputChecked){
-    setToggleExportState('MedicationOrder', isInputChecked)
-  }
-  function toggleMedicationStatementsExport(event, isInputChecked){
-    setToggleExportState('MedicationStatement', isInputChecked)
-  }
-  function toggleMessageHeadersExport(event, isInputChecked){    
-    setToggleExportState('MessageHeader', isInputChecked)
-  };
-  function toggleNetworksExport(event, isInputChecked){    
-    setToggleExportState('Network', isInputChecked)
-  };
-  function toggleObservationsExport(event, isInputChecked){    
-    setToggleExportState('Observation', isInputChecked)
-  };
-  function toggleOrganizationsExport(event, isInputChecked){    
-    setToggleExportState('Organization', isInputChecked)
-  };
-  function toggleOrganizationAffiliationsExport(event, isInputChecked){    
-    setToggleExportState('OrganizationAffiliation', isInputChecked)
-  };
-  function togglePatientsExport(event, isInputChecked){    
-    setToggleExportState('Patient', isInputChecked)
-  };
-  function togglePersonsExport(event, isInputChecked){    
-    setToggleExportState('Person', isInputChecked)
-  };
-  function togglePractitionersExport(event, isInputChecked){    
-    setToggleExportState('Practitioner', isInputChecked)
-  };
-  function togglePractitionerRolesExport(event, isInputChecked){    
-    setToggleExportState('PractitionerRole', isInputChecked)
-  };
-  function toggleProceduresExport(event, isInputChecked){    
-    setToggleExportState('Procedure', isInputChecked)
-  };
-  function toggleProvenancesExport(event, isInputChecked){    
-    setToggleExportState('Provenance', isInputChecked)
-  };
-  function toggleProcedureRequestsExport(event, isInputChecked){    
-    setToggleExportState('ProcedureRequest', isInputChecked)
-  };
-  function toggleQuestionnairesExport(event, isInputChecked){    
-    setToggleExportState('Questionnaire', isInputChecked)
-  };
-  function toggleQuestionnaireResponsesExport(event, isInputChecked){    
-    setToggleExportState('QuestionnaireResponse', isInputChecked)
-  };
-  function toggleRelatedPersonsExport(event, isInputChecked){    
-    setToggleExportState('RelatedPerson', isInputChecked)
-  };
-  function toggleRestrictionsExport(event, isInputChecked){    
-    setToggleExportState('Restriction', isInputChecked)
-  };
-  function toggleRiskAssessmentsExport(event, isInputChecked){    
-    setToggleExportState('RiskAssessment', isInputChecked)
-  };
-  function toggleSearchParametersExport(event, isInputChecked){    
-    setToggleExportState('SearchParameters', isInputChecked)
-  };
-  function toggleSchedulesExport(event, isInputChecked){    
-    setToggleExportState('Schedule', isInputChecked)
-  };
-  function toggleServiceRequestsExport(event, isInputChecked){    
-    setToggleExportState('ServiceRequest', isInputChecked)
-  };
-  function toggleSequencesExport(event, isInputChecked){    
-    setToggleExportState('Sequence', isInputChecked)
-  };
-  function toggleStructureDefinitionsExport(event, isInputChecked){    
-    setToggleExportState('StructureDefinition', isInputChecked)
-  };
-  function toggleTasksExport(event, isInputChecked){    
-    setToggleExportState('Task', isInputChecked)
-  };
-  function toggleValueSetsExport(event, isInputChecked){    
-    setToggleExportState('ValueSet', isInputChecked)
-  };
-  function toggleVerificationResultsExport(event, isInputChecked){    
-    setToggleExportState('VerificationResult', isInputChecked)
-  };
+  var exportMethods = {};
+  supportedResources.forEach(function(collectionName){
+    exportMethods["toggle" + pluralizeResourceName(collectionName) + "Export"] = function(event, isInputChecked){
+      setToggleExportState(collectionName, isInputChecked)
+      if(typeof onSelectedExportChange === "function"){
+        console.log('onSelectedExportChange')
+        onSelectedExportChange(Session.get('toggleExportStates'))
+      }
+    }
+  })
+  // function toggleAllergiesExport(event, isInputChecked){    
+  //   setToggleExportState('AllergyIntolerance', isInputChecked)
+  // };
+  // function toggleAppointmentsExport(event, isInputChecked){    
+  //   setToggleExportState('Appointment', isInputChecked)
+  // };
+  // function toggleBundlesExport(event, isInputChecked){    
+  //   setToggleExportState('Bundle', isInputChecked)
+  // };
+  // function toggleCarePlansExport(event, isInputChecked){    
+  //   setToggleExportState('CarePlan', isInputChecked)
+  // };
+  // function toggleCareTeamsExport(event, isInputChecked){    
+  //   setToggleExportState('CareTeam', isInputChecked)
+  // };
+  // function toggleClaimsExport(event, isInputChecked){    
+  //   setToggleExportState('Claim', isInputChecked)
+  // };
+  // function toggleClinicalDocumentsExport(event, isInputChecked){    
+  //   setToggleExportState('ClinicalDocument', isInputChecked)
+  // };
+  // function toggleCodeSystemsExport(event, isInputChecked){    
+  //   setToggleExportState('CodeSystem', isInputChecked)
+  // };
+  // function toggleConditionsExport(event, isInputChecked){    
+  //   setToggleExportState('Condition', isInputChecked)
+  // };
+  // function toggleConsentsExport(event, isInputChecked){    
+  //   setToggleExportState('Consent', isInputChecked)
+  // };
+  // function toggleContractsExport(event, isInputChecked){    
+  //   setToggleExportState('Contract', isInputChecked)
+  // };
+  // function toggleCommunicationsExport(event, isInputChecked){    
+  //   setToggleExportState('Communication', isInputChecked)
+  // };
+  // function toggleCommunicationResponsesExport(event, isInputChecked){    
+  //   setToggleExportState('CommunicationResponse', isInputChecked)
+  // };
+  // function toggleCommunicationRequestsExport(event, isInputChecked){    
+  //   setToggleExportState('CommunicationRequest', isInputChecked)
+  // };
+  // function toggleClinicalImpressionsExport(event, isInputChecked){    
+  //   setToggleExportState('ClinicalImpression', isInputChecked)
+  // };
+  // function toggleDevicesExport(event, isInputChecked){    
+  //   setToggleExportState('Device', isInputChecked)
+  // };
+  // function toggleDiagnosticReportsExport(event, isInputChecked){    
+  //   setToggleExportState('DiagnosticReport', isInputChecked)
+  // };
+  //   function toggleDocumentReferencesExport(event, isInputChecked){    
+  //   setToggleExportState('DocumentReference', isInputChecked)
+  // };
+  // function toggleEncountersExport(event, isInputChecked){    
+  //   setToggleExportState('Encounter', isInputChecked)
+  // };
+  // function toggleEndpointsExport(event, isInputChecked){    
+  //   setToggleExportState('Endpoint', isInputChecked)
+  // };
+  // function toggleExplanationOfBenefitsExport(event, isInputChecked){    
+  //   setToggleExportState('ExplanationOfBenefit', isInputChecked)
+  // };
+  // function toggleFamilyMemberHistoriesExport(event, isInputChecked){    
+  //   setToggleExportState('FamilyMemberHistory', isInputChecked)
+  // };
+  // function toggleGoalsExport(event, isInputChecked){
+  //   setToggleExportState('Goal', isInputChecked)
+  // };
+  // function toggleHealthcareServicesExport(event, isInputChecked){
+  //   setToggleExportState('HealthcareService', isInputChecked)
+  // };
+  // function toggleImmunizationsExport(event, isInputChecked){
+  //   setToggleExportState('Immunization', isInputChecked)
+  // };
+  // function toggleInsurancePlansExport(event, isInputChecked){
+  //   setToggleExportState('InsurancePlan', isInputChecked)
+  // };
+  // function toggleImagingStudiesExport(event, isInputChecked){    
+  //   setToggleExportState('ImagingStudy', isInputChecked)
+  // };
+  // function toggleListsExport(event, isInputChecked){
+  //   setToggleExportState('List', isInputChecked)
+  // };
+  // function toggleLocationsExport(event, isInputChecked){
+  //   setToggleExportState('Location', isInputChecked)
+  // };
+  // function toggleMeasuresExport(event, isInputChecked){    
+  //   setToggleExportState('Measure', isInputChecked)
+  // };
+  // function toggleMeasureReportsExport(event, isInputChecked){    
+  //   setToggleExportState('MeasureReport', isInputChecked)
+  // };
+  // function toggleMedicationsExport(event, isInputChecked){    
+  //   setToggleExportState('Medication', isInputChecked)
+  // };
+  // function toggleMedicationOrdersExport(event, isInputChecked){
+  //   setToggleExportState('MedicationOrder', isInputChecked)
+  // }
+  // function toggleMedicationStatementsExport(event, isInputChecked){
+  //   setToggleExportState('MedicationStatement', isInputChecked)
+  // }
+  // function toggleMessageHeadersExport(event, isInputChecked){    
+  //   setToggleExportState('MessageHeader', isInputChecked)
+  // };
+  // function toggleNetworksExport(event, isInputChecked){    
+  //   setToggleExportState('Network', isInputChecked)
+  // };
+  // function toggleObservationsExport(event, isInputChecked){    
+  //   setToggleExportState('Observation', isInputChecked)
+  // };
+  // function toggleOrganizationsExport(event, isInputChecked){    
+  //   setToggleExportState('Organization', isInputChecked)
+  // };
+  // function toggleOrganizationAffiliationsExport(event, isInputChecked){    
+  //   setToggleExportState('OrganizationAffiliation', isInputChecked)
+  // };
+  // function togglePatientsExport(event, isInputChecked){    
+  //   setToggleExportState('Patient', isInputChecked)
+  // };
+  // function togglePersonsExport(event, isInputChecked){    
+  //   setToggleExportState('Person', isInputChecked)
+  // };
+  // function togglePractitionersExport(event, isInputChecked){    
+  //   setToggleExportState('Practitioner', isInputChecked)
+  // };
+  // function togglePractitionerRolesExport(event, isInputChecked){    
+  //   setToggleExportState('PractitionerRole', isInputChecked)
+  // };
+  // function toggleProceduresExport(event, isInputChecked){    
+  //   setToggleExportState('Procedure', isInputChecked)
+  // };
+  // function toggleProvenancesExport(event, isInputChecked){    
+  //   setToggleExportState('Provenance', isInputChecked)
+  // };
+  // function toggleProcedureRequestsExport(event, isInputChecked){    
+  //   setToggleExportState('ProcedureRequest', isInputChecked)
+  // };
+  // function toggleQuestionnairesExport(event, isInputChecked){    
+  //   setToggleExportState('Questionnaire', isInputChecked)
+  // };
+  // function toggleQuestionnaireResponsesExport(event, isInputChecked){    
+  //   setToggleExportState('QuestionnaireResponse', isInputChecked)
+  // };
+  // function toggleRelatedPersonsExport(event, isInputChecked){    
+  //   setToggleExportState('RelatedPerson', isInputChecked)
+  // };
+  // function toggleRestrictionsExport(event, isInputChecked){    
+  //   setToggleExportState('Restriction', isInputChecked)
+  // };
+  // function toggleRiskAssessmentsExport(event, isInputChecked){    
+  //   setToggleExportState('RiskAssessment', isInputChecked)
+  // };
+  // function toggleSearchParametersExport(event, isInputChecked){    
+  //   setToggleExportState('SearchParameters', isInputChecked)
+  // };
+  // function toggleSchedulesExport(event, isInputChecked){    
+  //   setToggleExportState('Schedule', isInputChecked)
+  // };
+  // function toggleServiceRequestsExport(event, isInputChecked){    
+  //   setToggleExportState('ServiceRequest', isInputChecked)
+  // };
+  // function toggleSequencesExport(event, isInputChecked){    
+  //   setToggleExportState('Sequence', isInputChecked)
+  // };
+  // function toggleStructureDefinitionsExport(event, isInputChecked){    
+  //   setToggleExportState('StructureDefinition', isInputChecked)
+  // };
+  // function toggleTasksExport(event, isInputChecked){    
+  //   setToggleExportState('Task', isInputChecked)
+  // };
+  // function toggleValueSetsExport(event, isInputChecked){    
+  //   setToggleExportState('ValueSet', isInputChecked)
+  // };
+  // function toggleVerificationResultsExport(event, isInputChecked){    
+  //   setToggleExportState('VerificationResult', isInputChecked)
+  // };
 
   //------------------------------------------------------------
   // TODO: Refactor using the following
@@ -772,6 +503,35 @@ export function CollectionManagement(props){
     }
 
     return singularized;
+  }
+
+  function pluralizeResourceName(resourceTypeString){
+    var pluralized = '';
+    switch (resourceTypeString) {
+      case 'Binary':          
+        pluralized = 'Binaries';
+        break;
+      case 'Library':      
+        pluralized = 'Libraries';
+        break;
+      case 'SupplyDelivery':      
+        pluralized = 'SupplyDeliveries';
+        break;
+      case 'ImagingStudy':      
+        pluralized = 'ImagingStudies';
+        break;        
+      case 'FamilyMemberHistory':      
+        pluralized = 'FamilyMemberHistories';
+        break;        
+      case 'ResearchStudy':      
+        pluralized = 'ResearchStudies';
+        break;        
+      default:
+        pluralized = resourceTypeString + 's';
+        break;
+    }
+
+    return pluralized;
   }
   function exportCollection(collectionName, exportFileType){
     console.log("Exporting the ' + collectionName + ' collection.")
@@ -902,17 +662,19 @@ export function CollectionManagement(props){
       )  
     }
   }
-  function renderImportCheckmark(onChangeMethod, resourceShorthand){
-    // console.log('renderImportCheckmark', resourceShorthand)
-    if(props.displayImportCheckmarks){
+  function renderImportCheckmark(onChangeMethod, resourceType){
+    // console.log('renderImportCheckmark', resourceType)
+    if(displayImportCheckmarks){
       let checkedValue = false;
-      if(get(this, 'data.collections.checkedImports')){
-        checkedValue = data.collections.checkedImports[FhirUtilities.pluralizeResourceName(resourceShorthand)];
+      if(get(data, 'collections.checkedImports')){
+        checkedValue = data.collections.checkedImports[resourceType];
       }
       // console.log('renderImportCheckmark.checkedValue', checkedValue)
   
       return(
-        <TableCell className="importAll"><Checkbox onChange={onChangeMethod} checked={checkedValue} /></TableCell>
+        <TableCell className="importAll">
+          <Checkbox onChange={onChangeMethod} checked={checkedValue} />
+        </TableCell>
       )  
     }
   }
@@ -1072,10 +834,12 @@ export function CollectionManagement(props){
     }
   }
   function renderImportCheckmarkHeader(){
-    if(props.displayImportCheckmarks){
-      let dChecked = get(this, 'data.collections.checkedImports.d', false)
+    if(displayImportCheckmarks){
+      let allChecked = get(data, 'collections.checkedImports.importsAll', false)
       return(
-        <TableCell className="importAll"><Checkbox onChange={toggleAllImports.bind(this)} checked={dChecked} /></TableCell>
+        <TableCell className="importAll">
+          <Checkbox onChange={toggleAllImports.bind(this)} checked={allChecked} />
+        </TableCell>
       )  
     }
   }
@@ -1163,7 +927,7 @@ export function CollectionManagement(props){
   //     shouldDisplayNoDataRow = false;
   //     dynamicRows[collectionName + "Row"] = <TableRow className='dataManagementRow' hover={true}>
   //       { renderIcon(singularizeResourceName(collectionName)) }
-  //       { renderImportCheckmark(toggleConditions.bind(this), collectionName) }
+  //       { renderImportCheckmark(methods.toggleConditions.bind(this), collectionName) }
   //       { renderImportButton(collectionName)} 
   //       <TableCell className="collection">{collectionName}</TableCell>
   //       { renderPreview(singularizeResourceName(collectionName))} 
@@ -1172,7 +936,7 @@ export function CollectionManagement(props){
   //       { renderPubSub(singularizeResourceName(collectionName))} 
   //       { renderDropButton(singularizeResourceName(collectionName))} 
   //       { renderExportButton(collectionName)} 
-  //       { renderExportCheckmark(toggleConditionsExport.bind(this), singularizeResourceName(collectionName)) }
+  //       { renderExportCheckmark(exportMethods.toggleConditionsExport.bind(this), singularizeResourceName(collectionName)) }
   //     </TableRow>
   //   }    
   // })
@@ -1184,7 +948,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     allergyIntolerancesRow = <TableRow className='dataManagementRow' hover={true}>
       { renderIcon("AllergyIntolerance") }
-      { renderImportCheckmark(toggleAllergies.bind(this), 'AllergyIntolerance') }
+      { renderImportCheckmark(methods.toggleAllergies.bind(this), 'AllergyIntolerance') }
       { renderImportButton('AllergyIntolerances')} 
       <TableCell className="collection">Allergy Intolerance</TableCell>
       { renderPreview('AllergyIntolerance')} 
@@ -1193,7 +957,7 @@ export function CollectionManagement(props){
       { renderPubSub('AllergyIntolerance')} 
       { renderDropButton('AllergyIntolerance')} 
       { renderExportButton('AllergyIntolerances')} 
-      { renderExportCheckmark(toggleAllergiesExport.bind(this), 'AllergyIntolerance') }
+      { renderExportCheckmark(exportMethods.toggleAllergiesExport.bind(this), 'AllergyIntolerance') }
     </TableRow>
   }
 
@@ -1202,7 +966,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     appointmentsRow = <TableRow className='dataManagementRow' hover={true}>
       { renderIcon("Appointment") }
-      { renderImportCheckmark(toggleAppointments.bind(this), 'Appointment') }
+      { renderImportCheckmark(methods.toggleAppointments.bind(this), 'Appointment') }
       { renderImportButton('Appointments')} 
       <TableCell className="collection">Appointments</TableCell>
       { renderPreview('Appointment')} 
@@ -1211,7 +975,7 @@ export function CollectionManagement(props){
       { renderPubSub('Appointment')} 
       { renderDropButton('Appointment')} 
       { renderExportButton('Appointments')} 
-      { renderExportCheckmark(toggleAppointmentsExport.bind(this), 'Appointment') }
+      { renderExportCheckmark(exportMethods.toggleAppointmentsExport.bind(this), 'Appointment') }
     </TableRow>
   }
 
@@ -1220,7 +984,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     bundlesRow = <TableRow className='dataManagementRow' hover={true}>
       { renderIcon("Bundle") }
-      { renderImportCheckmark(toggleBundles.bind(this), 'Bundle') }
+      { renderImportCheckmark(methods.toggleBundles.bind(this), 'Bundle') }
       { renderImportButton('Bundles')} 
       <TableCell className="collection">Bundles</TableCell>
       { renderPreview('Bundle')} 
@@ -1229,7 +993,7 @@ export function CollectionManagement(props){
       { renderPubSub('Bundle')} 
       { renderDropButton('Bundle')} 
       { renderExportButton('Bundles')} 
-      { renderExportCheckmark(toggleBundlesExport.bind(this), 'Bundle') }
+      { renderExportCheckmark(exportMethods.toggleBundlesExport.bind(this), 'Bundle') }
     </TableRow>
   }
 
@@ -1238,7 +1002,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     carePlansRow = <TableRow className='dataManagementRow' hover={true}>
       { renderIcon("CarePlan") }
-      { renderImportCheckmark(toggleCarePlans.bind(this), 'CarePlan') }
+      { renderImportCheckmark(methods.toggleCarePlans.bind(this), 'CarePlan') }
       { renderImportButton('CarePlans')} 
       <TableCell className="collection">Care Plans</TableCell>
       { renderPreview('CarePlan')} 
@@ -1247,7 +1011,7 @@ export function CollectionManagement(props){
       { renderPubSub('CarePlan')}       
       { renderDropButton('CarePlan')} 
       { renderExportButton('CarePlans')} 
-      { renderExportCheckmark(toggleCarePlansExport.bind(this), 'CarePlan') }
+      { renderExportCheckmark(exportMethods.toggleCarePlansExport.bind(this), 'CarePlan') }
     </TableRow>
   }
 
@@ -1256,7 +1020,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     careTeamsRow = <TableRow className='dataManagementRow' hover={true}>
       { renderIcon("CareTeam") }
-      { renderImportCheckmark(toggleCareTeams.bind(this), 'CareTeam') }
+      { renderImportCheckmark(methods.toggleCareTeams.bind(this), 'CareTeam') }
       { renderImportButton('CareTeams')} 
       <TableCell className="collection">Care Plans</TableCell>
       { renderPreview('CareTeam')} 
@@ -1265,7 +1029,7 @@ export function CollectionManagement(props){
       { renderPubSub('CareTeam')}       
       { renderDropButton('CareTeam')} 
       { renderExportButton('CareTeams')} 
-      { renderExportCheckmark(toggleCareTeamsExport.bind(this), 'CareTeam') }
+      { renderExportCheckmark(exportMethods.toggleCareTeamsExport.bind(this), 'CareTeam') }
     </TableRow>
   }
 
@@ -1274,7 +1038,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
       claimsRow = <TableRow className='dataManagementRow' hover={true}>
       { renderIcon("Claim") }
-      { renderImportCheckmark(toggleClaims.bind(this), 'Claim') }
+      { renderImportCheckmark(methods.toggleClaims.bind(this), 'Claim') }
       { renderImportButton('Claims')} 
       <TableCell className="collection">Claims</TableCell>
       { renderPreview('Claim')} 
@@ -1283,7 +1047,7 @@ export function CollectionManagement(props){
       { renderPubSub('Claim')}       
       { renderDropButton('Claim')} 
       { renderExportButton('Claims')} 
-      { renderExportCheckmark(toggleClaimsExport.bind(this), 'Claim') }
+      { renderExportCheckmark(exportMethods.toggleClaimsExport.bind(this), 'Claim') }
     </TableRow>
   }
 
@@ -1292,7 +1056,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     clinicalDocumentsRow = <TableRow className='dataManagementRow' hover={true}>
       { renderIcon("ClinicalDocument") }
-      { renderImportCheckmark(toggleClinicalDocuments.bind(this), 'ClinicalDocument') }
+      { renderImportCheckmark(methods.toggleClinicalDocuments.bind(this), 'ClinicalDocument') }
       { renderImportButton('ClinicalDocuments')} 
       <TableCell className="collection">Clinical Documents</TableCell>
       { renderPreview('ClinicalDocument')} 
@@ -1301,7 +1065,7 @@ export function CollectionManagement(props){
       { renderPubSub('ClinicalDocument')} 
       { renderDropButton('ClinicalDocument')} 
       { renderExportButton('ClinicalDocuments')} 
-      { renderExportCheckmark(toggleClinicalDocumentsExport.bind(this), 'ClinicalDocument') }
+      { renderExportCheckmark(exportMethods.toggleClinicalDocumentsExport.bind(this), 'ClinicalDocument') }
     </TableRow>
   }
 
@@ -1310,7 +1074,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     clinicalImpressionsRow = <TableRow className='dataManagementRow' hover={true}>
       { renderIcon("ClinicalImpression") }
-      { renderImportCheckmark(toggleClinicalImpressions.bind(this), 'ClinicalImpression') }
+      { renderImportCheckmark(methods.toggleClinicalImpressions.bind(this), 'ClinicalImpression') }
       { renderImportButton('ClinicalImpressions')} 
       <TableCell className="collection">Clinical Impressions</TableCell>
       { renderPreview('ClinicalImpression')} 
@@ -1319,7 +1083,7 @@ export function CollectionManagement(props){
       { renderPubSub('ClinicalImpression')} 
       { renderDropButton('ClinicalImpression')} 
       { renderExportButton('ClinicalImpressions')} 
-      { renderExportCheckmark(toggleClinicalImpressionsExport.bind(this), 'ClinicalImpression') }
+      { renderExportCheckmark(exportMethods.toggleClinicalImpressionsExport.bind(this), 'ClinicalImpression') }
     </TableRow>
   }
 
@@ -1328,7 +1092,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     codeSystemsRow = <TableRow className='dataManagementRow' hover={true}>
       { renderIcon("CodeSystem") }
-      { renderImportCheckmark(toggleCodeSystems.bind(this), 'CodeSystem') }
+      { renderImportCheckmark(methods.toggleCodeSystems.bind(this), 'CodeSystem') }
       { renderImportButton('CodeSystems')} 
       <TableCell className="collection">CodeSystems</TableCell>
       { renderPreview('CodeSystem')} 
@@ -1337,7 +1101,7 @@ export function CollectionManagement(props){
       { renderPubSub('CodeSystem')} 
       { renderDropButton('CodeSystem')} 
       { renderExportButton('CodeSystems')} 
-      { renderExportCheckmark(toggleCodeSystemsExport.bind(this), 'CodeSystem') }
+      { renderExportCheckmark(exportMethods.toggleCodeSystemsExport.bind(this), 'CodeSystem') }
     </TableRow>
   }
 
@@ -1346,7 +1110,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     conditionsRow = <TableRow className='dataManagementRow' hover={true}>
       { renderIcon("Condition") }
-      { renderImportCheckmark(toggleConditions.bind(this), 'Condition') }
+      { renderImportCheckmark(methods.toggleConditions.bind(this), 'Condition') }
       { renderImportButton('Conditions')} 
       <TableCell className="collection">Conditions</TableCell>
       { renderPreview('Condition')} 
@@ -1355,7 +1119,7 @@ export function CollectionManagement(props){
       { renderPubSub('Condition')} 
       { renderDropButton('Condition')} 
       { renderExportButton('Conditions')} 
-      { renderExportCheckmark(toggleConditionsExport.bind(this), 'Condition') }
+      { renderExportCheckmark(exportMethods.toggleConditionsExport.bind(this), 'Condition') }
     </TableRow>
   }
 
@@ -1364,7 +1128,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     consentsRow = <TableRow className='dataManagementRow' hover={true}>
       { renderIcon("Consent") }
-      { renderImportCheckmark(toggleConsents.bind(this), 'Consent') }
+      { renderImportCheckmark(methods.toggleConsents.bind(this), 'Consent') }
       { renderImportButton('Consents')} 
       <TableCell className="collection">Consents</TableCell>
       { renderPreview('Consent')} 
@@ -1373,7 +1137,7 @@ export function CollectionManagement(props){
       { renderPubSub('Consent')} 
       { renderDropButton('Consent')} 
       { renderExportButton('Consents')} 
-      { renderExportCheckmark(toggleConsentsExport.bind(this), 'Consent') }
+      { renderExportCheckmark(exportMethods.toggleConsentsExport.bind(this), 'Consent') }
     </TableRow>
   }
 
@@ -1382,7 +1146,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     contractsRow = <TableRow className='dataManagementRow' hover={true}>
       { renderIcon("Contract") }
-      { renderImportCheckmark(toggleContracts.bind(this), 'Contract') }
+      { renderImportCheckmark(methods.toggleContracts.bind(this), 'Contract') }
       { renderImportButton('Contracts')} 
       <TableCell className="collection">Contracts</TableCell>
       { renderPreview('Contract')} 
@@ -1391,7 +1155,7 @@ export function CollectionManagement(props){
       { renderPubSub('Contract')}       
       { renderDropButton('Contract')} 
       { renderExportButton('Contracts')} 
-      { renderExportCheckmark(toggleContractsExport.bind(this), 'Contract') }
+      { renderExportCheckmark(exportMethods.toggleContractsExport.bind(this), 'Contract') }
     </TableRow>
   }
 
@@ -1400,7 +1164,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     communicationsRow = <TableRow className='dataManagementRow' hover={true}>
       { renderIcon("Communication") }
-      { renderImportCheckmark(toggleCommunications.bind(this), 'Communication') }
+      { renderImportCheckmark(methods.toggleCommunications.bind(this), 'Communication') }
       { renderImportButton('Communications')} 
       <TableCell className="collection">Communications</TableCell>
       { renderPreview('Communication')} 
@@ -1409,7 +1173,7 @@ export function CollectionManagement(props){
       { renderPubSub('Communication')} 
       { renderDropButton('Communication')} 
       { renderExportButton('Communications')} 
-      { renderExportCheckmark(toggleCommunicationsExport.bind(this), 'Communication') }
+      { renderExportCheckmark(exportMethods.toggleCommunicationsExport.bind(this), 'Communication') }
     </TableRow>
   }
 
@@ -1418,7 +1182,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     communicationResponsesRow = <TableRow className='dataManagementRow' hover={true}>
       { renderIcon("CommunicationResponse") }
-      { renderImportCheckmark(toggleCommunications.bind(this), 'CommunicationResponse') }
+      { renderImportCheckmark(methods.toggleCommunications.bind(this), 'CommunicationResponse') }
       { renderImportButton('CommunicationResponses')} 
       <TableCell className="collection">Communication Responses</TableCell>
       { renderPreview('CommunicationResponse')} 
@@ -1427,7 +1191,7 @@ export function CollectionManagement(props){
       { renderPubSub('CommunicationResponse')} 
       { renderDropButton('CommunicationResponse')} 
       { renderExportButton('CommunicationResponses')} 
-      { renderExportCheckmark(toggleCommunicationResponsesExport.bind(this), 'CommunicationResponse') }
+      { renderExportCheckmark(exportMethods.toggleCommunicationResponsesExport.bind(this), 'CommunicationResponse') }
     </TableRow>
   }
 
@@ -1436,7 +1200,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     communicationRequestsRow = <TableRow className='dataManagementRow' hover={true}>
       { renderIcon("CommunicationRequest") }
-      { renderImportCheckmark(toggleCommunications.bind(this), 'CommunicationRequest') }
+      { renderImportCheckmark(methods.toggleCommunications.bind(this), 'CommunicationRequest') }
       { renderImportButton('CommunicationRequests')} 
       <TableCell className="collection">Communication Requests</TableCell>
       { renderPreview('CommunicationRequest')} 
@@ -1445,7 +1209,7 @@ export function CollectionManagement(props){
       { renderPubSub('CommunicationRequest')} 
       { renderDropButton('CommunicationRequest')} 
       { renderExportButton('CommunicationRequests')} 
-      { renderExportCheckmark(toggleCommunicationRequestsExport.bind(this), 'CommunicationRequest') }
+      { renderExportCheckmark(exportMethods.toggleCommunicationRequestsExport.bind(this), 'CommunicationRequest') }
     </TableRow>
   }
 
@@ -1454,7 +1218,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     devicesRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("Device") }
-      { renderImportCheckmark(toggleDevices.bind(this), 'Device') }
+      { renderImportCheckmark(methods.toggleDevices.bind(this), 'Device') }
       { renderImportButton('Devices')} 
       <TableCell className="collection">Devices</TableCell>
       { renderPreview('Device')} 
@@ -1463,7 +1227,7 @@ export function CollectionManagement(props){
       { renderPubSub('Device')} 
       { renderDropButton('Device')} 
       { renderExportButton('Devices')} 
-      { renderExportCheckmark(toggleDevicesExport.bind(this), 'Device') }
+      { renderExportCheckmark(exportMethods.toggleDevicesExport.bind(this), 'Device') }
     </TableRow>
   }
 
@@ -1472,7 +1236,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     diagnosticReportsRow = <TableRow className='dataManagementRow' hover={true}>
       { renderIcon("DiagnosticReport") }
-      { renderImportCheckmark(toggleDiagnosticReports.bind(this), 'DiagnosticReport') }
+      { renderImportCheckmark(methods.toggleDiagnosticReports.bind(this), 'DiagnosticReport') }
       { renderImportButton('DiagnosticReports')} 
       <TableCell className="collection">Diagnostic Reports</TableCell>
       { renderPreview('DiagnosticReport')} 
@@ -1481,7 +1245,7 @@ export function CollectionManagement(props){
       { renderPubSub('DiagnosticReport')} 
       { renderDropButton('DiagnosticReport')} 
       { renderExportButton('DiagnosticReports')} 
-      { renderExportCheckmark(toggleDiagnosticReportsExport.bind(this), 'DiagnosticReport') }
+      { renderExportCheckmark(exportMethods.toggleDiagnosticReportsExport.bind(this), 'DiagnosticReport') }
     </TableRow>
   }
 
@@ -1489,7 +1253,7 @@ export function CollectionManagement(props){
   if(determineRowVisible("DocumentReference")){
     shouldDisplayNoDataRow = false;
     documentReferencesRow = <TableRow className='dataManagementRow' hover={true}>
-      { renderImportCheckmark(toggleDocumentReferences.bind(this), 'DocumentReference') }
+      { renderImportCheckmark(methods.toggleDocumentReferences.bind(this), 'DocumentReference') }
       { renderImportButton('DocumentReferences')} 
       <TableCell className="collection">Document Reference</TableCell>
       { renderPreview('DocumentReference')} 
@@ -1498,7 +1262,7 @@ export function CollectionManagement(props){
       { renderPubSub('DocumentReference')} 
       { renderDropButton('DocumentReference')} 
       { renderExportButton('DocumentReferences')} 
-      { renderExportCheckmark(toggleDocumentReferencesExport.bind(this), 'DocumentReference') }
+      { renderExportCheckmark(exportMethods.toggleDocumentReferencesExport.bind(this), 'DocumentReference') }
     </TableRow>
   }
 
@@ -1507,7 +1271,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     encountersRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("Encounter") }
-      { renderImportCheckmark(toggleEncounters.bind(this), 'Encounter') }
+      { renderImportCheckmark(methods.toggleEncounters.bind(this), 'Encounter') }
       { renderImportButton('Encounters')} 
       <TableCell className="collection">Encounters</TableCell>
       { renderPreview('Encounter')} 
@@ -1516,7 +1280,7 @@ export function CollectionManagement(props){
       { renderPubSub('Encounter')} 
       { renderDropButton('Encounter')} 
       { renderExportButton('Encounters')} 
-      { renderExportCheckmark(toggleEncountersExport.bind(this), 'Encounter') }
+      { renderExportCheckmark(exportMethods.toggleEncountersExport.bind(this), 'Encounter') }
     </TableRow>
   }
 
@@ -1525,7 +1289,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     endpointsRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("Endpoint") }
-      { renderImportCheckmark(toggleDevices.bind(this), 'Endpoint') }
+      { renderImportCheckmark(methods.toggleDevices.bind(this), 'Endpoint') }
       { renderImportButton('Endpoints')}       
       <TableCell className="collection">Endpoint</TableCell>
       { renderPreview('Endpoint')} 
@@ -1534,7 +1298,7 @@ export function CollectionManagement(props){
       { renderPubSub('Endpoint')} 
       { renderDropButton('Endpoint')} 
       { renderExportButton('Endpoints')} 
-      { renderExportCheckmark(toggleEndpointsExport.bind(this), 'Endpoint') }
+      { renderExportCheckmark(exportMethods.toggleEndpointsExport.bind(this), 'Endpoint') }
     </TableRow>
   }
 
@@ -1543,7 +1307,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     explanationOfBenefitsRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("ExplanationOfBenefit") }
-      { renderImportCheckmark(toggleDevices.bind(this), 'ExplanationOfBenefit') }
+      { renderImportCheckmark(methods.toggleDevices.bind(this), 'ExplanationOfBenefit') }
       { renderImportButton('ExplanationOfBenefits')} 
       <TableCell className="collection">Explanation Of Benefit</TableCell>
       { renderPreview('ExplanationOfBenefit')} 
@@ -1552,7 +1316,7 @@ export function CollectionManagement(props){
       { renderPubSub('ExplanationOfBenefit')} 
       { renderDropButton('ExplanationOfBenefit')} 
       { renderExportButton('ExplanationOfBenefits')} 
-      { renderExportCheckmark(toggleExplanationOfBenefitsExport.bind(this), 'ExplanationOfBenefit') }
+      { renderExportCheckmark(exportMethods.toggleExplanationOfBenefitsExport.bind(this), 'ExplanationOfBenefit') }
     </TableRow>
   }
 
@@ -1561,7 +1325,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     familyMemberHistoriesRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("FamilyMemberHistory") }
-      { renderImportCheckmark(toggleFamilyMemberHistories.bind(this), 'FamilyMemberHistory') }
+      { renderImportCheckmark(methods.toggleFamilyMemberHistories.bind(this), 'FamilyMemberHistory') }
       { renderImportButton('FamlyMemberHistories')} 
       <TableCell className="collection">Famly Member Histories</TableCell>
       { renderPreview('FamilyMemberHistory')} 
@@ -1570,7 +1334,7 @@ export function CollectionManagement(props){
       { renderPubSub('FamilyMemberHistory')} 
       { renderDropButton('FamilyMemberHistory')} 
       { renderExportButton('FamilyMemberHistories')} 
-      { renderExportCheckmark(toggleFamilyMemberHistoriesExport.bind(this), 'FamilyMemberHistory') }
+      { renderExportCheckmark(exportMethods.toggleFamilyMemberHistoriesExport.bind(this), 'FamilyMemberHistory') }
     </TableRow>
   }
 
@@ -1579,7 +1343,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     goalsRow = <TableRow className='dataManagementRow' hover={true}>
       { renderIcon("Goal") }
-      { renderImportCheckmark(toggleGoals.bind(this), 'Goal') }
+      { renderImportCheckmark(methods.toggleGoals.bind(this), 'Goal') }
       { renderImportButton('Goals')} 
       <TableCell className="collection">Goals</TableCell>
       { renderPreview('Goal')} 
@@ -1588,7 +1352,7 @@ export function CollectionManagement(props){
       { renderPubSub('Goal')} 
       { renderDropButton('Goal')} 
       { renderExportButton('Goals')} 
-      { renderExportCheckmark(toggleGoalsExport.bind(this), 'Goal') }
+      { renderExportCheckmark(exportMethods.toggleGoalsExport.bind(this), 'Goal') }
     </TableRow>
   }
 
@@ -1597,7 +1361,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     healthcareServicesRow = <TableRow className='dataManagementRow' hover={true}>
       { renderIcon("HealthcareService") }
-      { renderImportCheckmark(toggleHealthcareServices.bind(this), 'HealthcareService') }
+      { renderImportCheckmark(methods.toggleHealthcareServices.bind(this), 'HealthcareService') }
       { renderImportButton('HealthcareServices')} 
       <TableCell className="collection">HealthcareServices</TableCell>
       { renderPreview('HealthcareService')} 
@@ -1606,7 +1370,7 @@ export function CollectionManagement(props){
       { renderPubSub('HealthcareService')} 
       { renderDropButton('HealthcareService')} 
       { renderExportButton('HealthcareServices')} 
-      { renderExportCheckmark(toggleHealthcareServicesExport.bind(this), 'HealthcareService') }
+      { renderExportCheckmark(exportMethods.toggleHealthcareServicesExport.bind(this), 'HealthcareService') }
     </TableRow>
   }
 
@@ -1615,7 +1379,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     immunizationsRow = <TableRow className='dataManagementRow' hover={true}>
       { renderIcon("Immunization") }
-      { renderImportCheckmark(toggleImmunizations.bind(this), 'Immunization') }
+      { renderImportCheckmark(methods.toggleImmunizations.bind(this), 'Immunization') }
       { renderImportButton('Immunizations')} 
       <TableCell className="collection">Immunizations</TableCell>
       { renderPreview('Immunization')} 
@@ -1624,7 +1388,7 @@ export function CollectionManagement(props){
       { renderPubSub('Immunization')} 
       { renderDropButton('Immunization')} 
       { renderExportButton('Immunizations')} 
-      { renderExportCheckmark(toggleImmunizationsExport.bind(this), 'Immunization') }
+      { renderExportCheckmark(exportMethods.toggleImmunizationsExport.bind(this), 'Immunization') }
     </TableRow>
   }
 
@@ -1634,7 +1398,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     insurancePlansRow = <TableRow className='dataManagementRow' hover={true}>
       { renderIcon("InsurancePlan") }
-      { renderImportCheckmark(toggleInsurancePlans.bind(this), 'InsurancePlan') }
+      { renderImportCheckmark(methods.toggleInsurancePlans.bind(this), 'InsurancePlan') }
       { renderImportButton('InsurancePlans')} 
       <TableCell className="collection">InsurancePlans</TableCell>
       { renderPreview('InsurancePlan')} 
@@ -1643,7 +1407,7 @@ export function CollectionManagement(props){
       { renderPubSub('InsurancePlan')} 
       { renderDropButton('InsurancePlan')} 
       { renderExportButton('InsurancePlans')} 
-      { renderExportCheckmark(toggleInsurancePlansExport.bind(this), 'InsurancePlan') }
+      { renderExportCheckmark(exportMethods.toggleInsurancePlansExport.bind(this), 'InsurancePlan') }
     </TableRow>
   }
 
@@ -1652,7 +1416,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     imagingStudiesRow = <TableRow className='dataManagementRow' hover={true}>
       { renderIcon("ImagingStudy") }
-      { renderImportCheckmark(toggleImmagingStudies.bind(this), 'ImagingStudy') }
+      { renderImportCheckmark(methods.toggleImmagingStudies.bind(this), 'ImagingStudy') }
       { renderImportButton('ImagingStudies')} 
       <TableCell className="collection">ImagingStudies</TableCell>
       { renderPreview('ImagingStudy')} 
@@ -1661,7 +1425,7 @@ export function CollectionManagement(props){
       { renderPubSub('ImagingStudy')} 
       { renderDropButton('ImagingStudy')} 
       { renderExportButton('ImagingStudies')} 
-      { renderExportCheckmark(toggleImagingStudiesExport.bind(this), 'ImagingStudy') }
+      { renderExportCheckmark(exportMethods.toggleImagingStudiesExport.bind(this), 'ImagingStudy') }
     </TableRow> 
   }
 
@@ -1670,7 +1434,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     listsRow = <TableRow className='dataManagementRow' hover={true}>
       { renderIcon("List") }
-      { renderImportCheckmark(toggleLists.bind(this), 'List') }
+      { renderImportCheckmark(methods.toggleLists.bind(this), 'List') }
       { renderImportButton('Lists')} 
       <TableCell className="collection">Lists</TableCell>
       { renderPreview('List')} 
@@ -1679,7 +1443,7 @@ export function CollectionManagement(props){
       { renderPubSub('List')} 
       { renderDropButton('List')} 
       { renderExportButton('Lists')} 
-      { renderExportCheckmark(toggleListsExport.bind(this), 'List') }
+      { renderExportCheckmark(exportMethods.toggleListsExport.bind(this), 'List') }
     </TableRow>
   }
 
@@ -1688,7 +1452,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     locationsRow = <TableRow className='dataManagementRow' hover={true}>
       { renderIcon("Location") }
-      { renderImportCheckmark(toggleLocations.bind(this), 'Location') }
+      { renderImportCheckmark(methods.toggleLocations.bind(this), 'Location') }
       { renderImportButton('Locations')} 
       <TableCell className="collection">Locations</TableCell>
       { renderPreview('Location')} 
@@ -1697,7 +1461,7 @@ export function CollectionManagement(props){
       { renderPubSub('Location')} 
       { renderDropButton('Location')} 
       { renderExportButton('Locations')} 
-      { renderExportCheckmark(toggleLocationsExport.bind(this), 'Location') }
+      { renderExportCheckmark(exportMethods.toggleLocationsExport.bind(this), 'Location') }
     </TableRow>
   }
 
@@ -1706,7 +1470,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     measuresRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("Measure") }
-      { renderImportCheckmark(toggleMeasures.bind(this), 'Measure') }
+      { renderImportCheckmark(methods.toggleMeasures.bind(this), 'Measure') }
       { renderImportButton('Measures')} 
       <TableCell className="collection">Measures</TableCell>
       { renderPreview('Measure')} 
@@ -1715,7 +1479,7 @@ export function CollectionManagement(props){
       { renderPubSub('Measure')} 
       { renderDropButton('Measure')} 
       { renderExportButton('Measures')} 
-      { renderExportCheckmark(toggleMeasuresExport.bind(this), 'Measure') }
+      { renderExportCheckmark(exportMethods.toggleMeasuresExport.bind(this), 'Measure') }
     </TableRow>
   }
 
@@ -1724,7 +1488,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     measureReportsRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("MeasureReport") }
-      { renderImportCheckmark(toggleMeasureReports.bind(this), 'MeasureReport') }
+      { renderImportCheckmark(methods.toggleMeasureReports.bind(this), 'MeasureReport') }
       { renderImportButton('MeasureReports')} 
       <TableCell className="collection">MeasureReports</TableCell>
       { renderPreview('MeasureReport')} 
@@ -1733,7 +1497,7 @@ export function CollectionManagement(props){
       { renderPubSub('MeasureReport')} 
       { renderDropButton('MeasureReport')} 
       { renderExportButton('MeasureReports')} 
-      { renderExportCheckmark(toggleMeasureReportsExport.bind(this), 'MeasureReport') }
+      { renderExportCheckmark(exportMethods.toggleMeasureReportsExport.bind(this), 'MeasureReport') }
     </TableRow>
   }
 
@@ -1742,7 +1506,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     medicationsRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("Medication") }
-      { renderImportCheckmark(toggleMedications.bind(this), 'Medication') }
+      { renderImportCheckmark(methods.toggleMedications.bind(this), 'Medication') }
       { renderImportButton('Medications')} 
       <TableCell className="collection">Medications</TableCell>
       { renderPreview('Medication')} 
@@ -1751,7 +1515,7 @@ export function CollectionManagement(props){
       { renderPubSub('Medication')} 
       { renderDropButton('Medication')} 
       { renderExportButton('Medications')} 
-      { renderExportCheckmark(toggleMedicationsExport.bind(this), 'Medication') }
+      { renderExportCheckmark(exportMethods.toggleMedicationsExport.bind(this), 'Medication') }
     </TableRow>
   }
 
@@ -1760,7 +1524,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     medicationOrdersRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("MedicationOrder") }
-      { renderImportCheckmark(toggleMedicationOrders.bind(this), 'MedicationOrder') }
+      { renderImportCheckmark(methods.toggleMedicationOrders.bind(this), 'MedicationOrder') }
       { renderImportButton('MedicationOrders')} 
       <TableCell className="collection">MedicationOrders</TableCell>
       { renderPreview('MedicationOrder')} 
@@ -1769,7 +1533,7 @@ export function CollectionManagement(props){
       { renderPubSub('MedicationOrder')}       
       { renderDropButton('MedicationOrder')} 
       { renderExportButton('MedicationOrders')} 
-      { renderExportCheckmark(toggleMedicationOrdersExport.bind(this), 'MedicationOrder') }
+      { renderExportCheckmark(exportMethods.toggleMedicationOrdersExport.bind(this), 'MedicationOrder') }
     </TableRow>
   }
 
@@ -1778,7 +1542,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     medicationStatementsRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("MedicationStatement") }
-      { renderImportCheckmark(toggleMedicationStatements.bind(this), 'MedicationStatement') }
+      { renderImportCheckmark(methods.toggleMedicationStatements.bind(this), 'MedicationStatement') }
       { renderImportButton('MedicationStatements')} 
       <TableCell className="collection">MedicationStatements</TableCell>
       { renderPreview('MedicationStatement')} 
@@ -1787,7 +1551,7 @@ export function CollectionManagement(props){
       { renderPubSub('MedicationStatement')} 
       { renderDropButton('MedicationStatement')} 
       { renderExportButton('MedicationStatements')} 
-      { renderExportCheckmark(toggleMedicationStatementsExport.bind(this), 'MedicationStatement') }
+      { renderExportCheckmark(exportMethods.toggleMedicationStatementsExport.bind(this), 'MedicationStatement') }
     </TableRow>
   }
 
@@ -1796,7 +1560,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     messageHeadersRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("MessageHeader") }
-      { renderImportCheckmark(toggleMessageHeaders.bind(this), 'MessageHeader') }
+      { renderImportCheckmark(methods.toggleMessageHeaders.bind(this), 'MessageHeader') }
       { renderImportButton('MessageHeaders')} 
       <TableCell className="collection">Message Headers</TableCell>
       { renderPreview('MessageHeader')} 
@@ -1805,7 +1569,7 @@ export function CollectionManagement(props){
       { renderPubSub('MessageHeader')} 
       { renderDropButton('MessageHeader')} 
       { renderExportButton('MessageHeaders')} 
-      { renderExportCheckmark(toggleMessageHeadersExport.bind(this), 'MessageHeader') }
+      { renderExportCheckmark(exportMethods.toggleMessageHeadersExport.bind(this), 'MessageHeader') }
     </TableRow>
   }
 
@@ -1814,7 +1578,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     networksRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("Network") }
-      { renderImportCheckmark(toggleNetworks.bind(this), 'Network') }
+      { renderImportCheckmark(methods.toggleNetworks.bind(this), 'Network') }
       { renderImportButton('Networks')} 
       <TableCell className="collection">Networks</TableCell>
       { renderPreview('Network')} 
@@ -1823,7 +1587,7 @@ export function CollectionManagement(props){
       { renderPubSub('Network')} 
       { renderDropButton('Network')} 
       { renderExportButton('Networks')} 
-      { renderExportCheckmark(toggleNetworksExport.bind(this), 'Network') }
+      { renderExportCheckmark(exportMethods.toggleNetworksExport.bind(this), 'Network') }
     </TableRow>
   }
 
@@ -1832,7 +1596,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     observationsRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("Observation") }
-      { renderImportCheckmark(toggleObservations.bind(this), 'Observation') }
+      { renderImportCheckmark(methods.toggleObservations.bind(this), 'Observation') }
       { renderImportButton('Observations')} 
       <TableCell className="collection">Observations</TableCell>
       { renderPreview('Observation')} 
@@ -1841,7 +1605,7 @@ export function CollectionManagement(props){
       { renderPubSub('Observation')} 
       { renderDropButton('Observation')} 
       { renderExportButton('Observations')} 
-      { renderExportCheckmark(toggleObservationsExport.bind(this), 'Observation') }
+      { renderExportCheckmark(exportMethods.toggleObservationsExport.bind(this), 'Observation') }
     </TableRow>
   }
 
@@ -1850,7 +1614,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     organizationsRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("Organization") }
-      { renderImportCheckmark(toggleOrganizations.bind(this), 'Organization') }
+      { renderImportCheckmark(methods.toggleOrganizations.bind(this), 'Organization') }
       { renderImportButton('Organizations')} 
       <TableCell className="collection">Organizations</TableCell>
       { renderPreview('Organization')} 
@@ -1859,7 +1623,7 @@ export function CollectionManagement(props){
       { renderPubSub('Organization')} 
       { renderDropButton('Organization')} 
       { renderExportButton('Organizations')} 
-      { renderExportCheckmark(toggleOrganizationsExport.bind(this), 'Organization') }
+      { renderExportCheckmark(exportMethods.toggleOrganizationsExport.bind(this), 'Organization') }
     </TableRow>
   }
 
@@ -1868,7 +1632,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     organizationAffiliationsRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("OrganizationAffiliation") }
-      { renderImportCheckmark(toggleOrganizationAffiliations.bind(this), 'OrganizationAffiliation') }
+      { renderImportCheckmark(methods.toggleOrganizationAffiliations.bind(this), 'OrganizationAffiliation') }
       { renderImportButton('OrganizationAffiliations')} 
       <TableCell className="collection">OrganizationAffiliations</TableCell>
       { renderPreview('OrganizationAffiliation')} 
@@ -1877,7 +1641,7 @@ export function CollectionManagement(props){
       { renderPubSub('OrganizationAffiliation')} 
       { renderDropButton('OrganizationAffiliation')} 
       { renderExportButton('OrganizationAffiliations')} 
-      { renderExportCheckmark(toggleOrganizationAffiliationsExport.bind(this), 'OrganizationAffiliation') }
+      { renderExportCheckmark(exportMethods.toggleOrganizationAffiliationsExport.bind(this), 'OrganizationAffiliation') }
     </TableRow>
   }
 
@@ -1886,7 +1650,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     patientsRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("Patient") }
-      { renderImportCheckmark(togglePatients.bind(this), 'Patient') }
+      { renderImportCheckmark(methods.togglePatients.bind(this), 'Patient') }
       { renderImportButton('Patients')} 
       <TableCell className="collection">Patients</TableCell>
       { renderPreview('Patient')} 
@@ -1895,7 +1659,7 @@ export function CollectionManagement(props){
       { renderPubSub('Patient')} 
       { renderDropButton('Patient')} 
       { renderExportButton('Patients')} 
-      { renderExportCheckmark(togglePatientsExport.bind(this), 'Patient') }
+      { renderExportCheckmark(exportMethods.togglePatientsExport.bind(this), 'Patient') }
     </TableRow>
   }
 
@@ -1904,7 +1668,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     personsRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("Person") }
-      { renderImportCheckmark(togglePersons.bind(this), 'Person') }
+      { renderImportCheckmark(methods.togglePersons.bind(this), 'Person') }
       { renderImportButton('Persons')} 
       <TableCell className="collection">Persons</TableCell>
       { renderPreview('Person')} 
@@ -1913,7 +1677,7 @@ export function CollectionManagement(props){
       { renderPubSub('Person')} 
       { renderDropButton('Person')} 
       { renderExportButton('Persons')} 
-      { renderExportCheckmark(togglePersonsExport.bind(this), 'Person') }
+      { renderExportCheckmark(exportMethods.togglePersonsExport.bind(this), 'Person') }
     </TableRow>
   }
 
@@ -1922,7 +1686,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     practitionersRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("Practitioner") }
-      { renderImportCheckmark(togglePractitioners.bind(this), 'Practitioner') }
+      { renderImportCheckmark(methods.togglePractitioners.bind(this), 'Practitioner') }
       { renderImportButton('Practitioners')} 
       <TableCell className="collection">Practitioners</TableCell>
       { renderPreview('Practitioner')} 
@@ -1931,7 +1695,7 @@ export function CollectionManagement(props){
       { renderPubSub('Practitioner')} 
       { renderDropButton('Practitioner')} 
       { renderExportButton('Practitioners')} 
-      { renderExportCheckmark(togglePractitionersExport.bind(this), 'Practitioner') }
+      { renderExportCheckmark(exportMethods.togglePractitionersExport.bind(this), 'Practitioner') }
     </TableRow>
   }
 
@@ -1940,7 +1704,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     practitionerRolesRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("PractitionerRole") }
-      { renderImportCheckmark(togglePractitionerRoles.bind(this), 'PractitionerRole') }
+      { renderImportCheckmark(methods.togglePractitionerRoles.bind(this), 'PractitionerRole') }
       { renderImportButton('PractitionerRoles')} 
       <TableCell className="collection">PractitionerRoles</TableCell>
       { renderPreview('PractitionerRole')} 
@@ -1949,7 +1713,7 @@ export function CollectionManagement(props){
       { renderPubSub('PractitionerRole')} 
       { renderDropButton('PractitionerRole')} 
       { renderExportButton('PractitionerRoles')} 
-      { renderExportCheckmark(togglePractitionerRolesExport.bind(this), 'PractitionerRole') }
+      { renderExportCheckmark(exportMethods.togglePractitionerRolesExport.bind(this), 'PractitionerRole') }
     </TableRow>
   }
 
@@ -1958,7 +1722,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     proceduresRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("Procedure") }
-      { renderImportCheckmark(toggleProcedures.bind(this), 'Procedure') }
+      { renderImportCheckmark(methods.toggleProcedures.bind(this), 'Procedure') }
       { renderImportButton('Procedures')} 
       <TableCell className="collection">Procedures</TableCell>
       { renderPreview('Procedure')} 
@@ -1967,7 +1731,7 @@ export function CollectionManagement(props){
       { renderPubSub('Procedure')} 
       { renderDropButton('Procedure')} 
       { renderExportButton('Procedures')} 
-      { renderExportCheckmark(toggleProceduresExport.bind(this), 'Procedure') }
+      { renderExportCheckmark(exportMethods.toggleProceduresExport.bind(this), 'Procedure') }
     </TableRow>
   }
 
@@ -1976,7 +1740,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     procedureRequetsRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("ProcedureRequest") }
-      { renderImportCheckmark(toggleProcedureRequests.bind(this), 'ProcedureRequest') }
+      { renderImportCheckmark(methods.toggleProcedureRequests.bind(this), 'ProcedureRequest') }
       { renderImportButton('ProcedureRequests')} 
       <TableCell className="collection">ProcedureRequests</TableCell>
       { renderPreview('ProcedureRequest')} 
@@ -1985,7 +1749,7 @@ export function CollectionManagement(props){
       { renderPubSub('ProcedureRequest')} 
       { renderDropButton('ProcedureRequest')} 
       { renderExportButton('ProcedureRequests')} 
-      { renderExportCheckmark(toggleProcedureRequestsExport.bind(this), 'ProcedureRequest') }
+      { renderExportCheckmark(exportMethods.toggleProcedureRequestsExport.bind(this), 'ProcedureRequest') }
     </TableRow>
   }
   let provenancesRow;
@@ -1993,7 +1757,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     provenancesRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("Provenance") }
-      { renderImportCheckmark(toggleProvenances.bind(this), 'Provenance') }
+      { renderImportCheckmark(methods.toggleProvenances.bind(this), 'Provenance') }
       { renderImportButton('Provenances')} 
       <TableCell className="collection">Provenances</TableCell>
       { renderPreview('Provenance')} 
@@ -2002,7 +1766,7 @@ export function CollectionManagement(props){
       { renderPubSub('Provenance')} 
       { renderDropButton('Provenance')} 
       { renderExportButton('Provenances')} 
-      { renderExportCheckmark(toggleProvenancesExport.bind(this), 'Provenance') }
+      { renderExportCheckmark(exportMethods.toggleProvenancesExport.bind(this), 'Provenance') }
     </TableRow>
   }
   let questionnairesRow;
@@ -2010,7 +1774,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     questionnairesRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("Questionnaire") }
-      { renderImportCheckmark(toggleQuestionnaires.bind(this), 'Questionnaire') }
+      { renderImportCheckmark(methods.toggleQuestionnaires.bind(this), 'Questionnaire') }
       { renderImportButton('Questionnaires')} 
       <TableCell className="collection">Questionnaires</TableCell>
       { renderPreview('Questionnaire')} 
@@ -2019,7 +1783,7 @@ export function CollectionManagement(props){
       { renderPubSub('Questionnaire')} 
       { renderDropButton('Questionnaire')} 
       { renderExportButton('Questionnaires')} 
-      { renderExportCheckmark(toggleQuestionnairesExport.bind(this), 'Questionnaire') }
+      { renderExportCheckmark(exportMethods.toggleQuestionnairesExport.bind(this), 'Questionnaire') }
     </TableRow>
   }
 
@@ -2028,7 +1792,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     questionnaireResponsesRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("QuestionnaireResponse") }
-      { renderImportCheckmark(toggleQuestionnaires.bind(this), 'QuestionnaireResponse') }
+      { renderImportCheckmark(methods.toggleQuestionnaires.bind(this), 'QuestionnaireResponse') }
       { renderImportButton('QuestionnaireResponses')} 
       <TableCell className="collection">Questionnaire Responses</TableCell>
       { renderPreview('QuestionnaireResponse')} 
@@ -2037,7 +1801,7 @@ export function CollectionManagement(props){
       { renderPubSub('QuestionnaireResponse')} 
       { renderDropButton('QuestionnaireResponse')} 
       { renderExportButton('QuestionnaireResponses')} 
-      { renderExportCheckmark(toggleQuestionnaireResponsesExport.bind(this), 'QuestionnaireResponse') }
+      { renderExportCheckmark(exportMethods.toggleQuestionnaireResponsesExport.bind(this), 'QuestionnaireResponse') }
     </TableRow>
   }
 
@@ -2046,7 +1810,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     restrictionsRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("Restriction") }
-      { renderImportCheckmark(toggleRestrictions.bind(this), 'Restriction') }
+      { renderImportCheckmark(methods.toggleRestrictions.bind(this), 'Restriction') }
       { renderImportButton('Restrictions')} 
       <TableCell className="collection">Restrictions</TableCell>
       { renderPreview('Restriction')} 
@@ -2055,7 +1819,7 @@ export function CollectionManagement(props){
       { renderPubSub('Restriction')} 
       { renderDropButton('Restriction')} 
       { renderExportButton('Restrictions')} 
-      { renderExportCheckmark(toggleRestrictionsExport.bind(this), 'Restriction') }
+      { renderExportCheckmark(exportMethods.toggleRestrictionsExport.bind(this), 'Restriction') }
     </TableRow>
   }
 
@@ -2064,7 +1828,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     relatedPersonsRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("RelatedPerson") }
-      { renderImportCheckmark(toggleRelatedPersons.bind(this), 'RelatedPerson') }
+      { renderImportCheckmark(methods.toggleRelatedPersons.bind(this), 'RelatedPerson') }
       { renderImportButton('RelatedPersons')} 
       <TableCell className="collection">Related Persons</TableCell>
       { renderPreview('RelatedPerson')} 
@@ -2073,7 +1837,7 @@ export function CollectionManagement(props){
       { renderPubSub('RelatedPerson')} 
       { renderDropButton('RelatedPerson')} 
       { renderExportButton('RelatedPersons')} 
-      { renderExportCheckmark(toggleRelatedPersonsExport.bind(this), 'RelatedPerson') }
+      { renderExportCheckmark(exportMethods.toggleRelatedPersonsExport.bind(this), 'RelatedPerson') }
     </TableRow>
   }
 
@@ -2082,7 +1846,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     riskAssessmentsRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("RiskAssessment") }
-      { renderImportCheckmark(toggleRiskAssessments.bind(this), 'RiskAssessment') }
+      { renderImportCheckmark(methods.toggleRiskAssessments.bind(this), 'RiskAssessment') }
       { renderImportButton('RiskAssessments')} 
       <TableCell className="collection">Risk Assessments</TableCell>
       { renderPreview('RiskAssessment')} 
@@ -2091,7 +1855,7 @@ export function CollectionManagement(props){
       { renderPubSub('RiskAssessment')} 
       { renderDropButton('RiskAssessment')} 
       { renderExportButton('RiskAssessments')} 
-      { renderExportCheckmark(toggleRiskAssessmentsExport.bind(this), 'RiskAssessment') }
+      { renderExportCheckmark(exportMethods.toggleRiskAssessmentsExport.bind(this), 'RiskAssessment') }
     </TableRow>
   }
 
@@ -2100,7 +1864,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     searchParametersRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("SearchParameter") }
-      { renderImportCheckmark(toggleSearchParameters.bind(this), 'SearchParameter') }
+      { renderImportCheckmark(methods.toggleSearchParameters.bind(this), 'SearchParameter') }
       { renderImportButton('SearchParameters')} 
       <TableCell className="collection">SearchParameters</TableCell>
       { renderPreview('SearchParameter')} 
@@ -2109,7 +1873,7 @@ export function CollectionManagement(props){
       { renderPubSub('SearchParameter')} 
       { renderDropButton('SearchParameter')} 
       { renderExportButton('SearchParameters')} 
-      { renderExportCheckmark(toggleSearchParametersExport.bind(this), 'SearchParameter') }
+      { renderExportCheckmark(exportMethods.toggleSearchParametersExport.bind(this), 'SearchParameter') }
     </TableRow>
   }
 
@@ -2119,7 +1883,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     schedulesRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("Schedule") }
-      { renderImportCheckmark(toggleSchedules.bind(this), 'Schedule') }
+      { renderImportCheckmark(methods.toggleSchedules.bind(this), 'Schedule') }
       { renderImportButton('Schedules')} 
       <TableCell className="collection">Schedules</TableCell>
       { renderPreview('Schedule')} 
@@ -2128,7 +1892,7 @@ export function CollectionManagement(props){
       { renderPubSub('Schedule')} 
       { renderDropButton('Schedule')} 
       { renderExportButton('Schedules')} 
-      { renderExportCheckmark(toggleSchedulesExport.bind(this), 'Schedule') }
+      { renderExportCheckmark(exportMethods.toggleSchedulesExport.bind(this), 'Schedule') }
     </TableRow>
   }
 
@@ -2137,7 +1901,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     serviceRequestsRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("ServiceRequest") }
-      { renderImportCheckmark(toggleServiceRequests.bind(this), 'ServiceRequest') }
+      { renderImportCheckmark(methods.toggleServiceRequests.bind(this), 'ServiceRequest') }
       { renderImportButton('ServiceRequests')} 
       <TableCell className="collection">Service Requests</TableCell>
       { renderPreview('ServiceRequest')} 
@@ -2146,7 +1910,7 @@ export function CollectionManagement(props){
       { renderPubSub('ServiceRequest')} 
       { renderDropButton('ServiceRequest')} 
       { renderExportButton('ServiceRequests')} 
-      { renderExportCheckmark(toggleServiceRequestsExport.bind(this), 'ServiceRequest') }
+      { renderExportCheckmark(exportMethods.toggleServiceRequestsExport.bind(this), 'ServiceRequest') }
     </TableRow>
   }
 
@@ -2155,7 +1919,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     sequencesRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("Sequence") }
-      { renderImportCheckmark(toggleSequences.bind(this), 'Sequence') }
+      { renderImportCheckmark(methods.toggleSequences.bind(this), 'Sequence') }
       { renderImportButton('Sequences')} 
       <TableCell className="collection">Sequences</TableCell>
       { renderPreview('Sequence')} 
@@ -2164,7 +1928,7 @@ export function CollectionManagement(props){
       { renderPubSub('Sequence')} 
       { renderDropButton('Sequence')} 
       { renderExportButton('Sequences')} 
-      { renderExportCheckmark(toggleSequencesExport.bind(this), 'Sequence') }
+      { renderExportCheckmark(exportMethods.toggleSequencesExport.bind(this), 'Sequence') }
     </TableRow>     
   }
 
@@ -2173,7 +1937,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     structureDefinitionsRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("StructureDefinition") }
-      { renderImportCheckmark(toggleStructureDefinitions.bind(this), 'StructureDefinition') }
+      { renderImportCheckmark(methods.toggleStructureDefinitions.bind(this), 'StructureDefinition') }
       { renderImportButton('StructureDefinitions')} 
       <TableCell className="collection">StructureDefinitions</TableCell>
       { renderPreview('StructureDefinition')} 
@@ -2182,7 +1946,7 @@ export function CollectionManagement(props){
       { renderPubSub('StructureDefinition')} 
       { renderDropButton('StructureDefinition')} 
       { renderExportButton('StructureDefinitions')} 
-      { renderExportCheckmark(toggleStructureDefinitionsExport.bind(this), 'StructureDefinition') }
+      { renderExportCheckmark(exportMethods.toggleStructureDefinitionsExport.bind(this), 'StructureDefinition') }
     </TableRow>     
   }
 
@@ -2191,7 +1955,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     tasksRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("Task") }
-      { renderImportCheckmark(toggleTasks.bind(this), 'Task') }
+      { renderImportCheckmark(methods.toggleTasks.bind(this), 'Task') }
       { renderImportButton('Tasks')} 
       <TableCell className="collection">Tasks</TableCell>
       { renderPreview('Task')} 
@@ -2200,7 +1964,7 @@ export function CollectionManagement(props){
       { renderPubSub('Task')} 
       { renderDropButton('Task')} 
       { renderExportButton('Tasks')} 
-      { renderExportCheckmark(toggleTasksExport.bind(this), 'Task') }
+      { renderExportCheckmark(exportMethods.toggleTasksExport.bind(this), 'Task') }
     </TableRow>     
   }
 
@@ -2209,7 +1973,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     valueSetsRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("ValueSet") }
-      { renderImportCheckmark(toggleValueSets.bind(this), 'ValueSet') }
+      { renderImportCheckmark(methods.toggleValueSets.bind(this), 'ValueSet') }
       { renderImportButton('ValueSets')} 
       <TableCell className="collection">Value Sets</TableCell>
       { renderPreview('ValueSet')} 
@@ -2218,7 +1982,7 @@ export function CollectionManagement(props){
       { renderPubSub('ValueSet')} 
       { renderDropButton('ValueSet')} 
       { renderExportButton('ValueSets')} 
-      { renderExportCheckmark(toggleValueSetsExport.bind(this), 'ValueSet') }
+      { renderExportCheckmark(exportMethods.toggleValueSetsExport.bind(this), 'ValueSet') }
     </TableRow>     
   }
 
@@ -2227,7 +1991,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     verificationResultsRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("VerificationResult") }
-      { renderImportCheckmark(toggleVerificationResults.bind(this), 'VerificationResult') }
+      { renderImportCheckmark(methods.toggleVerificationResults.bind(this), 'VerificationResult') }
       { renderImportButton('VerificationResults')} 
       <TableCell className="collection">VerificationResults</TableCell>
       { renderPreview('VerificationResult')} 
@@ -2236,7 +2000,7 @@ export function CollectionManagement(props){
       { renderPubSub('VerificationResult')} 
       { renderDropButton('VerificationResult')} 
       { renderExportButton('VerificationResults')} 
-      { renderExportCheckmark(toggleVerificationResultsExport.bind(this), 'VerificationResult') }
+      { renderExportCheckmark(exportMethods.toggleVerificationResultsExport.bind(this), 'VerificationResult') }
     </TableRow>
   }
 
@@ -2361,7 +2125,9 @@ CollectionManagement.propTypes = {
   noDataMessage: PropTypes.string,
   preview: PropTypes.object,
   selectedPatientId: PropTypes.string,
-  tableSize: PropTypes.string
+  tableSize: PropTypes.string,
+  onSelectionChange: PropTypes.func,
+  onSelectedExportChange: PropTypes.func
 }
 CollectionManagement.defaultProps = {
   displayIcons: false,
