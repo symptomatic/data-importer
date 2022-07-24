@@ -45,7 +45,6 @@
 //   componentDidMount () {
 //     const options = this.getDjsConfig()
 
-//     Dropzone = Dropzone || require('dropzone')
 //     Dropzone.autoDiscover = false
 
 //     if (!this.props.config.postUrl && !this.props.eventHandlers.drop) {
