@@ -592,7 +592,7 @@ export function ImportComponent(props){
   
   
   const [importQueue, setImportQueue] = useState([]); 
-  // const [fileExtension, setFileExtension] = useState("");  
+
   
   const downloadLabel = 'Download!';
 
@@ -612,9 +612,6 @@ export function ImportComponent(props){
   fileExtension = useTracker(function(){
     return Session.get("fileExtension");
   }, []);
-  // importQueue = useTracker(function(){
-  //   return Session.get("importQueue");
-  // }, []);
 
   let importQueueLength = 0;
   if(Array.isArray(importQueue)){
@@ -625,9 +622,11 @@ export function ImportComponent(props){
   if(['csv', 'xml', 'xmlx', 'xlsx', 'json', 'ccd', 'bundle', 'txt', 'application/json', 'application/csv', 'application/json+fhir'].includes(fileExtension)){
     strigifiedPreviewBuffer = JSON.stringify(previewBuffer, null, 2);
   }
-  if(['csv', 'xml', 'xmlx', 'xlsx', 'json', 'ccd', 'bundle', 'txt', 'application/json', 'application/csv', 'application/json+fhir'].includes(fileExtension)){
-    strigifiedImportBuffer = JSON.stringify(importBuffer, null, 2);
-  }
+
+  strigifiedImportBuffer = useTracker(function(){    
+      return JSON.stringify(Session.get("importBuffer"), null, 2);
+  }, []);
+
 
   //---------------------------------------------------------------------
   // Queue Runner (Eager, Throttled)  
@@ -700,7 +699,7 @@ export function ImportComponent(props){
   function selectFiles(variable, event, value){
     logger.debug('ImportComponent: Selecting files.')
 
-    fileDialog({ multiple: true, accept: ['application/json', 'application/json+fhir', 'application/csv', 'text/csv' ] }, function(fileList){
+    fileDialog({ multiple: true, accept: ['application/json', 'application/json+fhir', 'application/csv', 'text/csv', 'application/x-ndjson', 'text/ndjson',  'application/phr', 'application/x-phr', 'phr'  ] }, function(fileList){
       logger.verbose('ImportComponent.selectFile().fileDialog().fileList', fileList)
 
       let promises = Object.keys(fileList).map(function(fileIndex){
@@ -717,8 +716,13 @@ export function ImportComponent(props){
               type: fileList[fileIndex].type,
               status: 'loaded'
             }
-            // logger.trace('FileReader.newQueueItem', newQueueItem);
+            
+            logger.trace('FileReader.newQueueItem', newQueueItem);
             var content = event.target.result;   
+            console.log('content', content)
+
+            let fileType = get(fileList[fileIndex], 'type');
+            console.log('fileType', fileType);
             
             var parsedContent;
             if(fileList[fileIndex].type === "text/csv"){
@@ -727,6 +731,24 @@ export function ImportComponent(props){
             } else if(['application/json', 'application/json+fhir'].includes(fileList[fileIndex].type)){
               parsedContent = JSON.parse(content); 
               newQueueItem.content = parsedContent;
+            } else if(['phr', 'application/phr', 'ndjson', 'application/x-ndjson', 'application/ndjson', 'application/ndjson+fhir'].includes(fileList[fileIndex].type)){
+              let newlineArray = content.split('\n');
+
+              console.log('newlineArray', newlineArray)
+              console.log('newlineArray.length', newlineArray.length)
+
+              if(Array.isArray(newlineArray)){
+                newQueueItem.content = [];
+                newlineArray.forEach(function(line){
+                  // console.log('line', line)
+                  if(line){
+                    let parsedContent = JSON.parse(line);
+                    console.log('parsedContent', parsedContent)
+  
+                    newQueueItem.content.push(parsedContent);  
+                  }
+                })
+              }
             }
 
             logger.trace('FileReader.newQueueItem', newQueueItem);
@@ -1333,10 +1355,13 @@ export function ImportComponent(props){
 
 
     switch (mappingAlgorithm) {
-      case 0:
+      case 2:
         MedicalRecordImporter.importBundle(importBuffer, get(Meteor, 'settings.public.interfaces.fhirRelay.channel.endpoint', "http://localhost:3000/baseR4"));        
         break;
-      case 12:
+      case 3:
+        MedicalRecordImporter.importNdjson(importBuffer, get(Meteor, 'settings.public.interfaces.fhirRelay.channel.endpoint', "http://localhost:3000/baseR4"));        
+        break;
+        case 13:
         if(proxyUrl){
           let assembledUrl = proxyUrl;
           if(has(importBuffer, 'id')){
@@ -1521,11 +1546,14 @@ export function ImportComponent(props){
     var self = this;
 
 
+    // if preview buffer doesn't exist
     if(!previewBuffer){
       previewBuffer = Session.get('previewBuffer');
       logger.debug("No preview data exists.  Loading from preview buffer.")
       console.log("No preview data exists.  Loading from preview buffer.")
     }
+
+    // if no file extension, assume its JSON
     if(!fileExtension){
       fileExtension = 'json';
 
@@ -1537,10 +1565,16 @@ export function ImportComponent(props){
     }
 
     // make sure our inputs exist
+    // content may be an array
     if(get(queueItem, 'content')){
       logger.debug("Queue content exists.  Loading preview data from queue.");
       console.log("Queue content exists.  Loading preview data from queue.");
       previewBuffer = get(queueItem, 'content');
+
+      if(Array.isArray(previewBuffer)){
+        console.log('Preview buffer content is an array.  Probably NDJSON.')
+      }
+
     }
     if(get(queueItem, 'type')){
       fileExtension = get(queueItem, 'type');
@@ -1569,11 +1603,17 @@ export function ImportComponent(props){
     scanData(previewBuffer, true);
   
 
-    logger.debug('File extension: ' + fileExtension);
-    console.log('File extension: ' + fileExtension);
+    logger.debug('File mime type: ' + fileExtension);
+    console.log('File mime type: ' + fileExtension);
 
     if(['csv', 'application/csv'].includes(fileExtension)){
       parseCsvFile(previewBuffer);
+    } else if(['phr', 'application/phr', 'ndjson', 'application/x-ndjson'].includes(fileExtension)){
+      logger.debug('NDJSON parser.....');
+
+      console.log('previewBuffer', previewBuffer)
+
+      MedicalRecordImporter.importNdjson(previewBuffer, get(Meteor, 'settings.public.interfaces.fhirRelay.channel.endpoint', "http://localhost:3000/baseR4"));              
     } else if(['xls', 'xlsx'].includes(fileExtension)){
       parseExcelWorkbook(previewBuffer);
     } else if(['xml'].includes(fileExtension)){
@@ -1593,7 +1633,7 @@ export function ImportComponent(props){
         logger.debug("Doesn't look like we were able to parse the XML.")
       }
 
-    } else if(['json', 'fhir', 'ccd', 'bundle', 'txt', 'application/json', 'applicaotin/json+fhir'].includes(fileExtension)){
+    } else if(['json', 'fhir', 'ccd', 'bundle', 'txt', 'application/json', 'application/json+fhir'].includes(fileExtension)){
       logger.debug("Otherwise, we're going to assume that this is a JSON or FHIR file.  Parsing...")
       logger.debug('File contents: ', previewBuffer);
       logger.debug('ImportComponent.MappingAlgorithm: ' + mappingAlgorithm);
@@ -1738,7 +1778,7 @@ export function ImportComponent(props){
   function selectImportQueueRow(item, event){
     console.log('selectImportvalueQueueRow', item);
 
-    Session.get("fileExtension", get(item, 'type'))
+    Session.set("fileExtension", get(item, 'type'))
     Session.set('importBuffer', get(item, 'content'));
     Session.set('lastUpdated', new Date())
   }

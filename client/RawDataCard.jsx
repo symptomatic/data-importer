@@ -97,9 +97,28 @@ function RawDataCard(props){
     onImportFile,
     ...otherProps } = props;
 
+    console.log('RawDataCard.props', props)
+
   if(['xml', 'xmlx', 'xlsx', 'json', 'ccd', 'bundle', 'txt', 'application/json', 'application/csv', 'application/json+fhir'].includes(fileExtension)){
     // importBufferContents = JSON.stringify(importBuffer, null, 2);
     importBufferContents = importBuffer;
+  } else if(['ndjson', 'application/x-ndjson'].includes(fileExtension)){
+    console.log('importBuffer application/x-ndjson', importBuffer);
+    console.log('importBuffer typeof', typeof importBuffer);
+
+    let parsedBuffer = JSON.parse(importBuffer);
+
+    console.log('importBuffer parse', parsedBuffer);
+
+    let ndjsonPreview = "";
+    if(Array.isArray(parsedBuffer)){
+      console.log('importBuffer is an array');
+      parsedBuffer.forEach(function(line){
+        ndjsonPreview = ndjsonPreview + JSON.stringify(line) + "\n";
+      })
+    }
+
+    importBufferContents = ndjsonPreview;
   } else {
     importBufferContents = importBuffer;
   }
@@ -218,28 +237,31 @@ function RawDataCard(props){
       </CardContent>
     </CardContent>
   } else {
-    previewComponents = <CardContent>
-      {/* <AceEditor
-        placeholder="Select a file to import."
-        mode="json"
-        theme="tomorrow"
-        name="exportBuffer"
-        // onLoad={this.onLoad}
-        onChange={ handleChangeEditor.bind(this) }
-        fontSize={14}
-        showPrintMargin={false}
-        showGutter={true}
-        highlightActiveLine={true}
-        value={importBuffer}
-        setOptions={{
-          enableBasicAutocompletion: false,
-          enableLiveAutocompletion: false,
-          enableSnippets: false,
-          showLineNumbers: true,
-          tabSize: 2,
-        }}
-        style={{width: '100%', position: 'relative', height: window.innerHeight - 440, minHeight: '200px', backgroundColor: '#f5f5f5', borderColor: '#ccc', borderRadius: '4px', lineHeight: '16px'}}        
-      /> */}
+    previewComponents = <CardContent>      
+      <FormControl style={{width: '100%', paddingBottom: '20px', marginTop: '10px'}}>
+        <InputLabel id="import-algorithm-label">Mapping Algorithm</InputLabel>
+        <Select
+          id="import-algorithm-selector"
+          value={ mappingAlgorithm}
+          onChange={handleChangeMappingAlgorithm.bind(this)}
+          fullWidth
+          >
+          <MenuItem value={1} id="import-algorithm-menu-item-1" key="import-algorithm-menu-item-1" >FHIR Resource</MenuItem>
+          <MenuItem value={2} id="import-algorithm-menu-item-2" key="import-algorithm-menu-item-2" >FHIR Bundle</MenuItem>
+          <MenuItem value={3} id="import-algorithm-menu-item-3" key="import-algorithm-menu-item-3" >FHIR Bulk Data</MenuItem>
+          <MenuItem value={4} id="import-algorithm-menu-item-4" key="import-algorithm-menu-item-4" >FHIR Personal Health Record</MenuItem>
+          <MenuItem value={5} id="import-algorithm-menu-item-5" key="import-algorithm-menu-item-5" >Facebook Profile</MenuItem>
+          <MenuItem value={6} id="import-algorithm-menu-item-6" key="import-algorithm-menu-item-6" >City of Chicago Data File</MenuItem>
+          <MenuItem value={7} id="import-algorithm-menu-item-7" key="import-algorithm-menu-item-7" >Geojson</MenuItem>
+          <MenuItem value={8} id="import-algorithm-menu-item-8" key="import-algorithm-menu-item-8" >CDC Reporting Spreadsheet</MenuItem>
+          <MenuItem value={9} id="import-algorithm-menu-item-9" key="import-algorithm-menu-item-9" >FEMA Reporting Spreadsheet</MenuItem>
+          <MenuItem value={10} id="import-algorithm-menu-item-10" key="import-algorithm-menu-item-10" >Inpatient Prospective Payment System File</MenuItem>
+          <MenuItem value={11} id="import-algorithm-menu-item-11" key="import-algorithm-menu-item-11" >SANER Hospital File</MenuItem>
+          <MenuItem value={12} id="import-algorithm-menu-item-12" key="import-algorithm-menu-item-12" >LOINC Questionnaire</MenuItem>
+          <MenuItem value={13} id="import-algorithm-menu-item-13" key="import-algorithm-menu-item-13" >FHIR Bundle (Collection)</MenuItem>
+        </Select>
+      </FormControl>
+
       <pre 
         id="dropzonePreview"
         style={{
@@ -257,41 +279,7 @@ function RawDataCard(props){
         { importBufferContents }
       </pre>
 
-      <FormControl style={{width: '100%', paddingBottom: '20px', marginTop: '10px'}}>
-        <InputLabel id="import-algorithm-label">Mapping Algorithm</InputLabel>
-        <Select
-          // labelId="export-algorithm-label"
-          id="import-algorithm-selector"
-          value={ mappingAlgorithm}
-          onChange={handleChangeMappingAlgorithm.bind(this)}
-          fullWidth
-          >
-          <MenuItem value={0} id="import-algorithm-menu-item-0" key="import-algorithm-menu-item-0" >FHIR Bundle (Any)</MenuItem>
-          <MenuItem value={1} id="import-algorithm-menu-item-1" key="import-algorithm-menu-item-1" >FHIR Bundle - DSTU2</MenuItem>
-          <MenuItem value={2} id="import-algorithm-menu-item-2" key="import-algorithm-menu-item-2" >FHIR Bundle - STU3</MenuItem>
-          <MenuItem value={3} id="import-algorithm-menu-item-3" key="import-algorithm-menu-item-3" >FHIR Bundle - R4</MenuItem>
-          <MenuItem value={4} id="import-algorithm-menu-item-4" key="import-algorithm-menu-item-4" >Facebook Profile</MenuItem>
-          <MenuItem value={5} id="import-algorithm-menu-item-5" key="import-algorithm-menu-item-5" >City of Chicago Data File</MenuItem>
-          <MenuItem value={6} id="import-algorithm-menu-item-6" key="import-algorithm-menu-item-6" >Geojson</MenuItem>
-          <MenuItem value={7} id="import-algorithm-menu-item-7" key="import-algorithm-menu-item-7" >CDC Reporting Spreadsheet</MenuItem>
-          <MenuItem value={8} id="import-algorithm-menu-item-8" key="import-algorithm-menu-item-8" >FEMA Reporting Spreadsheet</MenuItem>
-          <MenuItem value={9} id="import-algorithm-menu-item-9" key="import-algorithm-menu-item-9" >Inpatient Prospective Payment System File</MenuItem>
-          <MenuItem value={10} id="import-algorithm-menu-item-10" key="import-algorithm-menu-item-10" >SANER Hospital File</MenuItem>
-          <MenuItem value={11} id="import-algorithm-menu-item-11" key="import-algorithm-menu-item-11" >LOINC Questionnaire</MenuItem>
-          <MenuItem value={12} id="import-algorithm-menu-item-12" key="import-algorithm-menu-item-11" >FHIR Bundle (Collection)</MenuItem>
-        </Select>
-      </FormControl>
-
       <Grid container>
-        {/* <Grid item md={4} style={{paddingRight: '10px'}}>
-          <Button 
-            id='scanFile'
-            onClick={ handleScanData.bind(this)}
-            color="primary"
-            variant="contained"
-            fullWidth                
-          >Scan</Button>   
-        </Grid> */}
         <Grid item md={4} style={{paddingRight: '10px'}}>
           { digestButton }
         </Grid>

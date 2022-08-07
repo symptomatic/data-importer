@@ -229,30 +229,6 @@ function PreviewDataCard(props){
         { previewBufferContents }
       </pre>
 
-      {/* <FormControl style={{width: '100%', paddingBottom: '20px', marginTop: '10px'}}>
-        <InputLabel id="import-algorithm-label">Mapping Algorithm</InputLabel>
-        <Select
-          // labelId="export-algorithm-label"
-          id="import-algorithm-selector"
-          value={ mappingAlgorithm}
-          onChange={handleChangeMappingAlgorithm.bind(this)}
-          fullWidth
-          >
-          <MenuItem value={0} id="import-algorithm-menu-item-0" key="import-algorithm-menu-item-0" >FHIR Bundle (Any)</MenuItem>
-          <MenuItem value={1} id="import-algorithm-menu-item-1" key="import-algorithm-menu-item-1" >FHIR Bundle - DSTU2</MenuItem>
-          <MenuItem value={2} id="import-algorithm-menu-item-2" key="import-algorithm-menu-item-2" >FHIR Bundle - STU3</MenuItem>
-          <MenuItem value={3} id="import-algorithm-menu-item-3" key="import-algorithm-menu-item-3" >FHIR Bundle - R4</MenuItem>
-          <MenuItem value={4} id="import-algorithm-menu-item-4" key="import-algorithm-menu-item-4" >Facebook Profile</MenuItem>
-          <MenuItem value={5} id="import-algorithm-menu-item-5" key="import-algorithm-menu-item-5" >City of Chicago Data File</MenuItem>
-          <MenuItem value={6} id="import-algorithm-menu-item-6" key="import-algorithm-menu-item-6" >Geojson</MenuItem>
-          <MenuItem value={7} id="import-algorithm-menu-item-7" key="import-algorithm-menu-item-7" >CDC Reporting Spreadsheet</MenuItem>
-          <MenuItem value={8} id="import-algorithm-menu-item-8" key="import-algorithm-menu-item-8" >FEMA Reporting Spreadsheet</MenuItem>
-          <MenuItem value={9} id="import-algorithm-menu-item-9" key="import-algorithm-menu-item-9" >Inpatient Prospective Payment System File</MenuItem>
-          <MenuItem value={10} id="import-algorithm-menu-item-10" key="import-algorithm-menu-item-10" >SANER Hospital File</MenuItem>
-          <MenuItem value={11} id="import-algorithm-menu-item-11" key="import-algorithm-menu-item-11" >LOINC Questionnaire</MenuItem>
-        </Select>
-      </FormControl> */}
-
       <Grid container>
         <Grid item md={4} style={{paddingRight: '10px'}}>
           <Button 
@@ -263,15 +239,6 @@ function PreviewDataCard(props){
             fullWidth                
           >Scan</Button>   
         </Grid>
-        {/* <Grid item md={4} style={{paddingRight: '10px'}}>
-          <Button 
-            id='mapData'
-            onClick={ handleMapData.bind(this)}
-            color="primary"
-            variant="contained"
-            fullWidth                
-          >Map</Button>   
-        </Grid> */}
         <Grid item md={4} style={{paddingLeft: '10px'}}>
           <Button id="clearPreviewQueueBtn" fullWidth variant="contained" onClick={clearPreviewBuffer.bind(this)} >Clear</Button>             
         </Grid>
