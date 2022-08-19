@@ -1,6 +1,6 @@
 Package.describe({
   name: 'symptomatic:data-importer',
-  version: '0.13.2',
+  version: '0.13.3',
   summary: 'Data Importer)',
   git: 'http://github.com/symptomatic/data-importer',
   documentation: 'README.md'
@@ -18,7 +18,7 @@ Package.onUse(function(api) {
   api.use('http');
   api.use('ejson');
   api.use('random');
-  api.use('fourseven:scss');
+  api.use('fourseven:scss@4.15.0');
 
   // api.use('webapp@1.10.0');
   // api.use('ddp@1.4.0');
@@ -30,7 +30,7 @@ Package.onUse(function(api) {
   // api.use('clinical:csv@0.3.0');
 
   
-  api.use('clinical:hl7-fhir-data-infrastructure');
+  api.use('clinical:hl7-fhir-data-infrastructure@6.26.21');
 
   api.addFiles('styles/filepicker.css', 'client');
   api.addFiles('lib/MedicalRecordImporter.js');
