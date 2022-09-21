@@ -948,7 +948,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     allergyIntolerancesRow = <TableRow className='dataManagementRow' hover={true}>
       { renderIcon("AllergyIntolerance") }
-      { renderImportCheckmark(methods.toggleAllergies.bind(this), 'AllergyIntolerance') }
+      { renderImportCheckmark(methods.toggleAllergyIntolerances.bind(this), 'AllergyIntolerance') }
       { renderImportButton('AllergyIntolerances')} 
       <TableCell className="collection">Allergy Intolerance</TableCell>
       { renderPreview('AllergyIntolerance')} 
@@ -957,7 +957,7 @@ export function CollectionManagement(props){
       { renderPubSub('AllergyIntolerance')} 
       { renderDropButton('AllergyIntolerance')} 
       { renderExportButton('AllergyIntolerances')} 
-      { renderExportCheckmark(exportMethods.toggleAllergiesExport.bind(this), 'AllergyIntolerance') }
+      { renderExportCheckmark(exportMethods.toggleAllergyIntolerancesExport.bind(this), 'AllergyIntolerance') }
     </TableRow>
   }
 
