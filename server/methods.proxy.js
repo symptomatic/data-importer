@@ -103,7 +103,50 @@ function pluralizeResourceName(resourceType){
   return pluralized;
 };
 
-// Meteor.methods({
+
+
+Meteor.methods({
+  saveUnknownResourceType: function(unknownResourceTypeObject){
+
+
+    console.log('unknownResourceTypeObject', unknownResourceTypeObject)
+    let resultId;
+
+    switch (get(unknownResourceTypeObject, 'resourceType')) {
+
+      case "AllergyIntolerance":
+        resultId = AllergyIntolerances.insert(unknownResourceTypeObject);
+        break;
+      case "Condition":
+        resultId = Conditions.insert(unknownResourceTypeObject);
+        break;
+      case "CarePlan":
+        resultId = CarePlans.insert(unknownResourceTypeObject);
+        break;
+      case "Encounter":
+        resultId = Encounters.insert(unknownResourceTypeObject);
+        break;
+      case "Immunization":
+        resultId = Immunizations.insert(unknownResourceTypeObject);
+        break;
+      case "MedicationStatement":
+        resultId = MedicationStatements.insert(unknownResourceTypeObject);
+        break;
+      case "Observation":
+        resultId = Observations.insert(unknownResourceTypeObject);
+        break;
+      case "Patient":
+        resultId = Patients.insert(unknownResourceTypeObject);
+        break;
+      case "Procedure":
+        resultId = Procedures.insert(unknownResourceTypeObject);
+        break;
+    
+      default:
+        break;
+    }
+    console.log('resultId', resultId);
+  }
 //   /* read the data and return the workbook object to the frontend */
 //   proxyInsert: function(proxiedInsertRequest){
 //     check(proxiedInsertRequest, Object);
@@ -219,4 +262,4 @@ function pluralizeResourceName(resourceType){
 
     
 //   }
-// });
+});

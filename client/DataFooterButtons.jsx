@@ -75,11 +75,15 @@ export function SampleDialogComponent(props){
   )
 }
 
+Session.setDefault('editorWrapEnabled', false);
 export function ImportButtons(props){
   const buttonClasses = useTabStyles();
 
   function clearQueue(){
     Session.set('importQueue', []);
+  }
+  function enableEditorWrap(){
+    Session.toggle('editorWrapEnabled');
   }
   function clearAllClientData(){
     console.log('Clear all data cursors!');
@@ -148,6 +152,9 @@ export function ImportButtons(props){
 
   return (
     <MuiThemeProvider theme={muiTheme} >
+      <Button onClick={ enableEditorWrap.bind(this) } className={ buttonClasses.west_button }>
+        Editor Wrap
+      </Button>
       <Button onClick={ clearAllClientData.bind(this) } className={ buttonClasses.west_button }>
         Clear All Client Data
       </Button>

@@ -24,9 +24,12 @@ import PropTypes from 'prop-types';
 
 import { get, set, has, uniq, cloneDeep } from 'lodash';
 
-// import AceEditor from "react-ace";
-// import "ace-builds/src-noconflict/mode-json";
-// import "ace-builds/src-noconflict/theme-tomorrow";
+import "ace-builds";
+import AceEditor from "react-ace";
+
+import "ace-builds/src-noconflict/mode-java";
+import "ace-builds/src-noconflict/theme-github";
+import "ace-builds/src-noconflict/ext-language_tools";
 
 
 // //====================================================================================
@@ -59,9 +62,9 @@ import { get, set, has, uniq, cloneDeep } from 'lodash';
 //     // Otherwise parseImportQueue can be called later, such as
 //     // in an onClick handler.
 //     useEffect(() => {
-//       logger.verbose('RawDataCard.useEffect()')
+//       logger.verbose('DataEditor.useEffect()')
 //       if (readyToImport) {
-//         logger.verbose('RawDataCard.useEffect().readyToImport')
+//         logger.verbose('DataEditor.useEffect().readyToImport')
 //         parseImportQueue();
 //       }
 //     }, [parseImportQueue, readyToImport]);
@@ -74,13 +77,21 @@ import { get, set, has, uniq, cloneDeep } from 'lodash';
 //====================================================================================
 // Main Application  
 
-function RawDataCard(props){
-  logger.debug('Rendering the RawDataCard');
-  logger.verbose('symptomatic:data-management.client.RawDataCard');
-  logger.data('RawDataCard.props', {data: props}, {source: "RawDataCard.jsx"});
+function DataEditor(props){
+  logger.debug('Rendering the DataEditor');
+  logger.verbose('symptomatic:data-management.client.DataEditor');
+  logger.data('DataEditor.props', {data: props}, {source: "DataEditor.jsx"});
 
 
+  //---------------------------------------------------------------------
+  // Component State
   
+  const [editorContent, setEditorContent] = useState("");
+  const [editorWrap, setEditorWrap] = useState(false);
+  const [selectedAlgorithm, setSelectedAlgorithm] = useState(0);
+  const [detectedFileExtension, setDetectedFileExtension] = useState("json");
+
+
   //---------------------------------------------------------------------
   // Props  
 
@@ -95,39 +106,54 @@ function RawDataCard(props){
     importBuffer, 
     fileExtension,
     onImportFile,
+    editorWrapEnabled,
     ...otherProps } = props;
 
-    console.log('RawDataCard.props', props)
+    console.log('DataEditor.props', props)
 
-  if(['xml', 'xmlx', 'xlsx', 'json', 'ccd', 'bundle', 'txt', 'application/json', 'application/csv', 'application/json+fhir'].includes(fileExtension)){
-    // importBufferContents = JSON.stringify(importBuffer, null, 2);
-    importBufferContents = importBuffer;
-  } else if(['ndjson', 'application/x-ndjson'].includes(fileExtension)){
-    console.log('importBuffer application/x-ndjson', importBuffer);
-    console.log('importBuffer typeof', typeof importBuffer);
 
-    let parsedBuffer = JSON.parse(importBuffer);
+    useEffect(function(){
+      if(['xml', 'xmlx', 'xlsx', 'json', 'ccd', 'bundle', 'txt', 'application/json', 'application/csv', 'application/json+fhir'].includes(fileExtension)){
+        // importBufferContents = JSON.stringify(importBuffer, null, 2);
+        importBufferContents = importBuffer;
+        setSelectedAlgorithm(1);
+      } else if(['phr', 'sphr', 'applicaion/x-phr', 'ndjson', 'application/x-ndjson'].includes(fileExtension)){
+        // console.log('importBuffer application/x-ndjson', importBuffer);
+        console.log('importBuffer typeof', typeof importBuffer);
+    
+        let parsedBuffer = JSON.parse(importBuffer);
+    
+        console.log('parsed importBuffer type: ' +  typeof parsedBuffer);
+    
+        let ndjsonPreview = "";
+        if(Array.isArray(parsedBuffer)){
+          console.log('importBuffer is an array');
+          parsedBuffer.forEach(function(line){
+            ndjsonPreview = ndjsonPreview + JSON.stringify(line) + "\n";
+          })
+        }
+    
+        console.log('ndjsonPreview', ndjsonPreview)
+        importBufferContents = ndjsonPreview;
+        setSelectedAlgorithm(3);
+      } else {
+        setSelectedAlgorithm(1);
+        importBufferContents = importBuffer;
+      }
+      setEditorContent(importBufferContents);
+      setDetectedFileExtension(fileExtension)
 
-    console.log('importBuffer parse', parsedBuffer);
+    }, [props])
 
-    let ndjsonPreview = "";
-    if(Array.isArray(parsedBuffer)){
-      console.log('importBuffer is an array');
-      parsedBuffer.forEach(function(line){
-        ndjsonPreview = ndjsonPreview + JSON.stringify(line) + "\n";
-      })
-    }
 
-    importBufferContents = ndjsonPreview;
-  } else {
-    importBufferContents = importBuffer;
-  }
+  logger.debug("DataEditor.importBufferContents", importBufferContents);
 
-  logger.debug("RawDataCard.importBufferContents", importBufferContents);
+  
+// 
 
   // const { parseImportQueue, isImporting, progressValue, error } = useAsync(autoImport, readyToImport);
 
-  // console.log("RawDataCard.isImporting", isImporting);
+  // console.log("DataEditor.isImporting", isImporting);
 
   // //---------------------------------------------------------------------
 
@@ -167,7 +193,7 @@ function RawDataCard(props){
   }
   function digestData(){
     if(typeof props.onDigestData === "function"){
-      props.onDigestData();
+      props.onDigestData(editorContent, detectedFileExtension, selectedAlgorithm);
     }
   }
   function handleScanData(){
@@ -176,6 +202,10 @@ function RawDataCard(props){
     }
   }
   function handleChangeMappingAlgorithm(event){
+    console.log('handleChangeMappingAlgorithm', event)
+    console.log('handleChangeMappingAlgorithm.target.value', event.target.value)
+    setSelectedAlgorithm(event.target.value)
+
     if(typeof props.onChangeMappingAlgorithm === "function"){
       props.onChangeMappingAlgorithm(event);
     }
@@ -187,17 +217,22 @@ function RawDataCard(props){
   }
 
   function clearPreviewBuffer(){
-    Session.set("importBuffer", "")
+    // Session.set("importBuffer", "")
+    setEditorContent("");
   }
   function noMapCopyToPreviewBuffer(){
     Session.set('previewBuffer', Session.get('importBuffer'));
+  }
+  function onChange(newValue){
+    console.log('onChange', newValue)
+    setEditorContent(newValue)
   }
 
 
   //---------------------------------------------------------------------
   // Render Methods  
 
-  logger.trace('RawDataCard.progress', progressValue, progressMax)
+  logger.trace('DataEditor.progress', progressValue, progressMax)
 
   let previewButton;
   let digestButton;
@@ -221,6 +256,8 @@ function RawDataCard(props){
   }
   let percentageComplete = 0;
   let previewComponents;
+  
+
   if(readyToImport){
     // if(progressMax > 0){
     //   percentageComplete = Number(((progressValue / progressMax) * 100).toFixed(0));
@@ -238,11 +275,24 @@ function RawDataCard(props){
     </CardContent>
   } else {
     previewComponents = <CardContent>      
+      <AceEditor
+        mode="json"
+        theme="github"
+        wrapEnabled={editorWrapEnabled}
+        onChange={onChange}
+        name="rawDataEditor"
+        editorProps={{ $blockScrolling: true }}
+        style={{width: '100%', marginBottom: '20px', height: window.innerHeight - 470}}
+        value={editorContent}
+        defaultValue={JSON.stringify(editorContent, null, 2)}
+      />
+
+
       <FormControl style={{width: '100%', paddingBottom: '20px', marginTop: '10px'}}>
         <InputLabel id="import-algorithm-label">Mapping Algorithm</InputLabel>
         <Select
           id="import-algorithm-selector"
-          value={ mappingAlgorithm}
+          value={ selectedAlgorithm}
           onChange={handleChangeMappingAlgorithm.bind(this)}
           fullWidth
           >
@@ -262,7 +312,8 @@ function RawDataCard(props){
         </Select>
       </FormControl>
 
-      <pre 
+
+      {/* <pre 
         id="dropzonePreview"
         style={{
           width: '100%', 
@@ -277,7 +328,7 @@ function RawDataCard(props){
         }} 
       >
         { importBufferContents }
-      </pre>
+      </pre> */}
 
       <Grid container>
         <Grid item md={4} style={{paddingRight: '10px'}}>
@@ -297,7 +348,7 @@ function RawDataCard(props){
 }
 
 
-RawDataCard.propTypes = {
+DataEditor.propTypes = {
   progressMax: PropTypes.number,
   initialValue: PropTypes.number,
   importBuffer: PropTypes.string,
@@ -314,7 +365,7 @@ RawDataCard.propTypes = {
   onImportFile: PropTypes.func,
   onMapData: PropTypes.func
 }
-RawDataCard.defaultProps = {
+DataEditor.defaultProps = {
   mappingAlgorithm: 0,
   initialValue: 0,
   progressValue: 0,
@@ -322,8 +373,9 @@ RawDataCard.defaultProps = {
   importBuffer: "",
   readyToImport: false,
   previewMode: false,
+  editorWrapEnabled: false,
   fileExtension: 'json'  
 }
 
 
-export default RawDataCard;
+export default DataEditor;

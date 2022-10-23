@@ -3,6 +3,7 @@ import React from 'react';
 import CollectionManagement from './client/CollectionManagement';
 import ImportAlgorithm from './lib/ImportAlgorithm';
 import ImportPage from './client/ImportPage';
+import EditorPage from './client/EditorPage';
 
 import MedicalRecordImporter from './lib/MedicalRecordImporter.js';
 
@@ -13,6 +14,11 @@ let DynamicRoutes = [{
   'path': '/import-data',
   'component': ImportPage,
   'requireAuth': true
+}, {
+  'name': 'EditorRoute',
+  'path': '/data-editor',
+  'component': EditorPage,
+  'requireAuth': true
 }];
 
 let AdminSidebarElements = [{
@@ -21,7 +27,12 @@ let AdminSidebarElements = [{
   iconName: "fire",
   excludeDevice: ['iPhone', 'iPad'],
   requireAuth: true
+}, {
+  primaryText: 'Data Editor',
+  to: '/data-editor',
+  iconName: 'fire'
 }];
+
 
 let FooterButtons = [{
   pathname: '/import-data',
@@ -36,8 +47,8 @@ export {
   AdminDynamicRoutes,
   AdminSidebarElements,
   FooterButtons,
+  SidebarWorkflows,
 
-  // DataManagementPage,
   ImportPage,
 
   MedicalRecordImporter,

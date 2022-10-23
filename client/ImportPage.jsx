@@ -8,7 +8,7 @@ import React from 'react';
 
 import { get } from 'lodash';
 
-import { ImportComponent } from './ImportComponent';
+import { ImportEditorBindings } from './ImportEditorBindings';
 // import { LayoutHelpers } from 'clinical:hl7-fhir-data-infrastructure';
 
 //============================================================================
@@ -135,7 +135,7 @@ export function ImportPage(props){
   return(
     <PageCanvas id="ImportPage" headerHeight={headerHeight} paddingLeft={20} paddingRight={20} >
       <MuiThemeProvider theme={muiTheme} >
-        <ImportComponent />
+        <ImportEditorBindings />
       </MuiThemeProvider>
     </PageCanvas>
   );

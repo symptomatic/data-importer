@@ -44,13 +44,19 @@ import { useTracker } from 'meteor/react-meteor-data';
 
 import { CollectionManagement } from './CollectionManagement';
 import PreviewDataCard from './PreviewDataCard';
-import RawDataCard from './RawDataCard';
+import DataEditor from './DataEditor';
 
 
-// import AceEditor from "react-ace";
+import "ace-builds";
+import AceEditor from "react-ace";
 
-// import "ace-builds/src-noconflict/mode-json";
-// import "ace-builds/src-noconflict/theme-tomorrow";
+import "ace-builds/src-noconflict/mode-java";
+import "ace-builds/src-noconflict/theme-github";
+import "ace-builds/src-noconflict/ext-language_tools";
+
+// import { FhirUtilities, AllergyIntolerances, Conditions, CarePlans, Encounters, Immunizations, MedicationStatements, Observations, Patients, Procedures } from 'meteor/clinical:hl7-fhir-data-infrastructure';
+// import 'ace-builds/webpack-resolver'
+
 
 import fileDialog from 'file-dialog'
 
@@ -221,7 +227,7 @@ let collectionNames = [
 let algorithmCount = 9;
 
 var componentConfig = {
-  allowedFiletypes: ['.json', '.jpg', '.png', '.23me', '.geojson', '.fhir', '.ccd', '.bundle'],
+  allowedFiletypes: ['.json', '.jpg', '.png', '.23me', '.geojson', '.fhir', '.ccd', '.bundle', '.sphr', '.phr'],
   iconFiletypes: ['.json', '.23me', '.geojson', '.fhir', '.ccd'],
   showFiletypeIcon: false,
   postUrl: '/uploadHandler',
@@ -249,16 +255,16 @@ var eventHandlers = {
   // All of these receive the file as first parameter:
   addedfile: function (file) {
     logger.warn("Received a file; sending to server.");
-    logger.data('ImportComponent.addedFile', {data: file}, {source: "ImportComponent.jsx"});
+    logger.data('ImportEditorBindings.addedFile', {data: file}, {source: "ImportEditorBindings.jsx"});
 
     // we're going to need the extention to figure out what kind of file parsing we're going to do
     var extension = file.name.split('.').pop().toLowerCase();
 
-    // console.log('ImportComponent.file', file)
-    // console.log('ImportComponent.file.name', file.name)
-    // console.log('ImportComponent.file.name.split', file.name.split('.'))
-    // console.log('ImportComponent.file.name.split.pop', file.name.split('.').pop())
-    // console.log('ImportComponent.file.name.split.pop.toLowerCase', file.name.split.pop.toLowerCase())
+    // console.log('ImportEditorBindings.file', file)
+    // console.log('ImportEditorBindings.file.name', file.name)
+    // console.log('ImportEditorBindings.file.name.split', file.name.split('.'))
+    // console.log('ImportEditorBindings.file.name.split.pop', file.name.split('.').pop())
+    // console.log('ImportEditorBindings.file.name.split.pop.toLowerCase', file.name.split.pop.toLowerCase())
 
     logger.debug('Extension: ' + extension);
 
@@ -280,7 +286,7 @@ var eventHandlers = {
           logger.debug('Found an .csv file; loading...');
 
           let csvData = PapaParse.parse(reader.result);
-          logger.data('ImportComponent.addedFile.csvData', {data: csvData}, {source: "ImportComponent.jsx"});
+          logger.data('ImportEditorBindings.addedFile.csvData', {data: csvData}, {source: "ImportEditorBindings.jsx"});
 
           logger.trace('Managed to parse csv...', csvData.data)
           Session.set('importBuffer', csvData.data);    
@@ -298,7 +304,7 @@ var eventHandlers = {
             valueProcessors: [ xml2js.processors.parseNumbers ]
           }, function (err, rawXmlData) {
             logger.trace('Managed to parse xml...')
-            logger.data('ImportComponent.addedFile.xmlData', {data: rawXmlData}, {source: "ImportComponent.jsx"});
+            logger.data('ImportEditorBindings.addedFile.xmlData', {data: rawXmlData}, {source: "ImportEditorBindings.jsx"});
 
             let resourceRoot = {};
             let xmlData = {};
@@ -355,7 +361,7 @@ var eventHandlers = {
         } else if(['json', 'fhir', 'ccd', 'bundle', 'txt'].includes(extension)){
 
           logger.debug('Found an .json enconded file; loading...');
-          logger.data('ImportComponent.addedFile.jsonData', {data: reader.result}, {source: "ImportComponent.jsx"});
+          logger.data('ImportEditorBindings.addedFile.jsonData', {data: reader.result}, {source: "ImportEditorBindings.jsx"});
 
           if(['fhir'].includes(extension)){
             logger.trace('.json was found within a .fhir file; decrypting and decoding...');
@@ -366,7 +372,7 @@ var eventHandlers = {
             // console.log('utf8Data', utf8Data);
 
             var decodedData = decodeURI(utf8Data);
-            logger.data('ImportComponent.addedFile.decodedData', {data: decodedData}, {source: "ImportComponent.jsx"});
+            logger.data('ImportEditorBindings.addedFile.decodedData', {data: decodedData}, {source: "ImportEditorBindings.jsx"});
 
             Session.set('importBuffer', decodedData);
           } else {
@@ -380,7 +386,7 @@ var eventHandlers = {
               dataContent = reader.result;
             }
 
-            logger.data('ImportComponent.addedFile.dataContent', {data: dataContent}, {source: "ImportComponent.jsx"});
+            logger.data('ImportEditorBindings.addedFile.dataContent', {data: dataContent}, {source: "ImportEditorBindings.jsx"});
 
             if(dataContent){
               if(dataContent.data){
@@ -401,7 +407,7 @@ var eventHandlers = {
                 logger.error("error", error);
               }
               if (result){
-                logger.data('ImportComponent.addedFile.parseGeoJson.result', {data: result}, {source: "ImportComponent.jsx"});
+                logger.data('ImportEditorBindings.addedFile.parseGeoJson.result', {data: result}, {source: "ImportEditorBindings.jsx"});
               }
             });
           }
@@ -415,7 +421,7 @@ var eventHandlers = {
           // console.log('data', data);
           // console.log('name', name);
 
-          logger.data('ImportComponent.addedFile.xlsData', {data: data}, {source: "ImportComponent.jsx"});
+          logger.data('ImportEditorBindings.addedFile.xlsData', {data: data}, {source: "ImportEditorBindings.jsx"});
 
 
           Meteor.call(rABS ? 'uploadS' : 'uploadU', rABS ? data : new Uint8Array(data), name, function(err, wb) {
@@ -441,7 +447,7 @@ var eventHandlers = {
                 logger.error("error", error);
               }
               if (result){
-                logger.data('ImportComponent.addedFile.parseGenome.result', {data: result}, {source: "ImportComponent.jsx"});
+                logger.data('ImportEditorBindings.addedFile.parseGenome.result', {data: result}, {source: "ImportEditorBindings.jsx"});
               }
             });
           }
@@ -558,7 +564,7 @@ Session.setDefault('mappingAlgorithm', 1);
 // ===================================================================================================================
 // MAIN COMPONENT
 
-export function ImportComponent(props){
+export function ImportEditorBindings(props){
 
   if(typeof logger === "undefined"){
     if(typeof props.logger === "object"){
@@ -568,9 +574,9 @@ export function ImportComponent(props){
     }
   }
 
-  logger.info('Rendering the ImportComponent');
-  logger.verbose('symptomatic:data-management.client.ImportComponent');
-  logger.data('ImportComponent.props', {data: props}, {source: "ImportComponent.jsx"});
+  logger.info('Rendering the ImportEditorBindings');
+  logger.verbose('symptomatic:data-management.client.ImportEditorBindings');
+  logger.data('ImportEditorBindings.props', {data: props}, {source: "ImportEditorBindings.jsx"});
 
   let [tabIndex, setTabIndex] = useState(0);
   let [upstreamSync, setUpstreamSync] = useState(get(Meteor, 'settings.public.meshNetwork.upstreamSync', ''));
@@ -600,10 +606,11 @@ export function ImportComponent(props){
   let fileExtension = "json";
   let strigifiedImportBuffer = "";
   let strigifiedPreviewBuffer = "";
+  let editWrapEnabled = false;
   // let importQueue = [];
 
-  importBuffer = useTracker(function(){
-    return Session.get("importBuffer");
+  useTracker(function(){
+    setImportBuffer(Session.get("importBuffer"));
   }, []);
   previewBuffer = useTracker(function(){
     return Session.get("previewBuffer");
@@ -612,11 +619,16 @@ export function ImportComponent(props){
   fileExtension = useTracker(function(){
     return Session.get("fileExtension");
   }, []);
+  editWrapEnabled = useTracker(function(){
+    return Session.get("editWrapEnabled");
+  }, []);
+
+  
 
   let importQueueLength = 0;
   if(Array.isArray(importQueue)){
     importQueueLength = importQueue.length;
-    logger.debug('ImportComponent.importQueueLength', importQueueLength)
+    logger.debug('ImportEditorBindings.importQueueLength', importQueueLength)
   }
 
   if(['csv', 'xml', 'xmlx', 'xlsx', 'json', 'ccd', 'bundle', 'txt', 'application/json', 'application/csv', 'application/json+fhir'].includes(fileExtension)){
@@ -697,10 +709,10 @@ export function ImportComponent(props){
     // this.openDialog();
   }
   function selectFiles(variable, event, value){
-    logger.debug('ImportComponent: Selecting files.')
+    logger.debug('ImportEditorBindings: Selecting files.')
 
-    fileDialog({ multiple: true, accept: ['application/json', 'application/json+fhir', 'application/csv', 'text/csv', 'application/x-ndjson', 'text/ndjson',  'application/phr', 'application/x-phr', 'phr'  ] }, function(fileList){
-      logger.verbose('ImportComponent.selectFile().fileDialog().fileList', fileList)
+    fileDialog({ multiple: true, accept: ['application/json', 'application/json', 'application/json+fhir', 'application/csv', 'text/csv', 'application/x-ndjson', 'text/ndjson',  'application/phr', 'application/x-phr', 'phr', 'sphr',  'application/sphr', 'application/x-sphr',   ] }, function(fileList){
+      logger.verbose('ImportEditorBindings.selectFile().fileDialog().fileList', fileList)
 
       let promises = Object.keys(fileList).map(function(fileIndex){
 
@@ -1343,31 +1355,44 @@ export function ImportComponent(props){
     }
   }
 
-  function digestData(importBuffer){
-    if(!importBuffer){
-      importBuffer = Session.get('importBuffer');
-    }
+  function digestData(editorContent, fileExtension, selectedAlgorithm){
+    console.log('================================================================')
+    console.log('DIGESTING DATA')
+    console.log('digestData.editorContent', editorContent)
+    console.log('digestData.selectedAlgorithm', selectedAlgorithm)
+    console.log('digestData.fileExtension', fileExtension)
+    console.log('')
 
-    console.log('digestData.mappingAlgorithm', mappingAlgorithm)
-    console.log('digestData.importBuffer', importBuffer)
+
+    if(!editorContent){
+      editorContent = Session.get('importBuffer');
+    }
+    //  else {
+    //   Session.set('importBuffer', editorContent)
+    // }
+
 
     let proxyUrl = get(Meteor, 'settings.public.interfaces.fhirRelay.channel.endpoint', 'http://localhost:3000/baseR4')
 
+    parseFileContents(editorContent, fileExtension, selectedAlgorithm)
 
-    switch (mappingAlgorithm) {
+    switch (selectedAlgorithm) {
       case 2:
-        MedicalRecordImporter.importBundle(importBuffer, get(Meteor, 'settings.public.interfaces.fhirRelay.channel.endpoint', "http://localhost:3000/baseR4"));        
+        console.log("Use case 2 - Bundle")
+        MedicalRecordImporter.importBundle(editorContent, get(Meteor, 'settings.public.interfaces.fhirRelay.channel.endpoint', "http://localhost:3000/baseR4"));        
         break;
       case 3:
-        MedicalRecordImporter.importNdjson(importBuffer, get(Meteor, 'settings.public.interfaces.fhirRelay.channel.endpoint', "http://localhost:3000/baseR4"));        
+        console.log("Use case 3 - Bulk Data")
+        MedicalRecordImporter.importNdjson(editorContent, get(Meteor, 'settings.public.interfaces.fhirRelay.channel.endpoint', "http://localhost:3000/baseR4"));        
         break;
-        case 13:
+      case 13:
+        console.log("Use case 13 - Bundle (Collection)")
         if(proxyUrl){
           let assembledUrl = proxyUrl;
-          if(has(importBuffer, 'id')){
-              assembledUrl = proxyUrl + '/Bundle/' + get(importBuffer, 'id');
+          if(has(editorContent, 'id')){
+              assembledUrl = proxyUrl + '/Bundle/' + get(editorContent, 'id');
               console.log('PUT ' + assembledUrl)
-              HTTP.put(assembledUrl, {data: importBuffer}, function(error, result){
+              HTTP.put(assembledUrl, {data: editorContent}, function(error, result){
                   if(error){
                       alert(JSON.stringify(error.message));
                   }
@@ -1375,7 +1400,7 @@ export function ImportComponent(props){
           } else {
               assembledUrl = proxyUrl + '/Bundle';
               console.log('POST ' + assembledUrl)
-              HTTP.post(assembledUrl, {data: importBuffer}, function(error, result){
+              HTTP.post(assembledUrl, {data: editorContent}, function(error, result){
                   if(error){
                       alert(JSON.stringify(error.message));
                   }
@@ -1385,6 +1410,7 @@ export function ImportComponent(props){
         break;
       
       default:
+        console.log("Default use case")
         break;
     }
   }
@@ -1539,6 +1565,103 @@ export function ImportComponent(props){
     }  
   }
 
+
+  async function parseFileContents(previewBuffer, fileExtension, mappingAlgorithm){
+    // do a quick scan to determine which resource types are being used
+
+    console.log('--------------------------------------------------------')
+    console.log('Parsing Data')
+
+
+    scanData(previewBuffer, true);
+  
+
+    logger.debug('File mime type: ' + fileExtension);
+    console.log('File mime type: ' + fileExtension);
+
+    if(['csv', 'application/csv'].includes(fileExtension)){
+      parseCsvFile(previewBuffer);
+    } else if(['phr', 'application/phr', 'ndjson', 'application/x-ndjson'].includes(fileExtension)){
+      logger.debug('NDJSON parser.....');
+
+      console.log('Parsing NDJSON previewBuffer', previewBuffer)
+
+      MedicalRecordImporter.importNdjson(previewBuffer, get(Meteor, 'settings.public.interfaces.fhirRelay.channel.endpoint', "http://localhost:3000/baseR4"));              
+    } else if(['xls', 'xlsx'].includes(fileExtension)){
+      parseExcelWorkbook(previewBuffer);
+    } else if(['xml'].includes(fileExtension)){
+      logger.debug('XML parser not impleted yet.');
+
+      let document = Session.get('previewBuffer');
+
+      if(document){
+        delete document.$;
+
+        logger.debug('Looks like we managed to parse the XML into JSON.', document);
+        if(get(document, 'resourceType')){
+          setScannedResourceTypes([get(document, 'resourceType')]);
+          // TODO: need to pluralize
+          window[get(document, 'resourceType')].upsert({id: document.id}, {$set: document});          
+        }
+      } else {
+        logger.debug("Doesn't look like we were able to parse the XML.")
+      }
+
+    } else if(['json', 'fhir', 'ccd', 'bundle', 'txt', 'application/json', 'application/json+fhir'].includes(fileExtension)){
+      logger.debug("Otherwise, we're going to assume that this is a JSON or FHIR file.  Parsing...")
+      logger.debug('File contents: ', previewBuffer);
+      logger.debug('ImportEditorBindings.MappingAlgorithm: ' + mappingAlgorithm);
+
+      //autoSelectPatient(autoSelectFirstPatient, previewBuffer);      
+
+      if(typeof previewBuffer === "object"){
+        switch (mappingAlgorithm) {
+          case 1:  // FHIR Bundle
+            MedicalRecordImporter.importBundle(previewBuffer);
+            break;      
+          case 2:  // FaceBook
+            parseFacebookProfile(previewBuffer);
+            break;      
+          case 3:  // Chicago Grocers File
+            parseChicagoGrocersFile(previewBuffer);
+            break;
+          default:
+            MedicalRecordImporter.importBundle(previewBuffer);
+            break;
+        }
+      }
+
+      
+    } else {
+      logger.debug("Otherwise, we're going to assume that this is a JSON or FHIR file.  Parsing...")
+      logger.debug('File contents: ', previewBuffer);
+
+      
+      switch (mappingAlgorithm) {
+        case 1:  // FHIR Bundle
+          MedicalRecordImporter.importBundle(previewBuffer);
+          break;      
+        case 2:  // FaceBook
+          parseFacebookProfile(previewBuffer);
+          break;      
+        case 3:  // Chicago Grocers File
+          this.parseChicagoGrocersFile(previewBuffer);
+          break;
+        default:
+          console.log('previewBuffer', previewBuffer);
+          // Meteor.call('insertBundleIntoWarehouse', previewBuffer, function(error, result){
+          //   if(error){
+          //     console.log('error while proxy inserting', error)
+          //   }
+          //   if(result){
+          //     console.log('proxyInsert/result', result)
+          //   }
+          // })
+          break;
+      }
+    }
+  }
+
   async function importFile(queueItem, resolve){
     logger.debug("Let's try to import a file...")
     console.log("Let's try to import a file...")
@@ -1580,112 +1703,26 @@ export function ImportComponent(props){
       fileExtension = get(queueItem, 'type');
     }
     
-    // make sure we're dealing with a json object
-    let previewObject;
-    if(typeof previewBuffer === 'string'){
-      logger.trace('This appears to be a string.  ', previewBuffer);
-      console.log('This appears to be a string.  ', previewBuffer);
-      try {
-        previewObject = JSON.parse(previewBuffer);        
-        logger.trace('Converting to object', previewBuffer);          
-        console.log('Converting to object', previewBuffer);          
-      } catch (error) {
-        logger.error('Error parsing JSON', error);                  
-        console.log('Error parsing JSON', error);                  
-      }
-    } else if(typeof previewBuffer === 'object'){
-      previewObject = previewBuffer;
-    }
-    console.log('previewObject', previewObject);
+    // // make sure we're dealing with a json object
+    // let previewObject;
+    // if(typeof previewBuffer === 'string'){
+    //   logger.trace('This appears to be a string.  ', previewBuffer);
+    //   console.log('This appears to be a string.  ', previewBuffer);
+    //   try {
+    //     previewObject = JSON.parse(previewBuffer);        
+    //     logger.trace('Converting to object', previewBuffer);          
+    //     console.log('Converting to object', previewBuffer);          
+    //   } catch (error) {
+    //     logger.error('Error parsing JSON', error);                  
+    //     console.log('Error parsing JSON', error);                  
+    //   }
+    // } else if(typeof previewBuffer === 'object'){
+    //   previewObject = previewBuffer;
+    // }
+    // console.log('previewObject', previewObject);
 
 
-    // do a quick scan to determine which resource types are being used
-    scanData(previewBuffer, true);
-  
-
-    logger.debug('File mime type: ' + fileExtension);
-    console.log('File mime type: ' + fileExtension);
-
-    if(['csv', 'application/csv'].includes(fileExtension)){
-      parseCsvFile(previewBuffer);
-    } else if(['phr', 'application/phr', 'ndjson', 'application/x-ndjson'].includes(fileExtension)){
-      logger.debug('NDJSON parser.....');
-
-      console.log('previewBuffer', previewBuffer)
-
-      MedicalRecordImporter.importNdjson(previewBuffer, get(Meteor, 'settings.public.interfaces.fhirRelay.channel.endpoint', "http://localhost:3000/baseR4"));              
-    } else if(['xls', 'xlsx'].includes(fileExtension)){
-      parseExcelWorkbook(previewBuffer);
-    } else if(['xml'].includes(fileExtension)){
-      logger.debug('XML parser not impleted yet.');
-
-      let document = Session.get('previewBuffer');
-
-      if(document){
-        delete document.$;
-
-        logger.debug('Looks like we managed to parse the XML into JSON.', document);
-        if(document.resourceType){
-          setScannedResourceTypes([document.resourceType]);
-          window[document.resourceType].upsert({id: document.id}, {$set: document});          
-        }
-      } else {
-        logger.debug("Doesn't look like we were able to parse the XML.")
-      }
-
-    } else if(['json', 'fhir', 'ccd', 'bundle', 'txt', 'application/json', 'application/json+fhir'].includes(fileExtension)){
-      logger.debug("Otherwise, we're going to assume that this is a JSON or FHIR file.  Parsing...")
-      logger.debug('File contents: ', previewBuffer);
-      logger.debug('ImportComponent.MappingAlgorithm: ' + mappingAlgorithm);
-
-      //autoSelectPatient(autoSelectFirstPatient, previewBuffer);      
-
-      if(previewObject){
-        switch (mappingAlgorithm) {
-          case 1:  // FHIR Bundle
-            MedicalRecordImporter.importBundle(previewObject);
-            break;      
-          case 2:  // FaceBook
-            parseFacebookProfile(previewObject);
-            break;      
-          case 3:  // Chicago Grocers File
-            parseChicagoGrocersFile(previewObject);
-            break;
-          default:
-            MedicalRecordImporter.importBundle(previewObject);
-            break;
-        }
-      }
-
-      
-    } else {
-      logger.debug("Otherwise, we're going to assume that this is a JSON or FHIR file.  Parsing...")
-      logger.debug('File contents: ', previewBuffer);
-
-      
-      switch (mappingAlgorithm) {
-        case 1:  // FHIR Bundle
-          MedicalRecordImporter.importBundle(previewBuffer);
-          break;      
-        case 2:  // FaceBook
-          parseFacebookProfile(previewBuffer);
-          break;      
-        case 3:  // Chicago Grocers File
-          this.parseChicagoGrocersFile(previewBuffer);
-          break;
-        default:
-          console.log('previewBuffer', previewBuffer);
-          // Meteor.call('insertBundleIntoWarehouse', previewBuffer, function(error, result){
-          //   if(error){
-          //     console.log('error while proxy inserting', error)
-          //   }
-          //   if(result){
-          //     console.log('proxyInsert/result', result)
-          //   }
-          // })
-          break;
-      }
-    }
+    parseFileContents(previewBuffer, fileExtension, mappingAlgorithm)
 
     logger.debug('File imported.')
 
@@ -1769,14 +1806,14 @@ export function ImportComponent(props){
   }
 
   function onChange(newValue) {
-    console.log("ImportComponent.onChange", newValue);
+    console.log("ImportEditorBindings.onChange", newValue);
   }
 
   function openFileTypeDialog(){
 
   }
   function selectImportQueueRow(item, event){
-    console.log('selectImportvalueQueueRow', item);
+    console.log('selectImportQueueRow', item);
 
     Session.set("fileExtension", get(item, 'type'))
     Session.set('importBuffer', get(item, 'content'));
@@ -1801,7 +1838,7 @@ export function ImportComponent(props){
       resourceList.forEach(function(resourceType){
         
         let pluralizedCollectionName = MedicalRecordImporter.pluralizeResourceName(resourceType);
-          console.log('ImportComponent.pluralizedCollectionName', pluralizedCollectionName)
+          console.log('ImportEditorBindings.pluralizedCollectionName', pluralizedCollectionName)
           
           if(window[pluralizedCollectionName] && window[pluralizedCollectionName]._collection){
             window[pluralizedCollectionName]._collection.find().forEach(function(record){                        
@@ -1973,7 +2010,7 @@ export function ImportComponent(props){
           <Grid item md={columnWidth} style={{width: '100%'}}>
             <CardHeader title="Step 2 - Raw Data" style={{cursor: 'pointer'}} onClick={ setShowPreviewData.bind(this, true)} />
             <StyledCard style={{height: window.innerHeight - 300}} width={cardWidth + 'px'}>
-              <RawDataCard
+              <DataEditor
                 previewMode={showPreviewData}
                 readyToImport={readyToImport}
                 progressMax={importQueueLength}
@@ -1983,9 +2020,10 @@ export function ImportComponent(props){
                 fileExtension={fileExtension}
                 // onImportFile={importFile.bind(this)}
                 onScanData={scanData}
-                onDigestData={digestData}
+                onDigestData={digestData.bind(this)}
                 onChangeMappingAlgorithm={changeMappingAlgorithm}
                 onMapData={mapData}
+                editWrapEnabled={editWrapEnabled}
               />
             </StyledCard>
           </Grid>
@@ -2035,4 +2073,4 @@ export function ImportComponent(props){
 
   );
 }
-export default ImportComponent;
+export default ImportEditorBindings;
