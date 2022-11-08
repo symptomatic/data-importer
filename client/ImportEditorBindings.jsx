@@ -1419,10 +1419,16 @@ export function ImportEditorBindings(props){
     if(!previewBuffer){
       previewBuffer = Session.get('previewBuffer');
     }
-    //console.log("Scanning the preview buffer...", previewBuffer)
+    console.log("Scanning the preview buffer...", previewBuffer)
+    console.log("preview buffer type...", typeof previewBuffer)
 
     let resourceTypes = [];
     let preview = {};
+
+    if(typeof previewBuffer === "string"){
+      previewBuffer = JSON.parse(previewBuffer);
+    }
+    
 
     if(get(previewBuffer, 'resourceType')){
       resourceTypes.push(get(previewBuffer, 'resourceType'));      
@@ -1440,14 +1446,17 @@ export function ImportEditorBindings(props){
         }
       })
     }
-    logger.trace("Collected the following resources: ", resourceTypes)
+    logger.debug("Collected the following resources: ", resourceTypes)
+    // console.log("Collected the following resources: ", resourceTypes)
 
     let bundleResourceTypes = uniq(resourceTypes);
     logger.debug("Compacted into the following list: ", bundleResourceTypes)
+    console.log("Compacted into the following list: ", bundleResourceTypes)
+    console.log("Generated the following preview: ", preview)
 
     if(cumulative){
       bundleResourceTypes.push(scannedResourceTypes);
-      logger.trace("Cumulative resources: ", bundleResourceTypes)
+      logger.debug("Cumulative resources: ", bundleResourceTypes)
     }
     setScannedResourceTypes(bundleResourceTypes);
     setResourcePreview(preview)
@@ -2038,6 +2047,8 @@ export function ImportEditorBindings(props){
                 displayImportCheckmarks={true}
                 displayExportCheckmarks={false}
                 displayExportButton={false}
+                displayLocalClientCount={true}
+                displayClientCount={false}
                 displayDropButton={true}
                 displayPubSubEnabled={false}
                 noDataMessage="Please select a file to import."

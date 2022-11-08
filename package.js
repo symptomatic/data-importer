@@ -1,6 +1,6 @@
 Package.describe({
   name: 'symptomatic:data-importer',
-  version: '0.14.2',
+  version: '0.14.3',
   summary: 'Data Importer)',
   git: 'http://github.com/symptomatic/data-importer',
   documentation: 'README.md'

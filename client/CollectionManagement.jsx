@@ -1022,7 +1022,7 @@ export function CollectionManagement(props){
       { renderIcon("CareTeam") }
       { renderImportCheckmark(methods.toggleCareTeams.bind(this), 'CareTeam') }
       { renderImportButton('CareTeams')} 
-      <TableCell className="collection">Care Plans</TableCell>
+      <TableCell className="collection">Care Teams</TableCell>
       { renderPreview('CareTeam')} 
       { renderClientCount('CareTeam')} 
       { renderLocalClientCount('CareTeam')} 
@@ -1416,7 +1416,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     imagingStudiesRow = <TableRow className='dataManagementRow' hover={true}>
       { renderIcon("ImagingStudy") }
-      { renderImportCheckmark(methods.toggleImmagingStudies.bind(this), 'ImagingStudy') }
+      { renderImportCheckmark(methods.toggleImagingStudies.bind(this), 'ImagingStudy') }
       { renderImportButton('ImagingStudies')} 
       <TableCell className="collection">ImagingStudies</TableCell>
       { renderPreview('ImagingStudy')} 
