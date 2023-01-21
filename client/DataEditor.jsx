@@ -25,12 +25,14 @@ import PropTypes from 'prop-types';
 import { get, set, has, uniq, cloneDeep } from 'lodash';
 
 import "ace-builds";
+import ace from 'ace-builds/src-noconflict/ace';
 import AceEditor from "react-ace";
 
 import "ace-builds/src-noconflict/mode-java";
 import "ace-builds/src-noconflict/theme-github";
 import "ace-builds/src-noconflict/ext-language_tools";
-
+import "ace-builds/src-noconflict/snippets/html"
+// import 'ace-builds/webpack-resolver'
 
 // //====================================================================================
 // // Async Hook
@@ -78,9 +80,13 @@ import "ace-builds/src-noconflict/ext-language_tools";
 // Main Application  
 
 function DataEditor(props){
-  logger.debug('Rendering the DataEditor');
-  logger.verbose('symptomatic:data-management.client.DataEditor');
-  logger.data('DataEditor.props', {data: props}, {source: "DataEditor.jsx"});
+  // logger.debug('Rendering the DataEditor');
+  // logger.verbose('symptomatic:data-management.client.DataEditor');
+  // logger.data('DataEditor.props', {data: props}, {source: "DataEditor.jsx"});
+
+  console.debug('Rendering the DataEditor');
+  console.debug('symptomatic:data-management.client.DataEditor');
+  // console.data('DataEditor.props', {data: props}, {source: "DataEditor.jsx"});
 
 
   //---------------------------------------------------------------------
@@ -109,7 +115,7 @@ function DataEditor(props){
     editorWrapEnabled,
     ...otherProps } = props;
 
-    console.log('DataEditor.props', props)
+    // console.log('DataEditor.props', props)
 
 
     useEffect(function(){
@@ -146,7 +152,7 @@ function DataEditor(props){
     }, [props])
 
 
-  logger.debug("DataEditor.importBufferContents", importBufferContents);
+  console.debug("DataEditor.importBufferContents", importBufferContents);
 
   
 // 

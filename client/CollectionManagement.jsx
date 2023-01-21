@@ -188,7 +188,7 @@ export function CollectionManagement(props){
       data.collections.preview[key] = props.preview[key];
     })
 
-    logger.debug('CollectionManagement.data.collections.preview', data.collections.preview)
+    console.debug('CollectionManagement.data.collections.preview', data.collections.preview)
   }
 
   //------------------------------------------------------------
@@ -268,7 +268,7 @@ export function CollectionManagement(props){
     }
   })
 
-  console.log('methods', methods);
+  // console.log('methods', methods);
 
 
   function toggleAllExports(isInputChecked, event, ){
