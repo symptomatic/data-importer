@@ -51,5 +51,6 @@ Npm.depends({
   "xlsx": "0.16.0",
   "papaparse": "5.2.0",
   "file-dialog": "0.0.8",
-  "react-ace": "10.1.0"
+  "react-ace": "10.1.0",
+  "promise": "8.3.0"
 });
