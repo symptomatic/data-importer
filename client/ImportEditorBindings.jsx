@@ -47,12 +47,12 @@ import PreviewDataCard from './PreviewDataCard';
 import DataEditor from './DataEditor';
 
 
-import "ace-builds";
-import AceEditor from "react-ace";
+// import "ace-builds";
+// import AceEditor from "react-ace";
 
-import "ace-builds/src-noconflict/mode-java";
-import "ace-builds/src-noconflict/theme-github";
-import "ace-builds/src-noconflict/ext-language_tools";
+// import "ace-builds/src-noconflict/mode-java";
+// import "ace-builds/src-noconflict/theme-github";
+// import "ace-builds/src-noconflict/ext-language_tools";
 
 // import { FhirUtilities, AllergyIntolerances, Conditions, CarePlans, Encounters, Immunizations, MedicationStatements, Observations, Patients, Procedures } from 'meteor/clinical:hl7-fhir-data-infrastructure';
 // import 'ace-builds/webpack-resolver'
@@ -574,9 +574,13 @@ export function ImportEditorBindings(props){
     }
   }
 
-  logger.info('Rendering the ImportEditorBindings');
-  logger.verbose('symptomatic:data-management.client.ImportEditorBindings');
-  logger.data('ImportEditorBindings.props', {data: props}, {source: "ImportEditorBindings.jsx"});
+  // logger.info('Rendering the ImportEditorBindings');
+  // logger.verbose('symptomatic:data-management.client.ImportEditorBindings');
+  // logger.data('ImportEditorBindings.props', {data: props}, {source: "ImportEditorBindings.jsx"});
+  
+  console.info('Rendering the ImportEditorBindings');
+  console.debug('symptomatic:data-management.client.ImportEditorBindings');
+  // console.data('ImportEditorBindings.props', {data: props}, {source: "ImportEditorBindings.jsx"});
 
   let [tabIndex, setTabIndex] = useState(0);
   let [upstreamSync, setUpstreamSync] = useState(get(Meteor, 'settings.public.meshNetwork.upstreamSync', ''));
@@ -628,7 +632,7 @@ export function ImportEditorBindings(props){
   let importQueueLength = 0;
   if(Array.isArray(importQueue)){
     importQueueLength = importQueue.length;
-    logger.debug('ImportEditorBindings.importQueueLength', importQueueLength)
+    console.debug('ImportEditorBindings.importQueueLength', importQueueLength)
   }
 
   if(['csv', 'xml', 'xmlx', 'xlsx', 'json', 'ccd', 'bundle', 'txt', 'application/json', 'application/csv', 'application/json+fhir'].includes(fileExtension)){
@@ -636,7 +640,9 @@ export function ImportEditorBindings(props){
   }
 
   strigifiedImportBuffer = useTracker(function(){    
+    if(Session.get("importBuffer")){
       return JSON.stringify(Session.get("importBuffer"), null, 2);
+    }
   }, []);
 
 
@@ -645,10 +651,10 @@ export function ImportEditorBindings(props){
 
   
   useEffect(() => {
-    logger.verbose('PreviewDataCard.useEffect()')
+    console.debug('PreviewDataCard.useEffect()')
 
     const queueMonitor = Meteor.setInterval(function(){
-      logger.trace('Queue Monitor:: ' + new Date() + " - Ready to Import: " + readyToImport)
+      console.trace('Queue Monitor:: ' + new Date() + " - Ready to Import: " + readyToImport)
       
       if(readyToImport){        
         importNextFile();
@@ -1658,9 +1664,9 @@ export function ImportEditorBindings(props){
           break;
         default:
           console.log('previewBuffer', previewBuffer);
-          // Meteor.call('insertBundleIntoWarehouse', previewBuffer, function(error, result){
+          // Meteor.call('insertBundleIntoWarehouse', previewBuffer, Session.get('accountsAccessToken'), function(error, result){
           //   if(error){
-          //     console.log('error while proxy inserting', error)
+          //     console.error('error while proxy inserting', error)
           //   }
           //   if(result){
           //     console.log('proxyInsert/result', result)

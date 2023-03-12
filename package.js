@@ -1,6 +1,6 @@
 Package.describe({
   name: 'symptomatic:data-importer',
-  version: '0.14.3',
+  version: '0.14.6',
   summary: 'Data Importer)',
   git: 'http://github.com/symptomatic/data-importer',
   documentation: 'README.md'
@@ -30,7 +30,7 @@ Package.onUse(function(api) {
   // api.use('clinical:csv@0.3.0');
 
   
-  api.use('clinical:hl7-fhir-data-infrastructure@6.27.4');
+  api.use('clinical:hl7-fhir-data-infrastructure@6.28.2');
 
   api.addFiles('styles/filepicker.css', 'client');
   api.addFiles('lib/MedicalRecordImporter.js');
@@ -51,5 +51,6 @@ Npm.depends({
   "xlsx": "0.16.0",
   "papaparse": "5.2.0",
   "file-dialog": "0.0.8",
-  "react-ace": "10.1.0"
+  "react-ace": "10.1.0",
+  "promise": "8.3.0"
 });
