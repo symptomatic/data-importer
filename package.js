@@ -1,7 +1,7 @@
 Package.describe({
   name: 'symptomatic:data-importer',
-  version: '0.14.6',
-  summary: 'Data Importer)',
+  version: '0.14.7',
+  summary: 'Data Importer',
   git: 'http://github.com/symptomatic/data-importer',
   documentation: 'README.md'
 });
@@ -52,5 +52,6 @@ Npm.depends({
   "papaparse": "5.2.0",
   "file-dialog": "0.0.8",
   "react-ace": "10.1.0",
-  "promise": "8.3.0"
+  "promise": "8.3.0",
+  "react-ace": "10.1.0"
 });
