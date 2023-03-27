@@ -1177,30 +1177,30 @@ export function CollectionManagement(props){
     </TableRow>
   }
 
-  let communicationResponsesRow;
-  if(determineRowVisible("CommunicationResponse")){
-    shouldDisplayNoDataRow = false;
-    communicationResponsesRow = <TableRow className='dataManagementRow' hover={true}>
-      { renderIcon("CommunicationResponse") }
-      { renderImportCheckmark(methods.toggleCommunications.bind(this), 'CommunicationResponse') }
-      <TableCell className="collection">Communication Responses</TableCell>
-      { renderPreview('CommunicationResponse')} 
-      { renderClientCount('CommunicationResponse')} 
-      { renderLocalClientCount('CommunicationResponse')} 
-      { renderPubSub('CommunicationResponse')} 
-      { renderImportButton('CommunicationResponses')} 
-      { renderDropButton('CommunicationResponse')} 
-      { renderExportButton('CommunicationResponses')} 
-      { renderExportCheckmark(exportMethods.toggleCommunicationResponsesExport.bind(this), 'CommunicationResponse') }
-    </TableRow>
-  }
+  // let communicationResponsesRow;
+  // if(determineRowVisible("CommunicationResponse")){
+  //   shouldDisplayNoDataRow = false;
+  //   communicationResponsesRow = <TableRow className='dataManagementRow' hover={true}>
+  //     { renderIcon("CommunicationResponse") }
+  //     { renderImportCheckmark(methods.toggleCommunications.bind(this), 'CommunicationResponse') }
+  //     <TableCell className="collection">Communication Responses</TableCell>
+  //     { renderPreview('CommunicationResponse')} 
+  //     { renderClientCount('CommunicationResponse')} 
+  //     { renderLocalClientCount('CommunicationResponse')} 
+  //     { renderPubSub('CommunicationResponse')} 
+  //     { renderImportButton('CommunicationResponses')} 
+  //     { renderDropButton('CommunicationResponse')} 
+  //     { renderExportButton('CommunicationResponses')} 
+  //     { renderExportCheckmark(exportMethods.toggleCommunicationResponsesExport.bind(this), 'CommunicationResponse') }
+  //   </TableRow>
+  // }
 
   let communicationRequestsRow;
   if(determineRowVisible("CommunicationRequest")){
     shouldDisplayNoDataRow = false;
     communicationRequestsRow = <TableRow className='dataManagementRow' hover={true}>
       { renderIcon("CommunicationRequest") }
-      { renderImportCheckmark(methods.toggleCommunications.bind(this), 'CommunicationRequest') }
+      { renderImportCheckmark(methods.toggleCommunicationRequests.bind(this), 'CommunicationRequest') }
       <TableCell className="collection">Communication Requests</TableCell>
       { renderPreview('CommunicationRequest')} 
       { renderClientCount('CommunicationRequest')} 
@@ -1289,7 +1289,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     endpointsRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("Endpoint") }
-      { renderImportCheckmark(methods.toggleDevices.bind(this), 'Endpoint') }
+      { renderImportCheckmark(methods.toggleEndpoints.bind(this), 'Endpoint') }
       <TableCell className="collection">Endpoint</TableCell>
       { renderPreview('Endpoint')} 
       { renderClientCount('Endpoint')} 
@@ -1307,7 +1307,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     explanationOfBenefitsRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("ExplanationOfBenefit") }
-      { renderImportCheckmark(methods.toggleDevices.bind(this), 'ExplanationOfBenefit') }
+      { renderImportCheckmark(methods.toggleExplanationOfBenefits.bind(this), 'ExplanationOfBenefit') }
       <TableCell className="collection">Explanation Of Benefit</TableCell>
       { renderPreview('ExplanationOfBenefit')} 
       { renderClientCount('ExplanationOfBenefit')} 
@@ -1791,7 +1791,7 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     questionnaireResponsesRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("QuestionnaireResponse") }
-      { renderImportCheckmark(methods.toggleQuestionnaires.bind(this), 'QuestionnaireResponse') }
+      { renderImportCheckmark(methods.toggleQuestionnaireResponses.bind(this), 'QuestionnaireResponse') }
       <TableCell className="collection">Questionnaire Responses</TableCell>
       { renderPreview('QuestionnaireResponse')} 
       { renderClientCount('QuestionnaireResponse')} 
@@ -2041,7 +2041,7 @@ export function CollectionManagement(props){
         { consentsRow }
         { contractsRow }
         { communicationsRow } 
-        { communicationResponsesRow } 
+        {/* { communicationResponsesRow }  */}
         { communicationRequestsRow } 
         { devicesRow }
         { diagnosticReportsRow }
