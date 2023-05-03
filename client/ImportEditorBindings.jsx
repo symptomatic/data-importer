@@ -661,13 +661,9 @@ export function ImportEditorBindings(props){
     console.debug('PreviewDataCard.useEffect()')
 
     const queueMonitor = Meteor.setInterval(function(){
-<<<<<<< HEAD
-      process.env.TRACE && console.trace('Queue Monitor:: ' + new Date() + " - Ready to Import: " + readyToImport)
-=======
       if(['debug', 'trace'].includes(get(Meteor, 'settings.public.loggingThreshold'))){
         console.trace('Queue Monitor:: ' + new Date() + " - Ready to Import: " + readyToImport)
       }
->>>>>>> 0bb6672cc80d805ad184214dae8bf8d6e4018551
       
       if(readyToImport){        
         importNextFile();
