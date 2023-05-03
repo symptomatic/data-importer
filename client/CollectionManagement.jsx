@@ -108,7 +108,7 @@ let datalakeCounts = {
 let pubsubToggles = {}
 
 supportedResources.forEach(function(resourceType){
-  importToggles[resourceType] = true;
+  importToggles[resourceType] = false;
   exportToggles[resourceType] = false;
 
   clientCounts[resourceType] = 0;

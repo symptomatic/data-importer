@@ -599,6 +599,8 @@ export function ImportEditorBindings(props){
 
   let [selectedCollectionsToExport, setCollectionsToExport] = useState({});
 
+  let [sendToDataWarehouse, setSendToDataWarehouse] = useState(false);
+
   
   
   const [importQueue, setImportQueue] = useState([]); 
@@ -654,7 +656,7 @@ export function ImportEditorBindings(props){
     console.debug('PreviewDataCard.useEffect()')
 
     const queueMonitor = Meteor.setInterval(function(){
-      console.trace('Queue Monitor:: ' + new Date() + " - Ready to Import: " + readyToImport)
+      process.env.TRACE && console.trace('Queue Monitor:: ' + new Date() + " - Ready to Import: " + readyToImport)
       
       if(readyToImport){        
         importNextFile();
@@ -743,6 +745,8 @@ export function ImportEditorBindings(props){
             console.log('fileType', fileType);
             
             var parsedContent;
+
+
             if(fileList[fileIndex].type === "text/csv"){
               parsedContent = PapaParse.parse(content); 
               newQueueItem.content = parsedContent.data;
@@ -1647,6 +1651,12 @@ export function ImportEditorBindings(props){
       }
 
       
+    } else if(['ndjson', 'phr', 'sphr', 'application/ndjson', 'application/ndjson+fhir', 'application/phr', 'application/sphr'].includes(fileExtension)){
+      logger.debug("Looks like a bulk data file in NDJSON or PHR format.  Parsing...")
+      // logger.debug('File contents: ', previewBuffer);
+      // logger.debug('ImportEditorBindings.MappingAlgorithm: ' + mappingAlgorithm);
+
+      MedicalRecordImporter.importNdjson(previewBuffer);      
     } else {
       logger.debug("Otherwise, we're going to assume that this is a JSON or FHIR file.  Parsing...")
       logger.debug('File contents: ', previewBuffer);
@@ -1676,6 +1686,7 @@ export function ImportEditorBindings(props){
       }
     }
   }
+
 
   async function importFile(queueItem, resolve){
     logger.debug("Let's try to import a file...")
@@ -1736,8 +1747,11 @@ export function ImportEditorBindings(props){
     // }
     // console.log('previewObject', previewObject);
 
-
-    parseFileContents(previewBuffer, fileExtension, mappingAlgorithm)
+    if(sendToDataWarehouse){
+      Meteor.call('insertBundleIntoWarehouse', previewBuffer)
+    } else {
+      parseFileContents(previewBuffer, fileExtension, mappingAlgorithm)
+    }
 
     logger.debug('File imported.')
 
@@ -1842,7 +1856,11 @@ export function ImportEditorBindings(props){
   function setFirstPatientAsSelected(){
     autoSelectPatient(true, previewBuffer);
   }
-  function sendToDataWarehouse(){
+  function toggleSendToDataWarehouse(event, newValue){
+    // console.log('toggleSendToDataWarehouse', event.currentTarget.value, newValue)
+    setSendToDataWarehouse(newValue)
+  }
+  function sendBundleToDataWarehouse() {
     console.log('Sending to data warehouse....');
 
     // replace with fetch to /metadata route
@@ -2010,7 +2028,12 @@ export function ImportEditorBindings(props){
                   </TableBody>
                 </Table>
                 { paginationFooter }
+
+                <div style={{marginTop: '6px'}} >
+                  <Checkbox checked={sendToDataWarehouse} onChange={toggleSendToDataWarehouse.bind(this)} />Send to data warehouse servers
+                </div>
               </CardContent>
+
               <CardActions style={{display: 'inline-flex', width: '100%'}} >
                 <Grid item md={9} style={{paddingRight: '10px'}}>
                   <Button id="autoImportBtn" fullWidth variant="contained" color={queueButtonColor} onClick={toggleAutoImport.bind(this)} >{queueToggleText}</Button>                   
@@ -2077,14 +2100,15 @@ export function ImportEditorBindings(props){
                 fullWidth                
               >Send Each to Server!</Button>   
             <DynamicSpacer />
-            <Button 
+            {/* <Button 
                 id='importDataButton'
                 onClick={ sendTransactionBundleToServer.bind(this)}
                 color="primary"
                 variant="contained"
                 fullWidth                
               >Send Transaction Bundle to Server!</Button>   
-          </Grid>
+            */}
+          </Grid> 
         </Grid>   
       </PageCanvas>
 
