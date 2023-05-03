@@ -949,12 +949,12 @@ export function CollectionManagement(props){
     allergyIntolerancesRow = <TableRow className='dataManagementRow' hover={true}>
       { renderIcon("AllergyIntolerance") }
       { renderImportCheckmark(methods.toggleAllergyIntolerances.bind(this), 'AllergyIntolerance') }
-      { renderImportButton('AllergyIntolerances')} 
       <TableCell className="collection">Allergy Intolerance</TableCell>
       { renderPreview('AllergyIntolerance')} 
       { renderClientCount('AllergyIntolerance')} 
       { renderLocalClientCount('AllergyIntolerance')} 
       { renderPubSub('AllergyIntolerance')} 
+      { renderImportButton('AllergyIntolerances')} 
       { renderDropButton('AllergyIntolerance')} 
       { renderExportButton('AllergyIntolerances')} 
       { renderExportCheckmark(exportMethods.toggleAllergyIntolerancesExport.bind(this), 'AllergyIntolerance') }
@@ -967,12 +967,12 @@ export function CollectionManagement(props){
     appointmentsRow = <TableRow className='dataManagementRow' hover={true}>
       { renderIcon("Appointment") }
       { renderImportCheckmark(methods.toggleAppointments.bind(this), 'Appointment') }
-      { renderImportButton('Appointments')} 
       <TableCell className="collection">Appointments</TableCell>
       { renderPreview('Appointment')} 
       { renderClientCount('Appointment')} 
       { renderLocalClientCount('Appointment')} 
       { renderPubSub('Appointment')} 
+      { renderImportButton('Appointments')} 
       { renderDropButton('Appointment')} 
       { renderExportButton('Appointments')} 
       { renderExportCheckmark(exportMethods.toggleAppointmentsExport.bind(this), 'Appointment') }
@@ -985,12 +985,12 @@ export function CollectionManagement(props){
     bundlesRow = <TableRow className='dataManagementRow' hover={true}>
       { renderIcon("Bundle") }
       { renderImportCheckmark(methods.toggleBundles.bind(this), 'Bundle') }
-      { renderImportButton('Bundles')} 
       <TableCell className="collection">Bundles</TableCell>
       { renderPreview('Bundle')} 
       { renderClientCount('Bundle')} 
       { renderLocalClientCount('Bundle')} 
       { renderPubSub('Bundle')} 
+      { renderImportButton('Bundles')} 
       { renderDropButton('Bundle')} 
       { renderExportButton('Bundles')} 
       { renderExportCheckmark(exportMethods.toggleBundlesExport.bind(this), 'Bundle') }
@@ -1003,12 +1003,12 @@ export function CollectionManagement(props){
     carePlansRow = <TableRow className='dataManagementRow' hover={true}>
       { renderIcon("CarePlan") }
       { renderImportCheckmark(methods.toggleCarePlans.bind(this), 'CarePlan') }
-      { renderImportButton('CarePlans')} 
       <TableCell className="collection">Care Plans</TableCell>
       { renderPreview('CarePlan')} 
       { renderClientCount('CarePlan')} 
       { renderLocalClientCount('CarePlan')} 
       { renderPubSub('CarePlan')}       
+      { renderImportButton('CarePlans')} 
       { renderDropButton('CarePlan')} 
       { renderExportButton('CarePlans')} 
       { renderExportCheckmark(exportMethods.toggleCarePlansExport.bind(this), 'CarePlan') }
@@ -1021,12 +1021,12 @@ export function CollectionManagement(props){
     careTeamsRow = <TableRow className='dataManagementRow' hover={true}>
       { renderIcon("CareTeam") }
       { renderImportCheckmark(methods.toggleCareTeams.bind(this), 'CareTeam') }
-      { renderImportButton('CareTeams')} 
       <TableCell className="collection">Care Teams</TableCell>
       { renderPreview('CareTeam')} 
       { renderClientCount('CareTeam')} 
       { renderLocalClientCount('CareTeam')} 
       { renderPubSub('CareTeam')}       
+      { renderImportButton('CareTeams')} 
       { renderDropButton('CareTeam')} 
       { renderExportButton('CareTeams')} 
       { renderExportCheckmark(exportMethods.toggleCareTeamsExport.bind(this), 'CareTeam') }
@@ -1039,12 +1039,12 @@ export function CollectionManagement(props){
       claimsRow = <TableRow className='dataManagementRow' hover={true}>
       { renderIcon("Claim") }
       { renderImportCheckmark(methods.toggleClaims.bind(this), 'Claim') }
-      { renderImportButton('Claims')} 
       <TableCell className="collection">Claims</TableCell>
       { renderPreview('Claim')} 
       { renderClientCount('Claim')} 
       { renderLocalClientCount('Claim')} 
       { renderPubSub('Claim')}       
+      { renderImportButton('Claims')} 
       { renderDropButton('Claim')} 
       { renderExportButton('Claims')} 
       { renderExportCheckmark(exportMethods.toggleClaimsExport.bind(this), 'Claim') }
@@ -1057,12 +1057,12 @@ export function CollectionManagement(props){
     clinicalDocumentsRow = <TableRow className='dataManagementRow' hover={true}>
       { renderIcon("ClinicalDocument") }
       { renderImportCheckmark(methods.toggleClinicalDocuments.bind(this), 'ClinicalDocument') }
-      { renderImportButton('ClinicalDocuments')} 
       <TableCell className="collection">Clinical Documents</TableCell>
       { renderPreview('ClinicalDocument')} 
       { renderClientCount('ClinicalDocument')} 
       { renderLocalClientCount('ClinicalDocument')} 
       { renderPubSub('ClinicalDocument')} 
+      { renderImportButton('ClinicalDocuments')} 
       { renderDropButton('ClinicalDocument')} 
       { renderExportButton('ClinicalDocuments')} 
       { renderExportCheckmark(exportMethods.toggleClinicalDocumentsExport.bind(this), 'ClinicalDocument') }
@@ -1075,12 +1075,12 @@ export function CollectionManagement(props){
     clinicalImpressionsRow = <TableRow className='dataManagementRow' hover={true}>
       { renderIcon("ClinicalImpression") }
       { renderImportCheckmark(methods.toggleClinicalImpressions.bind(this), 'ClinicalImpression') }
-      { renderImportButton('ClinicalImpressions')} 
       <TableCell className="collection">Clinical Impressions</TableCell>
       { renderPreview('ClinicalImpression')} 
       { renderClientCount('ClinicalImpression')} 
       { renderLocalClientCount('ClinicalImpression')} 
       { renderPubSub('ClinicalImpression')} 
+      { renderImportButton('ClinicalImpressions')} 
       { renderDropButton('ClinicalImpression')} 
       { renderExportButton('ClinicalImpressions')} 
       { renderExportCheckmark(exportMethods.toggleClinicalImpressionsExport.bind(this), 'ClinicalImpression') }
@@ -1093,12 +1093,12 @@ export function CollectionManagement(props){
     codeSystemsRow = <TableRow className='dataManagementRow' hover={true}>
       { renderIcon("CodeSystem") }
       { renderImportCheckmark(methods.toggleCodeSystems.bind(this), 'CodeSystem') }
-      { renderImportButton('CodeSystems')} 
       <TableCell className="collection">CodeSystems</TableCell>
       { renderPreview('CodeSystem')} 
       { renderClientCount('CodeSystem')} 
       { renderLocalClientCount('CodeSystem')} 
       { renderPubSub('CodeSystem')} 
+      { renderImportButton('CodeSystems')} 
       { renderDropButton('CodeSystem')} 
       { renderExportButton('CodeSystems')} 
       { renderExportCheckmark(exportMethods.toggleCodeSystemsExport.bind(this), 'CodeSystem') }
@@ -1111,12 +1111,12 @@ export function CollectionManagement(props){
     conditionsRow = <TableRow className='dataManagementRow' hover={true}>
       { renderIcon("Condition") }
       { renderImportCheckmark(methods.toggleConditions.bind(this), 'Condition') }
-      { renderImportButton('Conditions')} 
       <TableCell className="collection">Conditions</TableCell>
       { renderPreview('Condition')} 
       { renderClientCount('Condition')} 
       { renderLocalClientCount('Condition')} 
       { renderPubSub('Condition')} 
+      { renderImportButton('Conditions')} 
       { renderDropButton('Condition')} 
       { renderExportButton('Conditions')} 
       { renderExportCheckmark(exportMethods.toggleConditionsExport.bind(this), 'Condition') }
@@ -1129,12 +1129,12 @@ export function CollectionManagement(props){
     consentsRow = <TableRow className='dataManagementRow' hover={true}>
       { renderIcon("Consent") }
       { renderImportCheckmark(methods.toggleConsents.bind(this), 'Consent') }
-      { renderImportButton('Consents')} 
       <TableCell className="collection">Consents</TableCell>
       { renderPreview('Consent')} 
       { renderClientCount('Consent')} 
       { renderLocalClientCount('Consent')} 
       { renderPubSub('Consent')} 
+      { renderImportButton('Consents')} 
       { renderDropButton('Consent')} 
       { renderExportButton('Consents')} 
       { renderExportCheckmark(exportMethods.toggleConsentsExport.bind(this), 'Consent') }
@@ -1147,12 +1147,12 @@ export function CollectionManagement(props){
     contractsRow = <TableRow className='dataManagementRow' hover={true}>
       { renderIcon("Contract") }
       { renderImportCheckmark(methods.toggleContracts.bind(this), 'Contract') }
-      { renderImportButton('Contracts')} 
       <TableCell className="collection">Contracts</TableCell>
       { renderPreview('Contract')} 
       { renderClientCount('Contract')} 
       { renderLocalClientCount('Contract')} 
       { renderPubSub('Contract')}       
+      { renderImportButton('Contracts')} 
       { renderDropButton('Contract')} 
       { renderExportButton('Contracts')} 
       { renderExportCheckmark(exportMethods.toggleContractsExport.bind(this), 'Contract') }
@@ -1165,48 +1165,48 @@ export function CollectionManagement(props){
     communicationsRow = <TableRow className='dataManagementRow' hover={true}>
       { renderIcon("Communication") }
       { renderImportCheckmark(methods.toggleCommunications.bind(this), 'Communication') }
-      { renderImportButton('Communications')} 
       <TableCell className="collection">Communications</TableCell>
       { renderPreview('Communication')} 
       { renderClientCount('Communication')} 
       { renderLocalClientCount('Communication')} 
       { renderPubSub('Communication')} 
+      { renderImportButton('Communications')} 
       { renderDropButton('Communication')} 
       { renderExportButton('Communications')} 
       { renderExportCheckmark(exportMethods.toggleCommunicationsExport.bind(this), 'Communication') }
     </TableRow>
   }
 
-  let communicationResponsesRow;
-  if(determineRowVisible("CommunicationResponse")){
-    shouldDisplayNoDataRow = false;
-    communicationResponsesRow = <TableRow className='dataManagementRow' hover={true}>
-      { renderIcon("CommunicationResponse") }
-      { renderImportCheckmark(methods.toggleCommunications.bind(this), 'CommunicationResponse') }
-      { renderImportButton('CommunicationResponses')} 
-      <TableCell className="collection">Communication Responses</TableCell>
-      { renderPreview('CommunicationResponse')} 
-      { renderClientCount('CommunicationResponse')} 
-      { renderLocalClientCount('CommunicationResponse')} 
-      { renderPubSub('CommunicationResponse')} 
-      { renderDropButton('CommunicationResponse')} 
-      { renderExportButton('CommunicationResponses')} 
-      { renderExportCheckmark(exportMethods.toggleCommunicationResponsesExport.bind(this), 'CommunicationResponse') }
-    </TableRow>
-  }
+  // let communicationResponsesRow;
+  // if(determineRowVisible("CommunicationResponse")){
+  //   shouldDisplayNoDataRow = false;
+  //   communicationResponsesRow = <TableRow className='dataManagementRow' hover={true}>
+  //     { renderIcon("CommunicationResponse") }
+  //     { renderImportCheckmark(methods.toggleCommunications.bind(this), 'CommunicationResponse') }
+  //     <TableCell className="collection">Communication Responses</TableCell>
+  //     { renderPreview('CommunicationResponse')} 
+  //     { renderClientCount('CommunicationResponse')} 
+  //     { renderLocalClientCount('CommunicationResponse')} 
+  //     { renderPubSub('CommunicationResponse')} 
+  //     { renderImportButton('CommunicationResponses')} 
+  //     { renderDropButton('CommunicationResponse')} 
+  //     { renderExportButton('CommunicationResponses')} 
+  //     { renderExportCheckmark(exportMethods.toggleCommunicationResponsesExport.bind(this), 'CommunicationResponse') }
+  //   </TableRow>
+  // }
 
   let communicationRequestsRow;
   if(determineRowVisible("CommunicationRequest")){
     shouldDisplayNoDataRow = false;
     communicationRequestsRow = <TableRow className='dataManagementRow' hover={true}>
       { renderIcon("CommunicationRequest") }
-      { renderImportCheckmark(methods.toggleCommunications.bind(this), 'CommunicationRequest') }
-      { renderImportButton('CommunicationRequests')} 
+      { renderImportCheckmark(methods.toggleCommunicationRequests.bind(this), 'CommunicationRequest') }
       <TableCell className="collection">Communication Requests</TableCell>
       { renderPreview('CommunicationRequest')} 
       { renderClientCount('CommunicationRequest')} 
       { renderLocalClientCount('CommunicationRequest')} 
       { renderPubSub('CommunicationRequest')} 
+      { renderImportButton('CommunicationRequests')} 
       { renderDropButton('CommunicationRequest')} 
       { renderExportButton('CommunicationRequests')} 
       { renderExportCheckmark(exportMethods.toggleCommunicationRequestsExport.bind(this), 'CommunicationRequest') }
@@ -1219,12 +1219,12 @@ export function CollectionManagement(props){
     devicesRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("Device") }
       { renderImportCheckmark(methods.toggleDevices.bind(this), 'Device') }
-      { renderImportButton('Devices')} 
       <TableCell className="collection">Devices</TableCell>
       { renderPreview('Device')} 
       { renderClientCount('Device')} 
       { renderLocalClientCount('Device')} 
       { renderPubSub('Device')} 
+      { renderImportButton('Devices')} 
       { renderDropButton('Device')} 
       { renderExportButton('Devices')} 
       { renderExportCheckmark(exportMethods.toggleDevicesExport.bind(this), 'Device') }
@@ -1237,12 +1237,12 @@ export function CollectionManagement(props){
     diagnosticReportsRow = <TableRow className='dataManagementRow' hover={true}>
       { renderIcon("DiagnosticReport") }
       { renderImportCheckmark(methods.toggleDiagnosticReports.bind(this), 'DiagnosticReport') }
-      { renderImportButton('DiagnosticReports')} 
       <TableCell className="collection">Diagnostic Reports</TableCell>
       { renderPreview('DiagnosticReport')} 
       { renderClientCount('DiagnosticReport')} 
       { renderLocalClientCount('DiagnosticReport')} 
       { renderPubSub('DiagnosticReport')} 
+      { renderImportButton('DiagnosticReports')} 
       { renderDropButton('DiagnosticReport')} 
       { renderExportButton('DiagnosticReports')} 
       { renderExportCheckmark(exportMethods.toggleDiagnosticReportsExport.bind(this), 'DiagnosticReport') }
@@ -1254,12 +1254,12 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     documentReferencesRow = <TableRow className='dataManagementRow' hover={true}>
       { renderImportCheckmark(methods.toggleDocumentReferences.bind(this), 'DocumentReference') }
-      { renderImportButton('DocumentReferences')} 
       <TableCell className="collection">Document Reference</TableCell>
       { renderPreview('DocumentReference')} 
       { renderClientCount('DocumentReference')} 
       { renderLocalClientCount('DocumentReference')} 
       { renderPubSub('DocumentReference')} 
+      { renderImportButton('DocumentReferences')} 
       { renderDropButton('DocumentReference')} 
       { renderExportButton('DocumentReferences')} 
       { renderExportCheckmark(exportMethods.toggleDocumentReferencesExport.bind(this), 'DocumentReference') }
@@ -1272,12 +1272,12 @@ export function CollectionManagement(props){
     encountersRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("Encounter") }
       { renderImportCheckmark(methods.toggleEncounters.bind(this), 'Encounter') }
-      { renderImportButton('Encounters')} 
       <TableCell className="collection">Encounters</TableCell>
       { renderPreview('Encounter')} 
       { renderClientCount('Encounter')} 
       { renderLocalClientCount('Encounter')} 
       { renderPubSub('Encounter')} 
+      { renderImportButton('Encounters')} 
       { renderDropButton('Encounter')} 
       { renderExportButton('Encounters')} 
       { renderExportCheckmark(exportMethods.toggleEncountersExport.bind(this), 'Encounter') }
@@ -1289,13 +1289,13 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     endpointsRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("Endpoint") }
-      { renderImportCheckmark(methods.toggleDevices.bind(this), 'Endpoint') }
-      { renderImportButton('Endpoints')}       
+      { renderImportCheckmark(methods.toggleEndpoints.bind(this), 'Endpoint') }
       <TableCell className="collection">Endpoint</TableCell>
       { renderPreview('Endpoint')} 
       { renderClientCount('Endpoint')} 
       { renderLocalClientCount('Endpoint')} 
       { renderPubSub('Endpoint')} 
+      { renderImportButton('Endpoints')}       
       { renderDropButton('Endpoint')} 
       { renderExportButton('Endpoints')} 
       { renderExportCheckmark(exportMethods.toggleEndpointsExport.bind(this), 'Endpoint') }
@@ -1307,13 +1307,13 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     explanationOfBenefitsRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("ExplanationOfBenefit") }
-      { renderImportCheckmark(methods.toggleDevices.bind(this), 'ExplanationOfBenefit') }
-      { renderImportButton('ExplanationOfBenefits')} 
+      { renderImportCheckmark(methods.toggleExplanationOfBenefits.bind(this), 'ExplanationOfBenefit') }
       <TableCell className="collection">Explanation Of Benefit</TableCell>
       { renderPreview('ExplanationOfBenefit')} 
       { renderClientCount('ExplanationOfBenefit')} 
       { renderLocalClientCount('ExplanationOfBenefit')} 
       { renderPubSub('ExplanationOfBenefit')} 
+      { renderImportButton('ExplanationOfBenefits')} 
       { renderDropButton('ExplanationOfBenefit')} 
       { renderExportButton('ExplanationOfBenefits')} 
       { renderExportCheckmark(exportMethods.toggleExplanationOfBenefitsExport.bind(this), 'ExplanationOfBenefit') }
@@ -1326,12 +1326,12 @@ export function CollectionManagement(props){
     familyMemberHistoriesRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("FamilyMemberHistory") }
       { renderImportCheckmark(methods.toggleFamilyMemberHistories.bind(this), 'FamilyMemberHistory') }
-      { renderImportButton('FamlyMemberHistories')} 
       <TableCell className="collection">Famly Member Histories</TableCell>
       { renderPreview('FamilyMemberHistory')} 
       { renderClientCount('FamilyMemberHistory')} 
       { renderLocalClientCount('FamilyMemberHistory')} 
       { renderPubSub('FamilyMemberHistory')} 
+      { renderImportButton('FamlyMemberHistories')} 
       { renderDropButton('FamilyMemberHistory')} 
       { renderExportButton('FamilyMemberHistories')} 
       { renderExportCheckmark(exportMethods.toggleFamilyMemberHistoriesExport.bind(this), 'FamilyMemberHistory') }
@@ -1344,12 +1344,12 @@ export function CollectionManagement(props){
     goalsRow = <TableRow className='dataManagementRow' hover={true}>
       { renderIcon("Goal") }
       { renderImportCheckmark(methods.toggleGoals.bind(this), 'Goal') }
-      { renderImportButton('Goals')} 
       <TableCell className="collection">Goals</TableCell>
       { renderPreview('Goal')} 
       { renderClientCount('Goal')} 
       { renderLocalClientCount('Goal')} 
       { renderPubSub('Goal')} 
+      { renderImportButton('Goals')} 
       { renderDropButton('Goal')} 
       { renderExportButton('Goals')} 
       { renderExportCheckmark(exportMethods.toggleGoalsExport.bind(this), 'Goal') }
@@ -1362,12 +1362,12 @@ export function CollectionManagement(props){
     healthcareServicesRow = <TableRow className='dataManagementRow' hover={true}>
       { renderIcon("HealthcareService") }
       { renderImportCheckmark(methods.toggleHealthcareServices.bind(this), 'HealthcareService') }
-      { renderImportButton('HealthcareServices')} 
       <TableCell className="collection">HealthcareServices</TableCell>
       { renderPreview('HealthcareService')} 
       { renderClientCount('HealthcareService')} 
       { renderLocalClientCount('HealthcareService')} 
       { renderPubSub('HealthcareService')} 
+      { renderImportButton('HealthcareServices')} 
       { renderDropButton('HealthcareService')} 
       { renderExportButton('HealthcareServices')} 
       { renderExportCheckmark(exportMethods.toggleHealthcareServicesExport.bind(this), 'HealthcareService') }
@@ -1380,12 +1380,12 @@ export function CollectionManagement(props){
     immunizationsRow = <TableRow className='dataManagementRow' hover={true}>
       { renderIcon("Immunization") }
       { renderImportCheckmark(methods.toggleImmunizations.bind(this), 'Immunization') }
-      { renderImportButton('Immunizations')} 
       <TableCell className="collection">Immunizations</TableCell>
       { renderPreview('Immunization')} 
       { renderClientCount('Immunization')} 
       { renderLocalClientCount('Immunization')} 
       { renderPubSub('Immunization')} 
+      { renderImportButton('Immunizations')} 
       { renderDropButton('Immunization')} 
       { renderExportButton('Immunizations')} 
       { renderExportCheckmark(exportMethods.toggleImmunizationsExport.bind(this), 'Immunization') }
@@ -1399,12 +1399,12 @@ export function CollectionManagement(props){
     insurancePlansRow = <TableRow className='dataManagementRow' hover={true}>
       { renderIcon("InsurancePlan") }
       { renderImportCheckmark(methods.toggleInsurancePlans.bind(this), 'InsurancePlan') }
-      { renderImportButton('InsurancePlans')} 
       <TableCell className="collection">InsurancePlans</TableCell>
       { renderPreview('InsurancePlan')} 
       { renderClientCount('InsurancePlan')} 
       { renderLocalClientCount('InsurancePlan')} 
       { renderPubSub('InsurancePlan')} 
+      { renderImportButton('InsurancePlans')} 
       { renderDropButton('InsurancePlan')} 
       { renderExportButton('InsurancePlans')} 
       { renderExportCheckmark(exportMethods.toggleInsurancePlansExport.bind(this), 'InsurancePlan') }
@@ -1417,12 +1417,12 @@ export function CollectionManagement(props){
     imagingStudiesRow = <TableRow className='dataManagementRow' hover={true}>
       { renderIcon("ImagingStudy") }
       { renderImportCheckmark(methods.toggleImagingStudies.bind(this), 'ImagingStudy') }
-      { renderImportButton('ImagingStudies')} 
       <TableCell className="collection">ImagingStudies</TableCell>
       { renderPreview('ImagingStudy')} 
       { renderClientCount('ImagingStudy')} 
       { renderLocalClientCount('ImagingStudy')} 
       { renderPubSub('ImagingStudy')} 
+      { renderImportButton('ImagingStudies')} 
       { renderDropButton('ImagingStudy')} 
       { renderExportButton('ImagingStudies')} 
       { renderExportCheckmark(exportMethods.toggleImagingStudiesExport.bind(this), 'ImagingStudy') }
@@ -1435,12 +1435,12 @@ export function CollectionManagement(props){
     listsRow = <TableRow className='dataManagementRow' hover={true}>
       { renderIcon("List") }
       { renderImportCheckmark(methods.toggleLists.bind(this), 'List') }
-      { renderImportButton('Lists')} 
       <TableCell className="collection">Lists</TableCell>
       { renderPreview('List')} 
       { renderClientCount('List')} 
       { renderLocalClientCount('List')} 
       { renderPubSub('List')} 
+      { renderImportButton('Lists')} 
       { renderDropButton('List')} 
       { renderExportButton('Lists')} 
       { renderExportCheckmark(exportMethods.toggleListsExport.bind(this), 'List') }
@@ -1453,12 +1453,12 @@ export function CollectionManagement(props){
     locationsRow = <TableRow className='dataManagementRow' hover={true}>
       { renderIcon("Location") }
       { renderImportCheckmark(methods.toggleLocations.bind(this), 'Location') }
-      { renderImportButton('Locations')} 
       <TableCell className="collection">Locations</TableCell>
       { renderPreview('Location')} 
       { renderClientCount('Location')} 
       { renderLocalClientCount('Location')} 
       { renderPubSub('Location')} 
+      { renderImportButton('Locations')} 
       { renderDropButton('Location')} 
       { renderExportButton('Locations')} 
       { renderExportCheckmark(exportMethods.toggleLocationsExport.bind(this), 'Location') }
@@ -1471,12 +1471,12 @@ export function CollectionManagement(props){
     measuresRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("Measure") }
       { renderImportCheckmark(methods.toggleMeasures.bind(this), 'Measure') }
-      { renderImportButton('Measures')} 
       <TableCell className="collection">Measures</TableCell>
       { renderPreview('Measure')} 
       { renderClientCount('Measure')} 
       { renderLocalClientCount('Measure')} 
       { renderPubSub('Measure')} 
+      { renderImportButton('Measures')} 
       { renderDropButton('Measure')} 
       { renderExportButton('Measures')} 
       { renderExportCheckmark(exportMethods.toggleMeasuresExport.bind(this), 'Measure') }
@@ -1489,12 +1489,12 @@ export function CollectionManagement(props){
     measureReportsRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("MeasureReport") }
       { renderImportCheckmark(methods.toggleMeasureReports.bind(this), 'MeasureReport') }
-      { renderImportButton('MeasureReports')} 
       <TableCell className="collection">MeasureReports</TableCell>
       { renderPreview('MeasureReport')} 
       { renderClientCount('MeasureReport')} 
       { renderLocalClientCount('MeasureReport')} 
       { renderPubSub('MeasureReport')} 
+      { renderImportButton('MeasureReports')} 
       { renderDropButton('MeasureReport')} 
       { renderExportButton('MeasureReports')} 
       { renderExportCheckmark(exportMethods.toggleMeasureReportsExport.bind(this), 'MeasureReport') }
@@ -1507,12 +1507,12 @@ export function CollectionManagement(props){
     medicationsRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("Medication") }
       { renderImportCheckmark(methods.toggleMedications.bind(this), 'Medication') }
-      { renderImportButton('Medications')} 
       <TableCell className="collection">Medications</TableCell>
       { renderPreview('Medication')} 
       { renderClientCount('Medication')} 
       { renderLocalClientCount('Medication')} 
       { renderPubSub('Medication')} 
+      { renderImportButton('Medications')} 
       { renderDropButton('Medication')} 
       { renderExportButton('Medications')} 
       { renderExportCheckmark(exportMethods.toggleMedicationsExport.bind(this), 'Medication') }
@@ -1525,12 +1525,12 @@ export function CollectionManagement(props){
     medicationOrdersRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("MedicationOrder") }
       { renderImportCheckmark(methods.toggleMedicationOrders.bind(this), 'MedicationOrder') }
-      { renderImportButton('MedicationOrders')} 
       <TableCell className="collection">MedicationOrders</TableCell>
       { renderPreview('MedicationOrder')} 
       { renderClientCount('MedicationOrder')} 
       { renderLocalClientCount('MedicationOrder')} 
       { renderPubSub('MedicationOrder')}       
+      { renderImportButton('MedicationOrders')} 
       { renderDropButton('MedicationOrder')} 
       { renderExportButton('MedicationOrders')} 
       { renderExportCheckmark(exportMethods.toggleMedicationOrdersExport.bind(this), 'MedicationOrder') }
@@ -1542,14 +1542,13 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     medicationStatementsRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("MedicationStatement") }
-      { renderImportCheckmark(methods.toggleMedicationStatements.bind(this), 'MedicationStatement') }
-      { renderImportButton('MedicationStatements')} 
-      <TableCell className="collection">MedicationStatements</TableCell>
+      { renderImportCheckmark(methods.toggleMedicationStatements.bind(this), 'MedicationStatement') }      <TableCell className="collection">MedicationStatements</TableCell>
       { renderPreview('MedicationStatement')} 
       { renderClientCount('MedicationStatement')} 
       { renderLocalClientCount('MedicationStatement')} 
       { renderPubSub('MedicationStatement')} 
-      { renderDropButton('MedicationStatement')} 
+            { renderImportButton('MedicationStatements')} 
+            { renderDropButton('MedicationStatement')} 
       { renderExportButton('MedicationStatements')} 
       { renderExportCheckmark(exportMethods.toggleMedicationStatementsExport.bind(this), 'MedicationStatement') }
     </TableRow>
@@ -1561,12 +1560,12 @@ export function CollectionManagement(props){
     messageHeadersRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("MessageHeader") }
       { renderImportCheckmark(methods.toggleMessageHeaders.bind(this), 'MessageHeader') }
-      { renderImportButton('MessageHeaders')} 
       <TableCell className="collection">Message Headers</TableCell>
       { renderPreview('MessageHeader')} 
       { renderClientCount('MessageHeader')} 
       { renderLocalClientCount('MessageHeader')} 
       { renderPubSub('MessageHeader')} 
+      { renderImportButton('MessageHeaders')} 
       { renderDropButton('MessageHeader')} 
       { renderExportButton('MessageHeaders')} 
       { renderExportCheckmark(exportMethods.toggleMessageHeadersExport.bind(this), 'MessageHeader') }
@@ -1579,12 +1578,12 @@ export function CollectionManagement(props){
     networksRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("Network") }
       { renderImportCheckmark(methods.toggleNetworks.bind(this), 'Network') }
-      { renderImportButton('Networks')} 
       <TableCell className="collection">Networks</TableCell>
       { renderPreview('Network')} 
       { renderClientCount('Network')} 
       { renderLocalClientCount('Network')} 
       { renderPubSub('Network')} 
+      { renderImportButton('Networks')} 
       { renderDropButton('Network')} 
       { renderExportButton('Networks')} 
       { renderExportCheckmark(exportMethods.toggleNetworksExport.bind(this), 'Network') }
@@ -1597,12 +1596,12 @@ export function CollectionManagement(props){
     observationsRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("Observation") }
       { renderImportCheckmark(methods.toggleObservations.bind(this), 'Observation') }
-      { renderImportButton('Observations')} 
       <TableCell className="collection">Observations</TableCell>
       { renderPreview('Observation')} 
       { renderClientCount('Observation')} 
       { renderLocalClientCount('Observation')} 
       { renderPubSub('Observation')} 
+      { renderImportButton('Observations')} 
       { renderDropButton('Observation')} 
       { renderExportButton('Observations')} 
       { renderExportCheckmark(exportMethods.toggleObservationsExport.bind(this), 'Observation') }
@@ -1615,12 +1614,12 @@ export function CollectionManagement(props){
     organizationsRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("Organization") }
       { renderImportCheckmark(methods.toggleOrganizations.bind(this), 'Organization') }
-      { renderImportButton('Organizations')} 
       <TableCell className="collection">Organizations</TableCell>
       { renderPreview('Organization')} 
       { renderClientCount('Organization')} 
       { renderLocalClientCount('Organization')} 
       { renderPubSub('Organization')} 
+      { renderImportButton('Organizations')} 
       { renderDropButton('Organization')} 
       { renderExportButton('Organizations')} 
       { renderExportCheckmark(exportMethods.toggleOrganizationsExport.bind(this), 'Organization') }
@@ -1633,12 +1632,12 @@ export function CollectionManagement(props){
     organizationAffiliationsRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("OrganizationAffiliation") }
       { renderImportCheckmark(methods.toggleOrganizationAffiliations.bind(this), 'OrganizationAffiliation') }
-      { renderImportButton('OrganizationAffiliations')} 
       <TableCell className="collection">OrganizationAffiliations</TableCell>
       { renderPreview('OrganizationAffiliation')} 
       { renderClientCount('OrganizationAffiliation')} 
       { renderLocalClientCount('OrganizationAffiliation')} 
       { renderPubSub('OrganizationAffiliation')} 
+      { renderImportButton('OrganizationAffiliations')} 
       { renderDropButton('OrganizationAffiliation')} 
       { renderExportButton('OrganizationAffiliations')} 
       { renderExportCheckmark(exportMethods.toggleOrganizationAffiliationsExport.bind(this), 'OrganizationAffiliation') }
@@ -1651,12 +1650,12 @@ export function CollectionManagement(props){
     patientsRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("Patient") }
       { renderImportCheckmark(methods.togglePatients.bind(this), 'Patient') }
-      { renderImportButton('Patients')} 
       <TableCell className="collection">Patients</TableCell>
       { renderPreview('Patient')} 
       { renderClientCount('Patient')} 
       { renderLocalClientCount('Patient')} 
       { renderPubSub('Patient')} 
+      { renderImportButton('Patients')} 
       { renderDropButton('Patient')} 
       { renderExportButton('Patients')} 
       { renderExportCheckmark(exportMethods.togglePatientsExport.bind(this), 'Patient') }
@@ -1669,12 +1668,12 @@ export function CollectionManagement(props){
     personsRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("Person") }
       { renderImportCheckmark(methods.togglePersons.bind(this), 'Person') }
-      { renderImportButton('Persons')} 
       <TableCell className="collection">Persons</TableCell>
       { renderPreview('Person')} 
       { renderClientCount('Person')} 
       { renderLocalClientCount('Person')} 
       { renderPubSub('Person')} 
+      { renderImportButton('Persons')} 
       { renderDropButton('Person')} 
       { renderExportButton('Persons')} 
       { renderExportCheckmark(exportMethods.togglePersonsExport.bind(this), 'Person') }
@@ -1687,12 +1686,12 @@ export function CollectionManagement(props){
     practitionersRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("Practitioner") }
       { renderImportCheckmark(methods.togglePractitioners.bind(this), 'Practitioner') }
-      { renderImportButton('Practitioners')} 
       <TableCell className="collection">Practitioners</TableCell>
       { renderPreview('Practitioner')} 
       { renderClientCount('Practitioner')} 
       { renderLocalClientCount('Practitioner')} 
       { renderPubSub('Practitioner')} 
+      { renderImportButton('Practitioners')} 
       { renderDropButton('Practitioner')} 
       { renderExportButton('Practitioners')} 
       { renderExportCheckmark(exportMethods.togglePractitionersExport.bind(this), 'Practitioner') }
@@ -1705,12 +1704,12 @@ export function CollectionManagement(props){
     practitionerRolesRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("PractitionerRole") }
       { renderImportCheckmark(methods.togglePractitionerRoles.bind(this), 'PractitionerRole') }
-      { renderImportButton('PractitionerRoles')} 
       <TableCell className="collection">PractitionerRoles</TableCell>
       { renderPreview('PractitionerRole')} 
       { renderClientCount('PractitionerRole')} 
       { renderLocalClientCount('PractitionerRole')} 
       { renderPubSub('PractitionerRole')} 
+      { renderImportButton('PractitionerRoles')} 
       { renderDropButton('PractitionerRole')} 
       { renderExportButton('PractitionerRoles')} 
       { renderExportCheckmark(exportMethods.togglePractitionerRolesExport.bind(this), 'PractitionerRole') }
@@ -1723,12 +1722,12 @@ export function CollectionManagement(props){
     proceduresRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("Procedure") }
       { renderImportCheckmark(methods.toggleProcedures.bind(this), 'Procedure') }
-      { renderImportButton('Procedures')} 
       <TableCell className="collection">Procedures</TableCell>
       { renderPreview('Procedure')} 
       { renderClientCount('Procedure')} 
       { renderLocalClientCount('Procedure')} 
       { renderPubSub('Procedure')} 
+      { renderImportButton('Procedures')} 
       { renderDropButton('Procedure')} 
       { renderExportButton('Procedures')} 
       { renderExportCheckmark(exportMethods.toggleProceduresExport.bind(this), 'Procedure') }
@@ -1741,12 +1740,12 @@ export function CollectionManagement(props){
     procedureRequetsRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("ProcedureRequest") }
       { renderImportCheckmark(methods.toggleProcedureRequests.bind(this), 'ProcedureRequest') }
-      { renderImportButton('ProcedureRequests')} 
       <TableCell className="collection">ProcedureRequests</TableCell>
       { renderPreview('ProcedureRequest')} 
       { renderClientCount('ProcedureRequest')} 
       { renderLocalClientCount('ProcedureRequest')} 
       { renderPubSub('ProcedureRequest')} 
+      { renderImportButton('ProcedureRequests')} 
       { renderDropButton('ProcedureRequest')} 
       { renderExportButton('ProcedureRequests')} 
       { renderExportCheckmark(exportMethods.toggleProcedureRequestsExport.bind(this), 'ProcedureRequest') }
@@ -1758,12 +1757,12 @@ export function CollectionManagement(props){
     provenancesRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("Provenance") }
       { renderImportCheckmark(methods.toggleProvenances.bind(this), 'Provenance') }
-      { renderImportButton('Provenances')} 
       <TableCell className="collection">Provenances</TableCell>
       { renderPreview('Provenance')} 
       { renderClientCount('Provenance')} 
       { renderLocalClientCount('Provenance')} 
       { renderPubSub('Provenance')} 
+      { renderImportButton('Provenances')} 
       { renderDropButton('Provenance')} 
       { renderExportButton('Provenances')} 
       { renderExportCheckmark(exportMethods.toggleProvenancesExport.bind(this), 'Provenance') }
@@ -1775,12 +1774,12 @@ export function CollectionManagement(props){
     questionnairesRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("Questionnaire") }
       { renderImportCheckmark(methods.toggleQuestionnaires.bind(this), 'Questionnaire') }
-      { renderImportButton('Questionnaires')} 
       <TableCell className="collection">Questionnaires</TableCell>
       { renderPreview('Questionnaire')} 
       { renderClientCount('Questionnaire')} 
       { renderLocalClientCount('Questionnaire')} 
       { renderPubSub('Questionnaire')} 
+      { renderImportButton('Questionnaires')} 
       { renderDropButton('Questionnaire')} 
       { renderExportButton('Questionnaires')} 
       { renderExportCheckmark(exportMethods.toggleQuestionnairesExport.bind(this), 'Questionnaire') }
@@ -1792,13 +1791,13 @@ export function CollectionManagement(props){
     shouldDisplayNoDataRow = false;
     questionnaireResponsesRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("QuestionnaireResponse") }
-      { renderImportCheckmark(methods.toggleQuestionnaires.bind(this), 'QuestionnaireResponse') }
-      { renderImportButton('QuestionnaireResponses')} 
+      { renderImportCheckmark(methods.toggleQuestionnaireResponses.bind(this), 'QuestionnaireResponse') }
       <TableCell className="collection">Questionnaire Responses</TableCell>
       { renderPreview('QuestionnaireResponse')} 
       { renderClientCount('QuestionnaireResponse')} 
       { renderLocalClientCount('QuestionnaireResponse')} 
       { renderPubSub('QuestionnaireResponse')} 
+      { renderImportButton('QuestionnaireResponses')} 
       { renderDropButton('QuestionnaireResponse')} 
       { renderExportButton('QuestionnaireResponses')} 
       { renderExportCheckmark(exportMethods.toggleQuestionnaireResponsesExport.bind(this), 'QuestionnaireResponse') }
@@ -1811,12 +1810,12 @@ export function CollectionManagement(props){
     restrictionsRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("Restriction") }
       { renderImportCheckmark(methods.toggleRestrictions.bind(this), 'Restriction') }
-      { renderImportButton('Restrictions')} 
       <TableCell className="collection">Restrictions</TableCell>
       { renderPreview('Restriction')} 
       { renderClientCount('Restriction')} 
       { renderLocalClientCount('Restriction')} 
       { renderPubSub('Restriction')} 
+      { renderImportButton('Restrictions')} 
       { renderDropButton('Restriction')} 
       { renderExportButton('Restrictions')} 
       { renderExportCheckmark(exportMethods.toggleRestrictionsExport.bind(this), 'Restriction') }
@@ -1829,12 +1828,12 @@ export function CollectionManagement(props){
     relatedPersonsRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("RelatedPerson") }
       { renderImportCheckmark(methods.toggleRelatedPersons.bind(this), 'RelatedPerson') }
-      { renderImportButton('RelatedPersons')} 
       <TableCell className="collection">Related Persons</TableCell>
       { renderPreview('RelatedPerson')} 
       { renderClientCount('RelatedPerson')} 
       { renderLocalClientCount('RelatedPerson')} 
       { renderPubSub('RelatedPerson')} 
+      { renderImportButton('RelatedPersons')} 
       { renderDropButton('RelatedPerson')} 
       { renderExportButton('RelatedPersons')} 
       { renderExportCheckmark(exportMethods.toggleRelatedPersonsExport.bind(this), 'RelatedPerson') }
@@ -1847,12 +1846,12 @@ export function CollectionManagement(props){
     riskAssessmentsRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("RiskAssessment") }
       { renderImportCheckmark(methods.toggleRiskAssessments.bind(this), 'RiskAssessment') }
-      { renderImportButton('RiskAssessments')} 
       <TableCell className="collection">Risk Assessments</TableCell>
       { renderPreview('RiskAssessment')} 
       { renderClientCount('RiskAssessment')} 
       { renderLocalClientCount('RiskAssessment')} 
       { renderPubSub('RiskAssessment')} 
+      { renderImportButton('RiskAssessments')} 
       { renderDropButton('RiskAssessment')} 
       { renderExportButton('RiskAssessments')} 
       { renderExportCheckmark(exportMethods.toggleRiskAssessmentsExport.bind(this), 'RiskAssessment') }
@@ -1865,12 +1864,12 @@ export function CollectionManagement(props){
     searchParametersRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("SearchParameter") }
       { renderImportCheckmark(methods.toggleSearchParameters.bind(this), 'SearchParameter') }
-      { renderImportButton('SearchParameters')} 
       <TableCell className="collection">SearchParameters</TableCell>
       { renderPreview('SearchParameter')} 
       { renderClientCount('SearchParameter')} 
       { renderLocalClientCount('SearchParameter')} 
       { renderPubSub('SearchParameter')} 
+      { renderImportButton('SearchParameters')} 
       { renderDropButton('SearchParameter')} 
       { renderExportButton('SearchParameters')} 
       { renderExportCheckmark(exportMethods.toggleSearchParametersExport.bind(this), 'SearchParameter') }
@@ -1884,12 +1883,12 @@ export function CollectionManagement(props){
     schedulesRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("Schedule") }
       { renderImportCheckmark(methods.toggleSchedules.bind(this), 'Schedule') }
-      { renderImportButton('Schedules')} 
       <TableCell className="collection">Schedules</TableCell>
       { renderPreview('Schedule')} 
       { renderClientCount('Schedule')} 
       { renderLocalClientCount('Schedule')} 
       { renderPubSub('Schedule')} 
+      { renderImportButton('Schedules')} 
       { renderDropButton('Schedule')} 
       { renderExportButton('Schedules')} 
       { renderExportCheckmark(exportMethods.toggleSchedulesExport.bind(this), 'Schedule') }
@@ -1902,12 +1901,12 @@ export function CollectionManagement(props){
     serviceRequestsRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("ServiceRequest") }
       { renderImportCheckmark(methods.toggleServiceRequests.bind(this), 'ServiceRequest') }
-      { renderImportButton('ServiceRequests')} 
       <TableCell className="collection">Service Requests</TableCell>
       { renderPreview('ServiceRequest')} 
       { renderClientCount('ServiceRequest')} 
       { renderLocalClientCount('ServiceRequest')} 
       { renderPubSub('ServiceRequest')} 
+      { renderImportButton('ServiceRequests')} 
       { renderDropButton('ServiceRequest')} 
       { renderExportButton('ServiceRequests')} 
       { renderExportCheckmark(exportMethods.toggleServiceRequestsExport.bind(this), 'ServiceRequest') }
@@ -1920,12 +1919,12 @@ export function CollectionManagement(props){
     sequencesRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("Sequence") }
       { renderImportCheckmark(methods.toggleSequences.bind(this), 'Sequence') }
-      { renderImportButton('Sequences')} 
       <TableCell className="collection">Sequences</TableCell>
       { renderPreview('Sequence')} 
       { renderClientCount('Sequence')} 
       { renderLocalClientCount('Sequence')} 
       { renderPubSub('Sequence')} 
+      { renderImportButton('Sequences')} 
       { renderDropButton('Sequence')} 
       { renderExportButton('Sequences')} 
       { renderExportCheckmark(exportMethods.toggleSequencesExport.bind(this), 'Sequence') }
@@ -1938,12 +1937,12 @@ export function CollectionManagement(props){
     structureDefinitionsRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("StructureDefinition") }
       { renderImportCheckmark(methods.toggleStructureDefinitions.bind(this), 'StructureDefinition') }
-      { renderImportButton('StructureDefinitions')} 
       <TableCell className="collection">StructureDefinitions</TableCell>
       { renderPreview('StructureDefinition')} 
       { renderClientCount('StructureDefinition')} 
       { renderLocalClientCount('StructureDefinition')} 
       { renderPubSub('StructureDefinition')} 
+      { renderImportButton('StructureDefinitions')} 
       { renderDropButton('StructureDefinition')} 
       { renderExportButton('StructureDefinitions')} 
       { renderExportCheckmark(exportMethods.toggleStructureDefinitionsExport.bind(this), 'StructureDefinition') }
@@ -1956,12 +1955,12 @@ export function CollectionManagement(props){
     tasksRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("Task") }
       { renderImportCheckmark(methods.toggleTasks.bind(this), 'Task') }
-      { renderImportButton('Tasks')} 
       <TableCell className="collection">Tasks</TableCell>
       { renderPreview('Task')} 
       { renderClientCount('Task')} 
       { renderLocalClientCount('Task')} 
       { renderPubSub('Task')} 
+      { renderImportButton('Tasks')} 
       { renderDropButton('Task')} 
       { renderExportButton('Tasks')} 
       { renderExportCheckmark(exportMethods.toggleTasksExport.bind(this), 'Task') }
@@ -1974,12 +1973,12 @@ export function CollectionManagement(props){
     valueSetsRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("ValueSet") }
       { renderImportCheckmark(methods.toggleValueSets.bind(this), 'ValueSet') }
-      { renderImportButton('ValueSets')} 
       <TableCell className="collection">Value Sets</TableCell>
       { renderPreview('ValueSet')} 
       { renderClientCount('ValueSet')} 
       { renderLocalClientCount('ValueSet')} 
       { renderPubSub('ValueSet')} 
+      { renderImportButton('ValueSets')} 
       { renderDropButton('ValueSet')} 
       { renderExportButton('ValueSets')} 
       { renderExportCheckmark(exportMethods.toggleValueSetsExport.bind(this), 'ValueSet') }
@@ -1992,12 +1991,12 @@ export function CollectionManagement(props){
     verificationResultsRow = <TableRow className='dataManagementRow'  hover={true}>
       { renderIcon("VerificationResult") }
       { renderImportCheckmark(methods.toggleVerificationResults.bind(this), 'VerificationResult') }
-      { renderImportButton('VerificationResults')} 
       <TableCell className="collection">VerificationResults</TableCell>
       { renderPreview('VerificationResult')} 
       { renderClientCount('VerificationResult')} 
       { renderLocalClientCount('VerificationResult')} 
       { renderPubSub('VerificationResult')} 
+      { renderImportButton('VerificationResults')} 
       { renderDropButton('VerificationResult')} 
       { renderExportButton('VerificationResults')} 
       { renderExportCheckmark(exportMethods.toggleVerificationResultsExport.bind(this), 'VerificationResult') }
@@ -2042,7 +2041,7 @@ export function CollectionManagement(props){
         { consentsRow }
         { contractsRow }
         { communicationsRow } 
-        { communicationResponsesRow } 
+        {/* { communicationResponsesRow }  */}
         { communicationRequestsRow } 
         { devicesRow }
         { diagnosticReportsRow }

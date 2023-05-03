@@ -4,6 +4,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Promise from 'promise';
 
+import PropTypes from 'prop-types';
+
 import { 
   Button, 
   CardContent, 
@@ -18,8 +20,10 @@ import {
   TableHead,
   TableCell,
   TablePagination,
+  Select,
+  MenuItem,
+  InputLabel
 } from '@material-ui/core';
-import PropTypes from 'prop-types';
 
 // import DropzoneComponent from 'react-dropzone-component';
 
@@ -594,6 +598,7 @@ export function ImportEditorBindings(props){
   let [progressMax, setProgressMax] = useState(0); 
   let [importBuffer, setImportBuffer] = useState(""); 
   let [previewBuffer, setPreviewBuffer] = useState(""); 
+  let [importAlgorithm, setImportAlgorithm] = useState("all"); 
 
   let [autoSelectFirstPatient, setAutoSelectFirstPatient] = useState(false);
 
@@ -656,12 +661,18 @@ export function ImportEditorBindings(props){
     console.debug('PreviewDataCard.useEffect()')
 
     const queueMonitor = Meteor.setInterval(function(){
+<<<<<<< HEAD
       process.env.TRACE && console.trace('Queue Monitor:: ' + new Date() + " - Ready to Import: " + readyToImport)
+=======
+      if(['debug', 'trace'].includes(get(Meteor, 'settings.public.loggingThreshold'))){
+        console.trace('Queue Monitor:: ' + new Date() + " - Ready to Import: " + readyToImport)
+      }
+>>>>>>> 0bb6672cc80d805ad184214dae8bf8d6e4018551
       
       if(readyToImport){        
         importNextFile();
       }
-    }, 500);
+    }, 500);  
 
     return () => Meteor.clearInterval(queueMonitor);
   }, [readyToImport]);
@@ -1472,10 +1483,10 @@ export function ImportEditorBindings(props){
     setResourcePreview(preview)
   }
 
-  // function handleChangeMappingAlgorithm(event, index, value, foo){
-  //   console.log('handleChangeMappingAlgorithm', event, index, value, foo)
-  //   setMappingAlgorithm(value);
-  // }
+  function handleChangeImportAlgorithm(event, index, value, foo){
+    console.log('handleChangeImportAlgorithm', event)
+    setImportAlgorithm(event.target.value)
+  }
   
   // function handleChangeSyncSource(event, index, value){
   //   console.log('handleChangeSyncSource', event, index, value)
@@ -1766,52 +1777,56 @@ export function ImportEditorBindings(props){
   }
 
   function sendEachToServer(){
-    console.log("Sending collection preview to data warehouse....");
-    
-    if(typeof selectedCollectionsToExport === "object"){
-      Object.keys(selectedCollectionsToExport).forEach(function(resourceName){
-        
-
-        if(selectedCollectionsToExport[resourceName] === true){
-          let collectionName = pluralizeResourceName(resourceName);
-          console.log('collectionName', collectionName);
+    console.log("Sending collection preview to data warehouse....", selectedCollectionsToExport);
+    let channelUrl = get(Meteor, 'settings.public.interfaces.fhirRelay.channel.endpoint');
+    if(channelUrl){
+      if(typeof selectedCollectionsToExport === "object"){
+        Object.keys(selectedCollectionsToExport).forEach(function(resourceName){
           
-          if(window[collectionName]){
-            if(window[collectionName].find().count()){
-              window[collectionName].find().forEach(function(record){
-                console.log('----------------------------------')
-                console.log('record', record);
-                let channelUrl = get(Meteor, 'settings.public.interfaces.fhirRelay.channel.endpoint');
-                console.log('channelUrl.length', channelUrl.length);
-                
-                if(channelUrl[channelUrl.length] === "/"){
-                  channelUrl = channelUrl.substring(0, channelUrl.length - 1);
-
-                }
-                console.log('channelUrl', channelUrl);
-
-                if(get(record, 'id')){
-                  let putUrl = channelUrl + '/' + resourceName + "/" + get(record, 'id');
-                  console.log('PUT ' + putUrl)
+  
+          if(selectedCollectionsToExport[resourceName] === true){
+            let collectionName = pluralizeResourceName(resourceName);
+            console.log('collectionName', collectionName);
+            
+            if(window[collectionName]){
+              if(window[collectionName].find().count()){
+                window[collectionName].find().forEach(function(record){
+                  console.log('----------------------------------')
+                  console.log('record', record);
+                  let channelUrl = get(Meteor, 'settings.public.interfaces.fhirRelay.channel.endpoint');
                   
-                  HTTP.put(putUrl, {data: record}, function(error, result){
-                    if(error) {console.log('HTTP.put.error', error)}
-                    if(result) {console.log('HTTP.put.result', result)}
-                  })
-                } else {
-                  let postUrl = channelUrl + '/' + resourceName;
-                  console.log('POST ' + postUrl)
-                  HTTP.post(postUrl, {data: record}, function(error, result){
-                    if(error) {console.log('HTTP.put.error', error)}
-                    if(result) {console.log('HTTP.put.result', result)}
-                  })
-                }
-              })
+                    console.log('channelUrl.length', channelUrl.length);
+                  
+                    if(channelUrl[channelUrl.length] === "/"){
+                      channelUrl = channelUrl.substring(0, channelUrl.length - 1);
+    
+                    }
+                    console.log('channelUrl', channelUrl);
+    
+                    if(get(record, 'id')){
+                      let putUrl = channelUrl + '/' + resourceName + "/" + get(record, 'id');
+                      console.log('PUT ' + putUrl)
+                      
+                      HTTP.put(putUrl, {data: record}, function(error, result){
+                        if(error) {console.log('HTTP.put.error', error)}
+                        if(result) {console.log('HTTP.put.result', result)}
+                      })
+                    } else {
+                      let postUrl = channelUrl + '/' + resourceName;
+                      console.log('POST ' + postUrl)
+                      HTTP.post(postUrl, {data: record}, function(error, result){
+                        if(error) {console.log('HTTP.put.error', error)}
+                        if(result) {console.log('HTTP.put.result', result)}
+                      })
+                    }  
+                })
+              }
             }
           }
-        }
-
-      })
+        })
+      }  
+    } else {
+      alert('No FhirRelay endpoint specified in settings file.')
     }
   }
   function sendTransactionBundleToServer(){
@@ -1847,7 +1862,14 @@ export function ImportEditorBindings(props){
     Session.set("fileExtension", get(item, 'type'))
     Session.set('importBuffer', get(item, 'content'));
     Session.set('lastUpdated', new Date())
+  }  
+  
+  
+  function handleChangeMappingAlgorithm(event, index, value, foo){
+    console.log('handleChangeMappingAlgorithm', event, index, value, foo)
+    // Session.set('mappingAlgorithm', value)
   }
+
 
   function handleSelectFirstPatient(){
     console.log('handleAutoSelectFirstPatient', autoSelectFirstPatient)
@@ -1979,30 +2001,7 @@ export function ImportEditorBindings(props){
         <Grid container spacing={8}>
           <Grid item md={columnWidth} style={{width: '100%', marginBottom: marginBottom + 'px'}}>
             <CardHeader title="Step 1 - File Scanner" />
-
-            
-            {/* <StyledCard style={{marginBottom: '40px'}} width={cardWidth + 'px'}>
-              <CardContent>        
-              <Button 
-                id='selectFileButton'
-                onClick={ openFile.bind(this) }
-                color='primary'
-                variant="contained"
-                style={{marginBottom: '20px'}}
-                fullWidth
-              >Select File</Button>   
-              <DropzoneComponent
-                id='dropzoneComponent'
-                config={componentConfig}
-                eventHandlers={eventHandlers}
-                djsConfig={djsConfig}
-                style={{height: '185px', marginBottom: '0px', marginTop: '0px', backgroundColor: "#F0F0F0"}}
-              />
-              </CardContent>
-            </StyledCard> */}
-
-
-            {/* <CardHeader title="Import Queue" /> */}
+          
             <StyledCard width={cardWidth + 'px'}>              
               <CardContent>        
                 <Button 
@@ -2068,25 +2067,41 @@ export function ImportEditorBindings(props){
           { previewDataContent }
           <Grid item md={columnWidth} style={{marginBottom: '80px', width: '100%'}}>
             <CardHeader title="Step 3 - Collection Preview" />
-            <StyledCard style={{marginBottom: '20px'}} width={cardWidth + 'px'}>
-              <CollectionManagement
-                mode="additive"
-                resourceTypes={scannedResourceTypes}
-                displayImportButton={true}
-                displayImportCheckmarks={true}
-                displayExportCheckmarks={false}
-                displayExportButton={false}
-                displayLocalClientCount={true}
-                displayClientCount={false}
-                displayDropButton={true}
-                displayPubSubEnabled={false}
-                noDataMessage="Please select a file to import."
-                preview={resourcePreview}
-                onSelectionChange={function(selectionState){
-                  console.log('onSelectionChange', selectionState)
-                  setCollectionsToExport(selectionState);
-                }}
-              />
+              <StyledCard style={{marginBottom: '20px'}} width={cardWidth + 'px'}>
+                <CardContent>
+                  <InputLabel id="import-algorithm-label">Import Algorithm</InputLabel>
+                  <Select
+                    // floatingLabelText="Mapping Algorithm"
+                    value={importAlgorithm}
+                    onChange={handleChangeImportAlgorithm}
+                    fullWidth
+                  >
+                    <MenuItem value="all" id="import-all" key="import-all">all</MenuItem>
+                    <MenuItem value="import" id="import-import" key="import-import" >import</MenuItem>
+                    <MenuItem value="export" id="import-export" key="import-export" >export</MenuItem>
+                    <MenuItem value="specific" id="import-specific" key="import-specific" >specific</MenuItem>
+                    <MenuItem value="additive" id="import-additive" key="import-algorithm-menu-item-4" >additive</MenuItem>
+                  </Select>
+                </CardContent>
+                { dynamicAlgorithmItems }
+                <CollectionManagement
+                  mode={importAlgorithm}
+                  resourceTypes={scannedResourceTypes}
+                  displayImportButton={true}
+                  displayImportCheckmarks={true}
+                  displayExportCheckmarks={false}
+                  displayExportButton={false}
+                  displayLocalClientCount={true}
+                  displayClientCount={false}
+                  displayDropButton={true}
+                  displayPubSubEnabled={false}
+                  noDataMessage="Please select a file to import."
+                  preview={resourcePreview}
+                  onSelectionChange={function(selectionState){
+                    console.log('onSelectionChange', selectionState)
+                    setCollectionsToExport(selectionState);
+                  }}
+                />
             </StyledCard>
             <DynamicSpacer />
             {/* <StyledCard style={{paddingBottom: '10px', paddingTop: '10px', paddingLeft: '10px', marginBottom: '20px'}} width={cardWidth + 'px'}>
