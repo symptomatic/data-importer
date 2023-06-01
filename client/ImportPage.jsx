@@ -87,7 +87,7 @@ const muiTheme = createMuiTheme({
 //============================================================================
 // Main Component  
 
-export function ImportPage(props){
+export function WearablesImportPage(props){
 
   // let data = {
   //   style: {
@@ -133,7 +133,7 @@ export function ImportPage(props){
   let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
 
   return(
-    <PageCanvas id="ImportPage" headerHeight={headerHeight} paddingLeft={20} paddingRight={20} >
+    <PageCanvas id="WearablesImportPage" headerHeight={headerHeight} paddingLeft={20} paddingRight={20} >
       <MuiThemeProvider theme={muiTheme} >
         <ImportEditorBindings />
       </MuiThemeProvider>
@@ -142,4 +142,4 @@ export function ImportPage(props){
 }
 
 
-export default ImportPage;
+export default WearablesImportPage;
