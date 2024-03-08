@@ -605,7 +605,7 @@ export function ImportEditorBindings(props){
   let [selectedCollectionsToExport, setCollectionsToExport] = useState({});
 
   let [sendToDataWarehouse, setSendToDataWarehouse] = useState(false);
-
+  // let [autoSelectFirstPatient, setAutoSelectFirstPatient] = useState(false);
   
   
   const [importQueue, setImportQueue] = useState([]); 
@@ -661,9 +661,9 @@ export function ImportEditorBindings(props){
     console.debug('PreviewDataCard.useEffect()')
 
     const queueMonitor = Meteor.setInterval(function(){
-      if(['debug', 'trace'].includes(get(Meteor, 'settings.public.loggingThreshold'))){
-        console.trace('Queue Monitor:: ' + new Date() + " - Ready to Import: " + readyToImport)
-      }
+      // if(['debug', 'trace'].includes(get(Meteor, 'settings.public.loggingThreshold'))){
+      //   console.trace('Queue Monitor:: ' + new Date() + " - Ready to Import: " + readyToImport)
+      // }
       
       if(readyToImport){        
         importNextFile();
@@ -1582,14 +1582,7 @@ export function ImportEditorBindings(props){
     }
   }
 
-  function autoSelectPatient(ifAutoSelectPatient, previewBundle){
-    if(ifAutoSelectPatient){
-      if(get(Patients.findOne(), 'resourceType') === "Patient"){
-        Session.set('selectedPatient', Patients.findOne());
-        Session.set('selectedPatientId', get(Patients.findOne(), 'id'));
-      }  
-    }  
-  }
+
 
 
   async function parseFileContents(previewBuffer, fileExtension, mappingAlgorithm){
@@ -1638,12 +1631,19 @@ export function ImportEditorBindings(props){
       logger.debug('File contents: ', previewBuffer);
       logger.debug('ImportEditorBindings.MappingAlgorithm: ' + mappingAlgorithm);
 
-      //autoSelectPatient(autoSelectFirstPatient, previewBuffer);      
+      //autoSelectFirstPatient(autoSelectFirstPatient, previewBuffer);    
+      if(autoSelectFirstPatient){
+        if(get(Patients.findOne(), 'resourceType') === "Patient"){
+          Session.set('selectedPatient', Patients.findOne());
+          Session.set('selectedPatientId', get(Patients.findOne(), 'id'));
+        }  
+      }  
 
       if(typeof previewBuffer === "object"){
         switch (mappingAlgorithm) {
           case 1:  // FHIR Bundle
             MedicalRecordImporter.importBundle(previewBuffer);
+            parseBufferForPatientAndSetAsSelected(previewBuffer);
             break;      
           case 2:  // FaceBook
             parseFacebookProfile(previewBuffer);
@@ -1653,6 +1653,7 @@ export function ImportEditorBindings(props){
             break;
           default:
             MedicalRecordImporter.importBundle(previewBuffer);
+            parseBufferForPatientAndSetAsSelected(previewBuffer);
             break;
         }
       }
@@ -1690,6 +1691,17 @@ export function ImportEditorBindings(props){
           //   }
           // })
           break;
+      }
+    }
+
+    function parseBufferForPatientAndSetAsSelected(previewBuffer) {
+      if (autoSelectFirstPatient) {
+        get(previewBuffer, 'entry').forEach(function (entry) {
+          if (get(entry, 'resource.resourceType') === "Patient") {
+            Session.set('selectedPatient', get(entry, 'resource'));
+            Session.set('selectedPatientId', get(entry, 'resource.id'));
+          }
+        });
       }
     }
   }
@@ -1872,11 +1884,15 @@ export function ImportEditorBindings(props){
     setAutoSelectFirstPatient(!autoSelectFirstPatient);
   }
   function setFirstPatientAsSelected(){
-    autoSelectPatient(true, previewBuffer);
+    autoSelectFirstPatient(true, previewBuffer);
   }
   function toggleSendToDataWarehouse(event, newValue){
     // console.log('toggleSendToDataWarehouse', event.currentTarget.value, newValue)
     setSendToDataWarehouse(newValue)
+  }
+  function toggleAutoSelectPatient(event, newValue){
+    console.log('toggleAutoSelectPatient', event.currentTarget.value, newValue)
+    setAutoSelectFirstPatient(newValue)
   }
   function sendBundleToDataWarehouse() {
     console.log('Sending to data warehouse....');
@@ -2026,6 +2042,8 @@ export function ImportEditorBindings(props){
 
                 <div style={{marginTop: '6px'}} >
                   <Checkbox checked={sendToDataWarehouse} onChange={toggleSendToDataWarehouse.bind(this)} />Send to data warehouse servers
+                  <br />
+                  <Checkbox checked={autoSelectFirstPatient} onChange={toggleAutoSelectPatient.bind(this)} />Autoselect patient
                 </div>
               </CardContent>
 

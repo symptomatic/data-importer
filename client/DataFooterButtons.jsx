@@ -7,7 +7,7 @@ import { Button } from '@material-ui/core';
 
 import { get } from 'lodash';
 
-
+import { AllergyIntolerances, CarePlans, Conditions, Consents, Contracts, ClinicalImpressions, Communications, Composition, Devices, DiagnosticReports, DocumentReferences, DocumentManifests, Encounters, Goals, Immunizations, ImagingStudies, Locations, Measures, MeasureReports, Medications, MedicationOrders, MedicationStatements, Organizations, Observations, Patients, Practitioners, Persons, Procedures, Questionnaires, QuestionnaireResponses, RiskAssessments, RelatedPersons, Sequences} from 'meteor/clinical:hl7-fhir-data-infrastructure';
 
 
 //========================================================================================================
@@ -66,6 +66,8 @@ import {
 
 //============================================================================================================================
 // FETCH
+
+
 
 export function SampleDialogComponent(props){
   return(
@@ -128,11 +130,30 @@ export function ImportButtons(props){
 
       resourceTypes.forEach(function(resourceType){
 
+
         if(Meteor.isClient){
-          if(window[resourceType]){
-            window[resourceType].find().forEach(function(record){
-              window[resourceType].remove({_id: record._id})
-            })            
+          console.log('Clearing client data for: ', resourceType);
+
+          if(typeof resourceType === "object"){
+    
+            try {
+              console.log('Removing all records from: ', resourceType)  
+              resourceType.remove({})
+            } catch (error) {
+              console.log('Error', error);
+              console.log('Trying to remove records one at a time.')
+              resourceType.find().forEach(function(record){
+                resourceType.remove({_id: record._id})
+              })                            
+            }
+          } else if(typeof window[resourceType] === "object"){
+            try {
+              window[resourceType].remove()
+            } catch (error) {
+              window[resourceType].find().forEach(function(record){
+                window[resourceType].remove({_id: record._id})
+              })                            
+            }
           }  
         }
       })
