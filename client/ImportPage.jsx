@@ -135,7 +135,7 @@ export function WearablesImportPage(props){
   return(
     <PageCanvas id="WearablesImportPage" headerHeight={headerHeight} paddingLeft={20} paddingRight={20} >
       <MuiThemeProvider theme={muiTheme} >
-        <ImportEditorBindings />
+        <ImportEditorBindings history={props.history} />
       </MuiThemeProvider>
     </PageCanvas>
   );

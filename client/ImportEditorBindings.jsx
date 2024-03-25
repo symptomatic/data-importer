@@ -598,9 +598,9 @@ export function ImportEditorBindings(props){
   let [progressMax, setProgressMax] = useState(0); 
   let [importBuffer, setImportBuffer] = useState(""); 
   let [previewBuffer, setPreviewBuffer] = useState(""); 
-  let [importAlgorithm, setImportAlgorithm] = useState("all"); 
+  let [importAlgorithm, setImportAlgorithm] = useState("additive"); 
 
-  let [autoSelectFirstPatient, setAutoSelectFirstPatient] = useState(false);
+  let [autoSelectFirstPatient, setAutoSelectFirstPatient] = useState(true);
 
   let [selectedCollectionsToExport, setCollectionsToExport] = useState({});
 
@@ -1871,6 +1871,11 @@ export function ImportEditorBindings(props){
     Session.set('importBuffer', get(item, 'content'));
     Session.set('lastUpdated', new Date())
   }  
+  function openPageUrl(url){
+    if(props.history){
+      props.history.replace(url);
+    }
+  }
   
   
   function handleChangeMappingAlgorithm(event, index, value, foo){
@@ -2006,6 +2011,35 @@ export function ImportEditorBindings(props){
       </StyledCard>
     </Grid>
   }
+
+  let workflowButton = [];
+  
+  let proxyUrl = get(Meteor, 'settings.public.interfaces.fhirRelay.channel.endpoint', false)
+  if(proxyUrl){
+    workflowButton.push(<DynamicSpacer />)
+    workflowButton.push(<Button 
+      id='importDataButton'
+      onClick={ sendEachToServer.bind(this)}
+      color="primary"
+      variant="contained"
+      fullWidth                
+    >Send Each to Server!</Button>)    
+  }
+
+  let dataImporterNextPageUrl = get(Meteor, 'settings.public.defaults.dataImporterNextPageUrl', false)
+  if(dataImporterNextPageUrl && (Object.keys(resourcePreview).length)){    
+    workflowButton.push(<DynamicSpacer />)
+    workflowButton.push(<Button 
+      id='importDataButton'
+      onClick={ openPageUrl.bind(this, dataImporterNextPageUrl)}
+      color="primary"
+      variant="contained"
+      fullWidth                
+    >Next</Button>)    
+  }
+
+
+
   return(
 
       <PageCanvas id="ImportCanvas" style={{height: window.innerHeight }} paddingLeft={paddingWidth} paddingRight={paddingWidth} >
@@ -2023,6 +2057,7 @@ export function ImportEditorBindings(props){
                   variant="contained"
                   style={{marginBottom: '20px'}}
                   fullWidth
+                  disabled={(importQueue.length > 0) ? true : false }
                 >Select Files</Button>   
 
                 <Table>
@@ -2041,15 +2076,15 @@ export function ImportEditorBindings(props){
                 { paginationFooter }
 
                 <div style={{marginTop: '6px'}} >
-                  <Checkbox checked={sendToDataWarehouse} onChange={toggleSendToDataWarehouse.bind(this)} />Send to data warehouse servers
-                  <br />
                   <Checkbox checked={autoSelectFirstPatient} onChange={toggleAutoSelectPatient.bind(this)} />Autoselect patient
+                  <br />
+                  <Checkbox checked={sendToDataWarehouse} onChange={toggleSendToDataWarehouse.bind(this)} />Send to data warehouse servers
                 </div>
               </CardContent>
 
               <CardActions style={{display: 'inline-flex', width: '100%'}} >
                 <Grid item md={9} style={{paddingRight: '10px'}}>
-                  <Button id="autoImportBtn" fullWidth variant="contained" color={queueButtonColor} onClick={toggleAutoImport.bind(this)} >{queueToggleText}</Button>                   
+                  <Button disabled={(importQueue.length > 0) ? false : true } id="autoImportBtn" fullWidth variant="contained" color={queueButtonColor} onClick={toggleAutoImport.bind(this)} >{queueToggleText}</Button>                   
                 </Grid>
                 <Grid item md={3} style={{paddingLeft: '10px'}}>
                   <Button id="clearConditionsBtn" fullWidth variant="contained" onClick={clearImportQueue.bind(this)} >Clear</Button>             
@@ -2117,26 +2152,7 @@ export function ImportEditorBindings(props){
                   }}
                 />
             </StyledCard>
-            <DynamicSpacer />
-            {/* <StyledCard style={{paddingBottom: '10px', paddingTop: '10px', paddingLeft: '10px', marginBottom: '20px'}} width={cardWidth + 'px'}>
-              <Checkbox checked={autoSelectFirstPatient} onClick={handleSelectFirstPatient} />Auto Select First Patient                              
-            </StyledCard> */}
-            <Button 
-                id='importDataButton'
-                onClick={ sendEachToServer.bind(this)}
-                color="primary"
-                variant="contained"
-                fullWidth                
-              >Send Each to Server!</Button>   
-            <DynamicSpacer />
-            {/* <Button 
-                id='importDataButton'
-                onClick={ sendTransactionBundleToServer.bind(this)}
-                color="primary"
-                variant="contained"
-                fullWidth                
-              >Send Transaction Bundle to Server!</Button>   
-            */}
+            { workflowButton }
           </Grid> 
         </Grid>   
       </PageCanvas>

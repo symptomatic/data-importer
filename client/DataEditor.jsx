@@ -246,7 +246,7 @@ function DataEditor(props){
     digestButton = <Button 
       id='mapData'
       onClick={ handleMapData.bind(this)}
-      color="primary"
+      // color="primary"
       variant="contained"
       fullWidth                
     >Map</Button>   
@@ -255,7 +255,7 @@ function DataEditor(props){
     digestButton = <Button 
       id='mapData'
       onClick={ digestData.bind(this)}
-      color="primary"
+      // color="primary"
       variant="contained"
       fullWidth                
     >Digest</Button>   
