@@ -2016,7 +2016,7 @@ export function ImportEditorBindings(props){
   
   let proxyUrl = get(Meteor, 'settings.public.interfaces.fhirRelay.channel.endpoint', false)
   if(proxyUrl){
-    workflowButton.push(<DynamicSpacer />)
+    workflowButton.push(<DynamicSpacer key={0} />)
     workflowButton.push(<Button 
       id='importDataButton'
       onClick={ sendEachToServer.bind(this)}
@@ -2028,7 +2028,13 @@ export function ImportEditorBindings(props){
 
   let dataImporterNextPageUrl = get(Meteor, 'settings.public.defaults.dataImporterNextPageUrl', false)
   if(dataImporterNextPageUrl && (Object.keys(resourcePreview).length)){    
-    workflowButton.push(<DynamicSpacer />)
+
+    let searchParams = new URLSearchParams(window.location.search);
+    if(searchParams.get('next')){
+      dataImporterNextPageUrl = searchParams.get('next');
+    }
+
+    workflowButton.push(<DynamicSpacer key={1} />)
     workflowButton.push(<Button 
       id='importDataButton'
       onClick={ openPageUrl.bind(this, dataImporterNextPageUrl)}
@@ -2114,9 +2120,9 @@ export function ImportEditorBindings(props){
             </StyledCard>
           </Grid>
           { previewDataContent }
-          <Grid item md={columnWidth} style={{marginBottom: '80px', width: '100%'}}>
+          <Grid item md={columnWidth} style={{marginBottom: '80px', width: '100%'}} key="last-grid-item">
             <CardHeader title="Step 3 - Collection Preview" />
-              <StyledCard style={{marginBottom: '20px'}} width={cardWidth + 'px'}>
+            <StyledCard style={{marginBottom: '20px'}} width={cardWidth + 'px'}>
                 <CardContent>
                   <InputLabel id="import-algorithm-label">Import Algorithm</InputLabel>
                   <Select
