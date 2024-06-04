@@ -1637,6 +1637,9 @@ export function ImportEditorBindings(props){
           Session.set('selectedPatient', Patients.findOne());
           Session.set('selectedPatientId', get(Patients.findOne(), 'id'));
         }  
+        if(Compositions.findOne({title: "International Patient Summary"})){
+          Session.set('textNormalForm', get(Compositions.findOne({title: "International Patient Summary"}), 'text.div'));
+        }
       }  
 
       if(typeof previewBuffer === "object"){
@@ -1701,6 +1704,9 @@ export function ImportEditorBindings(props){
             Session.set('selectedPatient', get(entry, 'resource'));
             Session.set('selectedPatientId', get(entry, 'resource.id'));
           }
+          if ((get(entry, 'resource.resourceType') === "Composition") && (get(entry, 'resource.title') === "International Patient Summary")) {
+            Session.set('textNormalForm', get(entry, 'resource.text.div', ""));
+          }          
         });
       }
     }
