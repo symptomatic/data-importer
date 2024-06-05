@@ -1999,7 +1999,7 @@ export function ImportEditorBindings(props){
   let previewDataContent;
   if(showPreviewData){
     columnWidth = 3;
-    previewDataContent = <Grid item md={columnWidth} style={{width: '100%'}}>
+    previewDataContent = <Grid item md={12} lg={columnWidth} style={{width: '100%'}}>
       <CardHeader title="Step 2.1 - Preview Data" style={{cursor: 'pointer'}} onClick={ setShowPreviewData.bind(this, false)} />
       <StyledCard style={{height: window.innerHeight - 300}} width={cardWidth + 'px'}>
         <PreviewDataCard
@@ -2046,7 +2046,8 @@ export function ImportEditorBindings(props){
       onClick={ openPageUrl.bind(this, dataImporterNextPageUrl)}
       color="primary"
       variant="contained"
-      fullWidth                
+      fullWidth          
+      style={{marginBottom: '80px'}}      
     >Next</Button>)    
   }
 
@@ -2056,8 +2057,8 @@ export function ImportEditorBindings(props){
 
       <PageCanvas id="ImportCanvas" style={{height: window.innerHeight }} paddingLeft={paddingWidth} paddingRight={paddingWidth} >
 
-        <Grid container spacing={8}>
-          <Grid item md={columnWidth} style={{width: '100%', marginBottom: marginBottom + 'px'}}>
+        <Grid container spacing={4} justify='center' style={{width: '100%', marginBottom: '100px'}}>
+          <Grid item md={12} lg={columnWidth} style={{width: '100%'}}>
             <CardHeader title="Step 1 - File Scanner" />
           
             <StyledCard width={cardWidth + 'px'}>              
@@ -2105,7 +2106,7 @@ export function ImportEditorBindings(props){
             </StyledCard>
 
           </Grid>
-          <Grid item md={columnWidth} style={{width: '100%'}}>
+          <Grid item md={12} lg={columnWidth} style={{width: '100%'}}>
             <CardHeader title="Step 2 - Raw Data" style={{cursor: 'pointer'}} onClick={ setShowPreviewData.bind(this, true)} />
             <StyledCard style={{height: window.innerHeight - 300}} width={cardWidth + 'px'}>
               <DataEditor
@@ -2126,7 +2127,7 @@ export function ImportEditorBindings(props){
             </StyledCard>
           </Grid>
           { previewDataContent }
-          <Grid item md={columnWidth} style={{marginBottom: '80px', width: '100%'}} key="last-grid-item">
+          <Grid item md={12} lg={columnWidth} style={{width: '100%'}} key="last-grid-item">
             <CardHeader title="Step 3 - Collection Preview" />
             <StyledCard style={{marginBottom: '20px'}} width={cardWidth + 'px'}>
                 <CardContent>
