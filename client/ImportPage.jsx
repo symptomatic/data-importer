@@ -1,7 +1,6 @@
 // https://www.npmjs.com/package/react-dropzone-component
 // http://www.dropzonejs.com/import { 
 
-import { StyledCard, PageCanvas, DynamicSpacer } from 'fhir-starter';
 
 import { Meteor } from 'meteor/meteor';
 import React from 'react';
@@ -14,7 +13,7 @@ import { ImportEditorBindings } from './ImportEditorBindings';
 //============================================================================
 //Global Theming 
 
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import { MuiThemeProvider, createTheme } from '@mui/material/styles';
 
 
 let theme = {
@@ -47,7 +46,7 @@ if(get(Meteor, 'settings.public.theme.palette')){
   theme = Object.assign(theme, get(Meteor, 'settings.public.theme.palette'));
 }
 
-const muiTheme = createMuiTheme({
+const muiTheme = createTheme({
   typography: {
     useNextVariants: true,
   },
@@ -87,7 +86,7 @@ const muiTheme = createMuiTheme({
 //============================================================================
 // Main Component  
 
-export function WearablesImportPage(props){
+export function ImportPage(props){
 
   // let data = {
   //   style: {
@@ -128,18 +127,20 @@ export function WearablesImportPage(props){
   // }
   
 
-  let headerHeight = LayoutHelpers.calcHeaderHeight();
-  let formFactor = LayoutHelpers.determineFormFactor();
-  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
+  let headerHeight = Meteor.LayoutHelpers.calcHeaderHeight();
+  let formFactor = Meteor.LayoutHelpers.determineFormFactor();
+  let paddingWidth = Meteor.LayoutHelpers.calcCanvasPaddingWidth();
 
   return(
-    <PageCanvas id="WearablesImportPage" headerHeight={headerHeight} paddingLeft={20} paddingRight={20} >
-      <MuiThemeProvider theme={muiTheme} >
+    <div id="ImportPage" >
         <ImportEditorBindings history={props.history} />
-      </MuiThemeProvider>
-    </PageCanvas>
+
+        {/* <MuiThemeProvider theme={muiTheme} >
+        <ImportEditorBindings history={props.history} />
+      </MuiThemeProvider> */}
+    </div>
   );
 }
 
 
-export default WearablesImportPage;
+export default ImportPage;

@@ -5,6 +5,7 @@
   
   import { 
     Button, 
+    Card,
     CardContent, 
     CardHeader, 
     CardActions,
@@ -17,19 +18,14 @@
     TableHead,
     TableCell,
     TablePagination,
-  } from '@material-ui/core';
-  import PropTypes from 'prop-types';
+  } from '@mui/material';
 
-import { StyledCard, PageCanvas, DynamicSpacer } from 'fhir-starter';
 
 import { Meteor } from 'meteor/meteor';
 import { HTTP } from 'meteor/http';
 
 import { get } from 'lodash';
 import moment from 'moment';
-
-import { ImportComponent } from './ImportEditorBindings';
-
 
 import "ace-builds";
 import AceEditor from "react-ace";
@@ -38,13 +34,46 @@ import "ace-builds/src-noconflict/mode-java";
 import "ace-builds/src-noconflict/theme-github";
 import "ace-builds/src-noconflict/ext-language_tools";
 
-import { FhirUtilities, AllergyIntolerances, Conditions, CarePlans, Encounters, Immunizations, MedicationStatements, Observations, Patients, Procedures } from 'meteor/clinical:hl7-fhir-data-infrastructure';
-// import 'ace-builds/webpack-resolver'
+// let DynamicSpacer = Meteor.DynamicSpacer;
+function DynamicSpacer(props){
+
+  const {children, height, ...otherProps} = props;
+
+  let spacerHeight = '20px'  
+  if(height > 0){
+    spacerHeight = height + 'px';
+  }
+
+  return(<div className="dynamicSpacer" style={{ height: spacerHeight }}></div>)
+}
+
+let AllergyIntolerances;
+let CarePlans;
+let Conditions;
+let Encounters;
+let Immunizations;
+let MedicationStatements;
+let Observations;
+let Patients;
+let Procedures;
+
+Meteor.startup(function(){
+  AllergyIntolerances = window.Collections.AllergyIntolerances;
+  CarePlans = window.Collections.CarePlans;
+  Conditions = window.Collections.Conditions;
+  Encounters = window.Collections.Encounters;
+  Immunizations = window.Collections.Immunizations;
+  MedicationStatements = window.Collections.MedicationStatements;
+  Observations = window.Collections.Observations;
+  Patients = window.Collections.Patients;
+  Procedures = window.Collections.Procedures;
+})
+
 
 //============================================================================
 //Global Theming 
 
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import { MuiThemeProvider, createTheme } from '@mui/material/styles';
 
 
 let theme = {
@@ -77,7 +106,7 @@ if(get(Meteor, 'settings.public.theme.palette')){
   theme = Object.assign(theme, get(Meteor, 'settings.public.theme.palette'));
 }
 
-const muiTheme = createMuiTheme({
+const muiTheme = createTheme({
   typography: {
     useNextVariants: true,
   },
@@ -127,9 +156,9 @@ export function EditorPage(props){
 
   const [editorContent, setEditorContent] = useState("");
 
-  let headerHeight = LayoutHelpers.calcHeaderHeight();
-  let formFactor = LayoutHelpers.determineFormFactor();
-  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
+  let headerHeight = Meteor.LayoutHelpers.calcHeaderHeight();
+  let formFactor = Meteor.LayoutHelpers.determineFormFactor();
+  let paddingWidth = Meteor.LayoutHelpers.calcCanvasPaddingWidth();
   let cardWidth = window.innerWidth - paddingWidth;
   let columnWidth = 4;
 
@@ -529,9 +558,8 @@ export function EditorPage(props){
     }, null, 2))
   }
   return(
-    <PageCanvas id="EditorPage" headerHeight={headerHeight} paddingLeft={20} paddingRight={20} >
-      <MuiThemeProvider theme={muiTheme} >
-      <PageCanvas id="ImportCanvas" style={{height: window.innerHeight }} paddingLeft={paddingWidth} paddingRight={paddingWidth} >
+    <div id="EditorPage" >
+      <div id="ImportCanvas" style={{height: window.innerHeight }} >
 
         <Grid container spacing={8} justify="center">
           <Grid item md={3}>
@@ -559,7 +587,7 @@ export function EditorPage(props){
           </Grid>
           <Grid item md={6} style={{width: '100%'}}>
             <CardHeader title="Data Editor" style={{cursor: 'pointer'}}  />
-            <StyledCard style={{height: window.innerHeight - 300}} width={cardWidth + 'px'}>
+            <Card style={{height: window.innerHeight - 300}} width={cardWidth + 'px'}>
               <AceEditor
                 mode="json"
                 theme="github"
@@ -571,7 +599,7 @@ export function EditorPage(props){
                 value={editorContent}
                 defaultValue={JSON.stringify(defaultResource, null, 2)}
               />
-            </StyledCard>
+            </Card>
           </Grid>
           <Grid item md={3}>
             <DynamicSpacer height={80} />
@@ -589,9 +617,8 @@ export function EditorPage(props){
               >Clear</Button>   
           </Grid>
         </Grid>   
-        </PageCanvas>
-      </MuiThemeProvider>
-    </PageCanvas>
+        </div>
+    </div>
   );
 }
 

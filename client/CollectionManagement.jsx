@@ -5,8 +5,6 @@ import React from 'react';
 import { useTracker } from 'meteor/react-meteor-data';
 import PropTypes from 'prop-types';
 
-import { FhirUtilities } from 'meteor/clinical:hl7-fhir-data-infrastructure';
-
 import { 
   Checkbox,
   Table,
@@ -14,7 +12,7 @@ import {
   TableCell,
   TableHead,
   TableRow
-} from '@material-ui/core';
+} from '@mui/material';
 
 import { Session } from 'meteor/session';
 import { Meteor } from 'meteor/meteor';
@@ -131,27 +129,27 @@ Meteor.call('getServerStats', function(error, result){
 export function CollectionManagement(props){
 
   let { 
-    displayIcons,
-    displayImportCheckmarks,
-    displayExportCheckmarks,
-    displayPubSubEnabled,
-    displayClientCount,
-    displayLocalClientCount,
-    displayServerCount,
-    displayInit,
-    displayDrop,
-    displaySync,
-    displayImportButton,
-    displayExportButton,
-    displayDropButton,
-    displayPreview,
-    selectedPatientId,
-    resourceTypes,
-    mode,
-    exportFileType,
-    noDataMessage,
-    preview,
-    tableSize,
+    displayIcons = false,
+    displayImportCheckmarks = false,
+    displayExportCheckmarks = true,
+    displayPubSubEnabled = false,
+    displayClientCount = true,
+    displayLocalClientCount = false,
+    displayServerCount = false,
+    displayInit = false,
+    displayDrop = false,
+    displaySync = false,
+    displayImportButton = false,
+    displayExportButton = true,
+    displayDropButton = false,
+    displayPreview = false,
+    selectedPatientId = "",
+    resourceTypes = ["AllergyIntolerance", "CarePlan", "Condition", "Immunization", "Medication", "MedicationStatement", "Patient", "Procedure"],
+    mode = "all",  // all, import, export, specific, additive
+    exportFileType = "json",  // json, geojson, fhir, csv
+    noDataMessage = "No data found.",
+    preview = {},
+    tableSize = "small",
     onSelectionChange,
     onSelectedExportChange,
     ...otherProps 
@@ -200,15 +198,15 @@ export function CollectionManagement(props){
     collectionManagementQuery["subject.reference"] = "urn:uuid:" + props.selectedPatientId
   }
   supportedResources.forEach(function(resourceName){
-    if(typeof window[FhirUtilities.pluralizeResourceName(resourceName)] === "object"){
-      data.collections.client[resourceName] = window[FhirUtilities.pluralizeResourceName(resourceName)].find(collectionManagementQuery).count();
-      data.collections.localClient[resourceName] = window[FhirUtilities.pluralizeResourceName(resourceName)]._collection.find(collectionManagementQuery).count();
+    if(typeof window.Collections[Meteor.FhirUtilities.pluralizeResourceName(resourceName)] === "object"){
+      data.collections.client[resourceName] = window.Collections[Meteor.FhirUtilities.pluralizeResourceName(resourceName)].find(collectionManagementQuery).count();
+      data.collections.localClient[resourceName] = window.Collections[Meteor.FhirUtilities.pluralizeResourceName(resourceName)]._collection.find(collectionManagementQuery).count();
 
       if(Meteor.default_connection){
         Object.keys( Meteor.default_connection._subscriptions).forEach(function(key) {
           if(Meteor.default_connection._subscriptions[key]){
             var record = Meteor.default_connection._subscriptions[key];          
-            if(record.name === FhirUtilities.pluralizeResourceName(resourceName)){
+            if(record.name === Meteor.FhirUtilities.pluralizeResourceName(resourceName)){
               data.collections.pubsub[resourceName] = true;
             }  
           }
@@ -232,7 +230,7 @@ export function CollectionManagement(props){
   //   });
   // }
 
-  logger.trace('CollectionManagement.data', data)
+  // logger.trace('CollectionManagement.data', data)
 
   function setToggleImportState(resourceName, isInputChecked){
     let toggleStates = Session.get('toggleImportStates');
@@ -573,14 +571,14 @@ export function CollectionManagement(props){
 
   }
   function dropCollection(resourceType){
-    let collectionName = FhirUtilities.pluralizeResourceName(resourceType);
+    let collectionName = Meteor.FhirUtilities.pluralizeResourceName(resourceType);
 
     console.log('Dropping the local ' + collectionName + ' collection.')
 
     if(Meteor.isClient){
-      if(typeof window[collectionName] === "object"){
-        window[collectionName].find().forEach(function(record){
-          window[collectionName].remove({_id: record._id});
+      if(typeof window.Collections[collectionName] === "object"){
+        window.Collections[collectionName].find().forEach(function(record){
+          window.Collections[collectionName].remove({_id: record._id});
         });  
       }
     }
@@ -2128,28 +2126,6 @@ CollectionManagement.propTypes = {
   onSelectionChange: PropTypes.func,
   onSelectedExportChange: PropTypes.func
 }
-CollectionManagement.defaultProps = {
-  displayIcons: false,
-  displayImportCheckmarks: false,
-  displayExportCheckmarks: true,
-  displayPubSubEnabled: false,
-  displayClientCount: true,
-  displayLocalClientCount: false,
-  displayServerCount: false,
-  displayInit: false,
-  displayDrop: false,
-  displaySync: false,
-  displayImportButton: false,
-  displayExportButton: true,
-  displayDropButton: false,
-  displayPreview: false,
-  selectedPatientId: '',
-  resourceTypes: ["AllergyIntolerance", "CarePlan", "Condition", "Immunization", "Medication", "MedicationStatement", "Patient", "Procedure"],
-  mode: 'all',  // all, import, export, specific, additive
-  exportFileType: 'json', // json, geojson, fhir, csv
-  noDataMessage: "No data found.",
-  preview: {},
-  tableSize: 'small'
-}
+
 
 export default CollectionManagement;

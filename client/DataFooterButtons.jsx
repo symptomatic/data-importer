@@ -3,11 +3,11 @@ import React from 'react';
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 
-import { Button } from '@material-ui/core';
+import { Button } from '@mui/material';
 
 import { get } from 'lodash';
 
-import { AllergyIntolerances, CarePlans, Conditions, Consents, Contracts, ClinicalImpressions, Communications, Composition, Devices, DiagnosticReports, DocumentReferences, DocumentManifests, Encounters, Goals, Immunizations, ImagingStudies, Locations, Measures, MeasureReports, Medications, MedicationOrders, MedicationStatements, Organizations, Observations, Patients, Practitioners, Persons, Procedures, Questionnaires, QuestionnaireResponses, RiskAssessments, RelatedPersons, Sequences} from 'meteor/clinical:hl7-fhir-data-infrastructure';
+// import { AllergyIntolerances, CarePlans, Conditions, Consents, Contracts, ClinicalImpressions, Communications, Composition, Devices, DiagnosticReports, DocumentReferences, DocumentManifests, Encounters, Goals, Immunizations, ImagingStudies, Locations, Measures, MeasureReports, Medications, MedicationOrders, MedicationStatements, Organizations, Observations, Patients, Practitioners, Persons, Procedures, Questionnaires, QuestionnaireResponses, RiskAssessments, RelatedPersons, Sequences} from 'meteor/clinical:hl7-fhir-data-infrastructure';
 
 
 //========================================================================================================
@@ -15,9 +15,12 @@ import { AllergyIntolerances, CarePlans, Conditions, Consents, Contracts, Clinic
 
 import {
   MuiThemeProvider,
-  makeStyles,
-  createMuiTheme,
-} from '@material-ui/core/styles';
+  createTheme,
+} from '@mui/material/styles';
+
+import {
+  makeStyles
+} from '@mui/styles';
 
   // Global Theming 
   // This is necessary for the Material UI component render layer
@@ -28,7 +31,7 @@ import {
     palette = get(Meteor, 'settings.public.theme.palette');
   }
 
-  const muiTheme = createMuiTheme({
+  const muiTheme = createTheme({
     typography: {
       useNextVariants: true,
     },
@@ -93,7 +96,7 @@ export function ImportButtons(props){
     if(confirm("Are you sure?")){
       
       let resourceTypes = [
-        'AllergyIntolerances',
+        // 'AllergyIntolerances',
         'CarePlans',
         'Conditions',
         'Consents',

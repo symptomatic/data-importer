@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 
 import { 
   Button, 
+  Card,
   CardContent, 
   CardHeader, 
   CardActions,
@@ -23,7 +24,7 @@ import {
   Select,
   MenuItem,
   InputLabel
-} from '@material-ui/core';
+} from '@mui/material';
 
 // import DropzoneComponent from 'react-dropzone-component';
 
@@ -41,14 +42,14 @@ import xml2js from 'xml2js';
 import XLSX from 'xlsx';
 
 import MedicalRecordImporter from '../lib/MedicalRecordImporter';
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
-import { StyledCard, PageCanvas } from 'fhir-starter';
 
 import { useTracker } from 'meteor/react-meteor-data';
 
 import { CollectionManagement } from './CollectionManagement';
 import PreviewDataCard from './PreviewDataCard';
 import DataEditor from './DataEditor';
+
+import { useNavigate } from "react-router-dom";
 
 
 // import "ace-builds";
@@ -58,15 +59,26 @@ import DataEditor from './DataEditor';
 // import "ace-builds/src-noconflict/theme-github";
 // import "ace-builds/src-noconflict/ext-language_tools";
 
-// import { FhirUtilities, AllergyIntolerances, Conditions, CarePlans, Encounters, Immunizations, MedicationStatements, Observations, Patients, Procedures } from 'meteor/clinical:hl7-fhir-data-infrastructure';
+// import "ace-builds/src-noconflict/theme-tomorrow";
+// import "ace-builds/src-noconflict/theme-monokai";
+
+
+
+// import { Meteor.FhirUtilities, AllergyIntolerances, Conditions, CarePlans, Encounters, Immunizations, MedicationStatements, Observations, Patients, Procedures } from 'meteor/clinical:hl7-fhir-data-infrastructure';
 // import 'ace-builds/webpack-resolver'
+
+
 
 
 import fileDialog from 'file-dialog'
 
 import PapaParse from 'papaparse';
 
-import { LayoutHelpers, FhirUtilities, DynamicSpacer } from 'meteor/clinical:hl7-fhir-data-infrastructure';
+
+let DynamicSpacer;
+Meteor.startup(function(){
+  DynamicSpacer = Meteor.DynamicSpacer;
+})
 
 var myDropzone;
 
@@ -139,6 +151,17 @@ let collectionNames = [
   "VerificationResults"
 ]
 
+let Patients;
+let Compositions;
+
+Meteor.startup(async function(){
+  // Conditions = window.Collections.Conditions;
+  // Procedures = window.Collections.Procedures;
+  Patients = window.Collections.Patients;
+  Compositions = window.Collections.Compositions;
+  // QuestionnaireResponses = window.Collections.QuestionnaireResponses;
+});
+
 //============================================================================
 //Global Theming 
 
@@ -173,42 +196,42 @@ let collectionNames = [
     theme = Object.assign(theme, get(Meteor, 'settings.public.theme.palette'));
   }
 
-  const muiTheme = createMuiTheme({
-    typography: {
-      useNextVariants: true,
-    },
-    palette: {
-      primary: {
-        main: theme.primaryColor,
-        contrastText: theme.primaryText
-      },
-      secondary: {
-        main: theme.secondaryColor,
-        contrastText: theme.errorText
-      },
-      appBar: {
-        main: theme.appBarColor,
-        contrastText: theme.appBarTextColor
-      },
-      cards: {
-        main: theme.cardColor,
-        contrastText: theme.cardTextColor
-      },
-      paper: {
-        main: theme.paperColor,
-        contrastText: theme.paperTextColor
-      },
-      error: {
-        main: theme.errorColor,
-        contrastText: theme.secondaryText
-      },
-      background: {
-        default: theme.backgroundCanvas
-      },
-      contrastThreshold: 3,
-      tonalOffset: 0.2
-    }
-  });
+  // const muiTheme = createTheme({
+  //   typography: {
+  //     useNextVariants: true,
+  //   },
+  //   palette: {
+  //     primary: {
+  //       main: theme.primaryColor,
+  //       contrastText: theme.primaryText
+  //     },
+  //     secondary: {
+  //       main: theme.secondaryColor,
+  //       contrastText: theme.errorText
+  //     },
+  //     appBar: {
+  //       main: theme.appBarColor,
+  //       contrastText: theme.appBarTextColor
+  //     },
+  //     cards: {
+  //       main: theme.cardColor,
+  //       contrastText: theme.cardTextColor
+  //     },
+  //     paper: {
+  //       main: theme.paperColor,
+  //       contrastText: theme.paperTextColor
+  //     },
+  //     error: {
+  //       main: theme.errorColor,
+  //       contrastText: theme.secondaryText
+  //     },
+  //     background: {
+  //       default: theme.backgroundCanvas
+  //     },
+  //     contrastThreshold: 3,
+  //     tonalOffset: 0.2
+  //   }
+  // });
 
   const styles = theme => ({
     root: {
@@ -313,7 +336,7 @@ var eventHandlers = {
             let resourceRoot = {};
             let xmlData = {};
             Object.keys(rawXmlData).forEach(async function(key){
-              if(FhirUtilities.isFhirResource(key)){
+              if(Meteor.FhirUtilities.isFhirResource(key)){
                 logger.trace('It appears we found a ' + key + ' resource in XML format.');
                 logger.trace('Lets try recursively parsing it.')
 
@@ -570,6 +593,8 @@ Session.setDefault('mappingAlgorithm', 1);
 
 export function ImportEditorBindings(props){
 
+  const navigate = useNavigate();
+
   if(typeof logger === "undefined"){
     if(typeof props.logger === "object"){
       logger = props.logger;
@@ -700,13 +725,13 @@ export function ImportEditorBindings(props){
   if(!props.disablePagination){
     paginationFooter = <TablePagination
       component="div"
-      // rowsPerPageOptions={[5, 10, 25, 100]}
-      rowsPerPageOptions={['']}
+      rowsPerPageOptions={[5, 10, 25, 100]}
+      // rowsPerPageOptions={['']}
       colSpan={3}
       count={paginationCount}
       rowsPerPage={rowsPerPageToRender}
       page={page}
-      onChangePage={handleChangePage}
+      onPageChange={handleChangePage}
       style={{float: 'right', border: 'none'}}
     />
   }
@@ -823,7 +848,7 @@ export function ImportEditorBindings(props){
         break;
       case 7:  // CDC Reporting File (Covid19)
         if(Array.isArray(importBuffer)){
-          importBuffer.forEach(function(row, index){
+          importBuffer.forEach(async function(row, index){
             // console.log('Upserting row ' + index);
 
             let newReport = {
@@ -1207,7 +1232,7 @@ export function ImportEditorBindings(props){
 
             console.log('newReport', newReport)
 
-            MeasureReports.upsert({_id: newReport._id}, {$set: newReport}, {filter: false, validate: false});
+            await MeasureReports.upsertAsync({_id: newReport._id}, {$set: newReport}, {filter: false, validate: false});
           })
         }
         setScannedResourceTypes(["MeasureReport"]);
@@ -1215,7 +1240,7 @@ export function ImportEditorBindings(props){
       case 9:  // Inpatient Prospective Payment System File  
         if(Array.isArray(importBuffer)){
 
-          importBuffer.forEach(function(row, index){
+          importBuffer.forEach(async function(row, index){
             console.log('Upserting row ' + index);
 
             let newOrganization = {
@@ -1249,7 +1274,7 @@ export function ImportEditorBindings(props){
               }]            
             }
 
-            Organizations.upsert({id: newOrganization.id}, {$set: newOrganization});
+            await Organizations.upsertAsync({id: newOrganization.id}, {$set: newOrganization});
           })
           console.log('Total number of organizations imported: ' + Organizations.find().count())
         }
@@ -1258,7 +1283,7 @@ export function ImportEditorBindings(props){
       case 10:  // Chicago Grocers File
         if(Array.isArray(importBuffer)){
 
-          importBuffer.forEach(function(row, index){
+          importBuffer.forEach(async function(row, index){
             console.log('Upserting row ' + index);
 
             let newLocation = {
@@ -1289,7 +1314,7 @@ export function ImportEditorBindings(props){
               }
           };
 
-            Locations.upsert({id: newLocation.id}, {$set: newLocation});
+            await Locations.upsertAsync({id: newLocation.id}, {$set: newLocation});
           })
           // console.log('Total number of locations imported: ' + Locations.find().count())
         }
@@ -1530,8 +1555,8 @@ export function ImportEditorBindings(props){
   //     resourceTypes.forEach(function(resourceType){
   //       if(Mongo.Collection.get(resourceType)){
   //         Mongo.Collection.get(resourceType).find().forEach(function(record){
-  //           Mongo.Collection.get(resourceType).remove({_id: record._id})
-  //           Mongo.Collection.get(resourceType)._collection.remove({_id: record._id})
+  //           await Mongo.Collection.get(resourceType).removeAsync({_id: record._id})
+  //           await Mongo.Collection.get(resourceType)._collection.removeAsync({_id: record._id})
   //         })
   //       }
   //     })
@@ -1620,7 +1645,7 @@ export function ImportEditorBindings(props){
         if(get(document, 'resourceType')){
           setScannedResourceTypes([get(document, 'resourceType')]);
           // TODO: need to pluralize
-          window[get(document, 'resourceType')].upsert({id: document.id}, {$set: document});          
+          await window[get(document, 'resourceType')].upsertAsync({id: document.id}, {$set: document});          
         }
       } else {
         logger.debug("Doesn't look like we were able to parse the XML.")
@@ -1878,9 +1903,8 @@ export function ImportEditorBindings(props){
     Session.set('lastUpdated', new Date())
   }  
   function openPageUrl(url){
-    if(props.history){
-      props.history.replace(url);
-    }
+    console.log('openPageUrl', url)
+    navigate(url, { replace: true });
   }
   
   
@@ -1920,10 +1944,10 @@ export function ImportEditorBindings(props){
           
           if(window[pluralizedCollectionName] && window[pluralizedCollectionName]._collection){
             window[pluralizedCollectionName]._collection.find().forEach(function(record){                        
-              Meteor.call('proxyInsertResource', record, function(err, res){
+              Meteor.call('proxyInsertResource', record, async function(err, res){
                 if(err) console.log('proxyInsert.err', err)
                 if(res){
-                  window[pluralizedCollectionName].remove({_id: record._id})
+                  await window[pluralizedCollectionName].removeAsync({_id: record._id})
                 }
               })
             });        
@@ -1989,9 +2013,9 @@ export function ImportEditorBindings(props){
 
   
 
-  let headerHeight = LayoutHelpers.calcHeaderHeight();
-  let formFactor = LayoutHelpers.determineFormFactor();
-  let paddingWidth = LayoutHelpers.calcCanvasPaddingWidth();
+  let headerHeight = Meteor.LayoutHelpers.calcHeaderHeight();
+  let formFactor = Meteor.LayoutHelpers.determineFormFactor();
+  let paddingWidth = Meteor.LayoutHelpers.calcCanvasPaddingWidth();
 
   let cardWidth = window.innerWidth - paddingWidth;
 
@@ -2001,7 +2025,7 @@ export function ImportEditorBindings(props){
     columnWidth = 3;
     previewDataContent = <Grid item md={12} lg={columnWidth} style={{width: '100%'}}>
       <CardHeader title="Step 2.1 - Preview Data" style={{cursor: 'pointer'}} onClick={ setShowPreviewData.bind(this, false)} />
-      <StyledCard style={{height: window.innerHeight - 300}} width={cardWidth + 'px'}>
+      <Card style={{height: window.innerHeight - 300}} width={cardWidth + 'px'}>
         <PreviewDataCard
           readyToImport={readyToImport}
           progressMax={importQueueLength}
@@ -2014,7 +2038,7 @@ export function ImportEditorBindings(props){
           onChangeMappingAlgorithm={changeMappingAlgorithm}
           onMapData={mapData}
         />
-      </StyledCard>
+      </Card>
     </Grid>
   }
 
@@ -2024,7 +2048,8 @@ export function ImportEditorBindings(props){
   if(proxyUrl){
     workflowButton.push(<DynamicSpacer key={0} />)
     workflowButton.push(<Button 
-      id='importDataButton'
+      key="sendEachToServerButton"
+      id='sendEachToServerButton'
       onClick={ sendEachToServer.bind(this)}
       color="primary"
       variant="contained"
@@ -2037,13 +2062,15 @@ export function ImportEditorBindings(props){
 
     let searchParams = new URLSearchParams(window.location.search);
     if(searchParams.get('next')){
+      console.log("searchParams.get('next')", searchParams.get('next'))
       dataImporterNextPageUrl = searchParams.get('next');
     }
 
     workflowButton.push(<DynamicSpacer key={1} />)
     workflowButton.push(<Button 
-      id='importDataButton'
-      onClick={ openPageUrl.bind(this, dataImporterNextPageUrl)}
+      key='nextButton'
+      id='nextButton'
+      onClick={ openPageUrl.bind(this, "/" + dataImporterNextPageUrl)}
       color="primary"
       variant="contained"
       fullWidth          
@@ -2055,13 +2082,13 @@ export function ImportEditorBindings(props){
 
   return(
 
-      <PageCanvas id="ImportCanvas" style={{height: window.innerHeight }} paddingLeft={paddingWidth} paddingRight={paddingWidth} >
+      <div id="ImportCanvas" style={{height: window.innerHeight }} >
 
         <Grid container spacing={4} justify='center' style={{width: '100%', marginBottom: '100px'}}>
           <Grid item md={12} lg={columnWidth} style={{width: '100%'}}>
             <CardHeader title="Step 1 - File Scanner" />
           
-            <StyledCard width={cardWidth + 'px'}>              
+            <Card width={cardWidth + 'px'}>              
               <CardContent>        
                 <Button 
                   id='selectFileButton'
@@ -2097,18 +2124,19 @@ export function ImportEditorBindings(props){
 
               <CardActions style={{display: 'inline-flex', width: '100%'}} >
                 <Grid item md={9} style={{paddingRight: '10px'}}>
-                  <Button disabled={(importQueue.length > 0) ? false : true } id="autoImportBtn" fullWidth variant="contained" color={queueButtonColor} onClick={toggleAutoImport.bind(this)} >{queueToggleText}</Button>                   
+                <Button disabled={(importQueue.length > 0) ? false : true } id="autoImportBtn" fullWidth variant="contained" onClick={toggleAutoImport.bind(this)} >{queueToggleText}</Button>                   
+                {/* <Button disabled={(importQueue.length > 0) ? false : true } id="autoImportBtn" fullWidth variant="contained" color={queueButtonColor} onClick={toggleAutoImport.bind(this)} >{queueToggleText}</Button>                    */}
                 </Grid>
                 <Grid item md={3} style={{paddingLeft: '10px'}}>
                   <Button id="clearConditionsBtn" fullWidth variant="contained" onClick={clearImportQueue.bind(this)} >Clear</Button>             
                 </Grid>
               </CardActions>
-            </StyledCard>
+            </Card>
 
           </Grid>
           <Grid item md={12} lg={columnWidth} style={{width: '100%'}}>
             <CardHeader title="Step 2 - Raw Data" style={{cursor: 'pointer'}} onClick={ setShowPreviewData.bind(this, true)} />
-            <StyledCard style={{height: window.innerHeight - 300}} width={cardWidth + 'px'}>
+            <Card style={{height: window.innerHeight - 300}} width={cardWidth + 'px'}>
               <DataEditor
                 previewMode={showPreviewData}
                 readyToImport={readyToImport}
@@ -2124,12 +2152,12 @@ export function ImportEditorBindings(props){
                 onMapData={mapData}
                 editWrapEnabled={editWrapEnabled}
               />
-            </StyledCard>
+            </Card>
           </Grid>
           { previewDataContent }
           <Grid item md={12} lg={columnWidth} style={{width: '100%'}} key="last-grid-item">
             <CardHeader title="Step 3 - Collection Preview" />
-            <StyledCard style={{marginBottom: '20px'}} width={cardWidth + 'px'}>
+            <Card style={{marginBottom: '20px'}} width={cardWidth + 'px'}>
                 <CardContent>
                   <InputLabel id="import-algorithm-label">Import Algorithm</InputLabel>
                   <Select
@@ -2164,11 +2192,11 @@ export function ImportEditorBindings(props){
                     setCollectionsToExport(selectionState);
                   }}
                 />
-            </StyledCard>
+            </Card>
             { workflowButton }
           </Grid> 
         </Grid>   
-      </PageCanvas>
+      </div>
 
   );
 }

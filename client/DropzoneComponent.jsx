@@ -8,6 +8,11 @@
 //   return (<div data-filetype={props.filetype} className='filepicker-file-icon' />)
 // }
 
+
+//   djsConfig: {},
+//   config: {},
+//   eventHandlers: {}
+
 // export class DropzoneComponent extends React.Component {
 //   constructor (props) {
 //     super(props)
@@ -217,10 +222,6 @@
 //   }
 // }
 
-// DropzoneComponent.defaultProps = {
-//   djsConfig: {},
-//   config: {},
-//   eventHandlers: {}
-// }
+
 
 // export default DropzoneComponent

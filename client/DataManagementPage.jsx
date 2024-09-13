@@ -8,7 +8,7 @@
 //   Tabs,
 //   Tab,
 //   Typography
-// } from '@material-ui/core';
+// } from '@mui/material';
 
 
 // import React, { useState } from 'react';
@@ -26,7 +26,7 @@
 // import { JsonEditorComponent } from './JsonEditorComponent';
 // import { ExportComponent } from './ExportComponent';
 
-// import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+// import { MuiThemeProvider, createTheme } from '@mui/material/styles';
 // import { StyledCard, PageCanvas } from 'fhir-starter';
 
 
@@ -66,7 +66,7 @@
 //     theme = Object.assign(theme, get(Meteor, 'settings.public.theme.palette'));
 //   }
 
-//   const muiTheme = createMuiTheme({
+//   const muiTheme = createTheme({
 //     typography: {
 //       useNextVariants: true,
 //     },
@@ -792,7 +792,7 @@
 //         <MuiThemeProvider theme={muiTheme} >
 //           <Grid id='dataImportGrid' container spacing={8}>
 //             <Grid item md={12}>
-//                 <StyledCard scrollable={true} margin={20} theme={props.theme} >
+//                 <StyledCard margin={20} theme={props.theme} >
 //                   <Tabs
 //                     value={tabIndex}
 //                     onChange={handleTabChange}

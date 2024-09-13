@@ -3,35 +3,7 @@ import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
 import { get } from 'lodash';
 
-import FhirUtilities from 'meteor/clinical:hl7-fhir-data-infrastructure';
-
-import { 
-  AllergyIntolerances,
-  Bundles,
-  CarePlans,
-  Conditions,
-  Communications,
-  CommunicationRequests,
-  CommunicationResponses,
-  Devices,
-  Encounters, 
-  Immunizations,
-  Lists,
-  Locations,
-  Medications,
-  MedicationOrders,
-  MedicationStatements,
-  MessageHeaders,
-  Measures,
-  MeasureReports,
-  Organizations,
-  Observations, 
-  Patients,
-  Procedures,
-  Questionnaires,
-  QuestionnaireResponses,
-  Tasks,
-} from 'meteor/clinical:hl7-fhir-data-infrastructure';
+const FhirUtilities = Meteor.FhirUtilities;
 
 //---------------------------------------------------------------------------
 // Collections
@@ -47,31 +19,34 @@ if(Meteor.isClient){
   Collections = window;
 }
 if(Meteor.isServer){
-  Collections.AllergyIntolerances = AllergyIntolerances;
-  Collections.Bundles = Bundles;
-  Collections.CarePlans = CarePlans;
-  Collections.Conditions = Conditions;
-  Collections.Communications = Communications;
-  Collections.CommunicationRequests = CommunicationRequests;
-  Collections.CommunicationResponses = CommunicationResponses;
-  Collections.Devices = Devices;  
-  Collections.Encounters = Encounters;
-  Collections.Immunizations = Immunizations;
-  Collections.Lists = Lists;
-  Collections.Locations = Locations;
-  Collections.Medications = Medications;
-  Collections.MedicationOrders = MedicationOrders;
-  Collections.MedicationStatements = MedicationStatements;
-  Collections.MessageHeaders = MessageHeaders;
-  Collections.Measures = Measures;
-  Collections.MeasureReports = MeasureReports;
-  Collections.Organizations = Organizations;
-  Collections.Observations = Observations;
-  Collections.Patients = Patients;
-  Collections.Procedures = Procedures;
-  Collections.Questionnaires = Questionnaires;
-  Collections.QuestionnaireResponses = QuestionnaireResponses;
-  Collections.Tasks = Tasks;
+  if(typeof global !== 'undefined'){
+    Collections = global.Collections;
+  }
+  // Collections.AllergyIntolerances = AllergyIntolerances;
+  // Collections.Bundles = Bundles;
+  // Collections.CarePlans = CarePlans;
+  // Collections.Conditions = Conditions;
+  // Collections.Communications = Communications;
+  // Collections.CommunicationRequests = CommunicationRequests;
+  // Collections.CommunicationResponses = CommunicationResponses;
+  // Collections.Devices = Devices;  
+  // Collections.Encounters = Encounters;
+  // Collections.Immunizations = Immunizations;
+  // Collections.Lists = Lists;
+  // Collections.Locations = Locations;
+  // Collections.Medications = Medications;
+  // Collections.MedicationOrders = MedicationOrders;
+  // Collections.MedicationStatements = MedicationStatements;
+  // Collections.MessageHeaders = MessageHeaders;
+  // Collections.Measures = Measures;
+  // Collections.MeasureReports = MeasureReports;
+  // Collections.Organizations = Organizations;
+  // Collections.Observations = Observations;
+  // Collections.Patients = Patients;
+  // Collections.Procedures = Procedures;
+  // Collections.Questionnaires = Questionnaires;
+  // Collections.QuestionnaireResponses = QuestionnaireResponses;
+  // Collections.Tasks = Tasks;
 }
 
 function pluralizeResourceName(resourceType){

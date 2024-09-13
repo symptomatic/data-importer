@@ -19,7 +19,7 @@ import {
   Select,
   MenuItem,
   LinearProgress
-} from '@material-ui/core';
+} from '@mui/material';
 import PropTypes from 'prop-types';
 
 import { get, set, has, uniq, cloneDeep } from 'lodash';
@@ -32,6 +32,10 @@ import "ace-builds/src-noconflict/mode-java";
 import "ace-builds/src-noconflict/theme-github";
 import "ace-builds/src-noconflict/ext-language_tools";
 import "ace-builds/src-noconflict/snippets/html"
+
+import "ace-builds/src-noconflict/theme-tomorrow";
+import "ace-builds/src-noconflict/theme-monokai";
+
 // import 'ace-builds/webpack-resolver'
 
 // //====================================================================================
@@ -75,9 +79,19 @@ import "ace-builds/src-noconflict/snippets/html"
 //   };
 
 
+//====================================================================================
+// Shared Components
+
+let useTheme;
+Meteor.startup(function(){
+  useTheme = Meteor.useTheme;
+})
+
+
 
 //====================================================================================
 // Main Application  
+
 
 function DataEditor(props){
   // logger.debug('Rendering the DataEditor');
@@ -88,6 +102,8 @@ function DataEditor(props){
   console.debug('symptomatic:data-management.client.DataEditor');
   // console.data('DataEditor.props', {data: props}, {source: "DataEditor.jsx"});
 
+
+  const { theme, toggleTheme } = useTheme();
 
   //---------------------------------------------------------------------
   // Component State
@@ -103,16 +119,16 @@ function DataEditor(props){
 
   let { 
     children, 
-    initialValue, 
-    progressValue,
-    progressMax, 
-    mappingAlgorithm,
-    readyToImport,
-    previewMode,
-    importBuffer, 
-    fileExtension,
+    initialValue = 0, 
+    progressValue = 0,
+    progressMax = 0, 
+    mappingAlgorithm = 0,
+    readyToImport = false,
+    previewMode = false,
+    importBuffer = "", 
+    fileExtension = "json",
     onImportFile,
-    editorWrapEnabled,
+    editorWrapEnabled = false,
     ...otherProps } = props;
 
     // console.log('DataEditor.props', props)
@@ -283,7 +299,7 @@ function DataEditor(props){
     previewComponents = <CardContent>      
       <AceEditor
         mode="json"
-        theme="github"
+        theme={theme === 'light' ? "tomorrow" : "monokai"}
         wrapEnabled={editorWrapEnabled}
         onChange={onChange}
         name="rawDataEditor"
@@ -370,17 +386,6 @@ DataEditor.propTypes = {
   onChangeMappingAlgorithm: PropTypes.func,
   onImportFile: PropTypes.func,
   onMapData: PropTypes.func
-}
-DataEditor.defaultProps = {
-  mappingAlgorithm: 0,
-  initialValue: 0,
-  progressValue: 0,
-  progressMax: 0,
-  importBuffer: "",
-  readyToImport: false,
-  previewMode: false,
-  editorWrapEnabled: false,
-  fileExtension: 'json'  
 }
 
 

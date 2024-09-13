@@ -19,7 +19,7 @@ import {
   Select,
   MenuItem,
   LinearProgress
-} from '@material-ui/core';
+} from '@mui/material';
 import PropTypes from 'prop-types';
 
 // import AceEditor from "react-ace";
@@ -73,7 +73,8 @@ import PropTypes from 'prop-types';
 Session.setDefault('previewBuffer', '');
 
 //====================================================================================
-// Component 
+// Main Component 
+
 
 function PreviewDataCard(props){
   logger.debug('Rendering the PreviewDataCard');
@@ -87,13 +88,13 @@ function PreviewDataCard(props){
 
   let { 
     children, 
-    initialValue, 
-    progressValue,
-    progressMax, 
-    mappingAlgorithm,
-    readyToImport,
-    previewBuffer, 
-    fileExtension,
+    initialValue = 0, 
+    progressValue = 0,
+    progressMax = 0, 
+    mappingAlgorithm = 0,
+    readyToImport = false,
+    previewBuffer = "", 
+    fileExtension = "json",
     onImportFile,
     ...otherProps } = props;
 
@@ -264,15 +265,6 @@ PreviewDataCard.propTypes = {
   onChangeMappingAlgorithm: PropTypes.func,
   onImportFile: PropTypes.func,
   onMapData: PropTypes.func
-}
-PreviewDataCard.defaultProps = {
-  mappingAlgorithm: 0,
-  initialValue: 0,
-  progressValue: 0,
-  progressMax: 0,
-  previewBuffer: "",
-  readyToImport: false,
-  fileExtension: 'json'
 }
 
 
