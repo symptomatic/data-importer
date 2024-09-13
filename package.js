@@ -13,12 +13,12 @@ Package.onUse(function(api) {
   api.use('webapp');
   api.use('ecmascript');
   api.use('session');
-  api.use('mongo');    
-  api.use('http');    
+  api.use('mongo');     
   api.use('ejson');
   api.use('random');
 
   api.use('react-meteor-data@3.0.1');
+  api.use('http@1.0.1');    
 
   //// api.use('fourseven:scss@4.15.0');
   
