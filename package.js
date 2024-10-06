@@ -1,6 +1,6 @@
 Package.describe({
   name: 'symptomatic:data-importer',
-  version: '0.16.0',
+  version: '0.16.1',
   summary: 'Data Importer)',
   git: 'http://github.com/symptomatic/data-importer',
   documentation: 'README.md'
@@ -20,16 +20,12 @@ Package.onUse(function(api) {
   api.use('react-meteor-data@3.0.1');
   api.use('http@1.0.1');    
 
-  //// api.use('fourseven:scss@4.15.0');
-  
-  // api.use('clinical:hl7-fhir-data-infrastructure@6.33.0');
-
   // api.addFiles('styles/filepicker.css', 'client');
   // api.addFiles('lib/MedicalRecordImporter.js');
   // api.addFiles('lib/Collections.js');
 
-  // api.addFiles('server/methods.xlsx.js', ['server']);
-  // api.addFiles('server/methods.proxy.js', ['server']);
+  api.addFiles('server/methods.xlsx.js', ['server']);
+  api.addFiles('server/methods.proxy.js', ['server']);
 
   // api.export('MedicalRecordImporter');
   // api.export('CollectionManagement')

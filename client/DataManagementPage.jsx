@@ -5,6 +5,7 @@
 //   Grid, 
 //   CardHeader, 
 //   CardContent,
+//   Card,
 //   Tabs,
 //   Tab,
 //   Typography
@@ -27,7 +28,6 @@
 // import { ExportComponent } from './ExportComponent';
 
 // import { MuiThemeProvider, createTheme } from '@mui/material/styles';
-// import { StyledCard, PageCanvas } from 'fhir-starter';
 
 
 // Session.setDefault('dataContent', '');
@@ -704,14 +704,14 @@
     
 //     return(
 //       <MuiThemeProvider theme={muiTheme} >
-//         <PageCanvas id="DataImportPage" style={{paddingLeft: '100px', paddingRight: '100px'}} headerHeight={headerHeight} >
+//         <div id="DataImportPage" style={{paddingLeft: '100px', paddingRight: '100px'}} headerHeight={headerHeight} >
 //             <Grid id='dataImportGrid' container spacing={8}>
 //               <Grid item md={4}>
 //                 <ImportComponent theme={muiTheme} {...otherProps} />
 //               </Grid>
 //               <Grid item md={4}>
 //                 Bar
-//                 {/* <StyledCard style={{height: window.innerHeight - 250, marginBottom: '20px'}}>
+//                 {/* <Card style={{height: window.innerHeight - 250, marginBottom: '20px'}}>
 //                   <CardHeader
 //                     title="Data Management"
 //                   />                  
@@ -727,14 +727,14 @@
 
 //                     </Grid>
 //                   </CardContent>
-//                 </StyledCard> */}
+//                 </Card> */}
 //               </Grid>
 //               <Grid item md={4}>
 //                 Baz
 //                 {/* <ExportComponent /> */}
 //               </Grid>            
 //             </Grid>           
-//         </PageCanvas>
+//         </div>
 //       </MuiThemeProvider>        
 //     );
 //   }
@@ -788,11 +788,11 @@
 //   }
   
 //   return(
-//       <PageCanvas id="DataManagementPage" paddingLeft={20} paddingRight={20} headerHeight={headerHeight} >
+//       <div id="DataManagementPage" paddingLeft={20} paddingRight={20} headerHeight={headerHeight} >
 //         <MuiThemeProvider theme={muiTheme} >
 //           <Grid id='dataImportGrid' container spacing={8}>
 //             <Grid item md={12}>
-//                 <StyledCard margin={20} theme={props.theme} >
+//                 <Card margin={20} theme={props.theme} >
 //                   <Tabs
 //                     value={tabIndex}
 //                     onChange={handleTabChange}
@@ -834,11 +834,11 @@
 //                       <ExportComponent />
 //                     </CardContent>
 //                   </TabContainer>}                              
-//                 </StyledCard>
+//                 </Card>
 //             </Grid>
 //           </Grid>           
 //         </MuiThemeProvider>        
-//       </PageCanvas>
+//       </div>
 //   );
 // }
 

@@ -34,18 +34,21 @@ import "ace-builds/src-noconflict/mode-java";
 import "ace-builds/src-noconflict/theme-github";
 import "ace-builds/src-noconflict/ext-language_tools";
 
-// let DynamicSpacer = Meteor.DynamicSpacer;
-function DynamicSpacer(props){
+import "ace-builds/src-noconflict/theme-tomorrow";
+import "ace-builds/src-noconflict/theme-monokai";
 
-  const {children, height, ...otherProps} = props;
+//====================================================================================
+// Shared Components
 
-  let spacerHeight = '20px'  
-  if(height > 0){
-    spacerHeight = height + 'px';
-  }
+let useTheme;
+let DynamicSpacer;
+Meteor.startup(function(){
+  useTheme = Meteor.useTheme;
+  DynamicSpacer = Meteor.DynamicSpacer;
+})
 
-  return(<div className="dynamicSpacer" style={{ height: spacerHeight }}></div>)
-}
+//====================================================================================
+// Collections
 
 let AllergyIntolerances;
 let CarePlans;
@@ -151,6 +154,8 @@ let defaultResource = {
 }
 
 export function EditorPage(props){
+
+  const { theme, toggleTheme } = useTheme();
 
   const [showPreviewData, setShowPreviewData] = useState(false);
 
@@ -558,8 +563,7 @@ export function EditorPage(props){
     }, null, 2))
   }
   return(
-    <div id="EditorPage" >
-      <div id="ImportCanvas" style={{height: window.innerHeight }} >
+    <div id="EditorPage" style={{height: window.innerHeight, "paddingBottom": "128px", "overflow": "scroll" }}>
 
         <Grid container spacing={8} justify="center">
           <Grid item md={3}>
@@ -590,7 +594,7 @@ export function EditorPage(props){
             <Card style={{height: window.innerHeight - 300}} width={cardWidth + 'px'}>
               <AceEditor
                 mode="json"
-                theme="github"
+                theme={theme === 'light' ? "tomorrow" : "monokai"}
                 wrapEnabled={true}
                 onChange={onChange}
                 name="aceEditor"
@@ -616,8 +620,7 @@ export function EditorPage(props){
               style={{marginRight: '20px', width: '240px'}}
               >Clear</Button>   
           </Grid>
-        </Grid>   
-        </div>
+        </Grid>  
     </div>
   );
 }

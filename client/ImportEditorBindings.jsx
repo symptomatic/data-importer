@@ -62,9 +62,6 @@ import { useNavigate } from "react-router-dom";
 // import "ace-builds/src-noconflict/theme-tomorrow";
 // import "ace-builds/src-noconflict/theme-monokai";
 
-
-
-// import { Meteor.FhirUtilities, AllergyIntolerances, Conditions, CarePlans, Encounters, Immunizations, MedicationStatements, Observations, Patients, Procedures } from 'meteor/clinical:hl7-fhir-data-infrastructure';
 // import 'ace-builds/webpack-resolver'
 
 
@@ -102,7 +99,7 @@ let collectionNames = [
   "Contracts",
   "Communications",
   "CommunicationRequests",
-  "CommunicationResponses",
+  "Compositions",
   "ClinicalImpressions",
   "ClinicalDocuments",
   "Devices",
@@ -157,9 +154,13 @@ let Compositions;
 Meteor.startup(async function(){
   // Conditions = window.Collections.Conditions;
   // Procedures = window.Collections.Procedures;
-  Patients = window.Collections.Patients;
-  Compositions = window.Collections.Compositions;
+  // Patients = window.Collections.Patients;
+  // Compositions = window.Collections.Compositions;
   // QuestionnaireResponses = window.Collections.QuestionnaireResponses;
+
+  collectionNames.forEach(function(collectionName){
+    window[collectionName] = window.Collections[collectionName];
+  })
 });
 
 //============================================================================
@@ -196,42 +197,6 @@ Meteor.startup(async function(){
     theme = Object.assign(theme, get(Meteor, 'settings.public.theme.palette'));
   }
 
-  // const muiTheme = createTheme({
-  //   typography: {
-  //     useNextVariants: true,
-  //   },
-  //   palette: {
-  //     primary: {
-  //       main: theme.primaryColor,
-  //       contrastText: theme.primaryText
-  //     },
-  //     secondary: {
-  //       main: theme.secondaryColor,
-  //       contrastText: theme.errorText
-  //     },
-  //     appBar: {
-  //       main: theme.appBarColor,
-  //       contrastText: theme.appBarTextColor
-  //     },
-  //     cards: {
-  //       main: theme.cardColor,
-  //       contrastText: theme.cardTextColor
-  //     },
-  //     paper: {
-  //       main: theme.paperColor,
-  //       contrastText: theme.paperTextColor
-  //     },
-  //     error: {
-  //       main: theme.errorColor,
-  //       contrastText: theme.secondaryText
-  //     },
-  //     background: {
-  //       default: theme.backgroundCanvas
-  //     },
-  //     contrastThreshold: 3,
-  //     tonalOffset: 0.2
-  //   }
-  // });
 
   const styles = theme => ({
     root: {
@@ -769,15 +734,14 @@ export function ImportEditorBindings(props){
               status: 'loaded'
             }
             
-            logger.trace('FileReader.newQueueItem', newQueueItem);
+            console.log('FileReader.newQueueItem', newQueueItem);
             var content = event.target.result;   
-            console.log('content', content)
+            console.log('content', content);
 
             let fileType = get(fileList[fileIndex], 'type');
             console.log('fileType', fileType);
             
             var parsedContent;
-
 
             if(fileList[fileIndex].type === "text/csv"){
               parsedContent = PapaParse.parse(content); 
@@ -1509,66 +1473,6 @@ export function ImportEditorBindings(props){
     setImportAlgorithm(event.target.value)
   }
   
-  // function handleChangeSyncSource(event, index, value){
-  //   console.log('handleChangeSyncSource', event, index, value)
-  //   Session.set('syncSourceItem', value)
-  // }
-
-  // function clearImportBuffer(){
-  //   setImportBuffer(false);
-  // }
-
-  // function clearLocalCache(){
-  //   if(confirm("Are you absolutely sure?")){
-
-  //     var resourceTypes = [
-  //       'AllergyIntolerances',
-  //       'CarePlans',
-  //       'Conditions',
-  //       'Consents',
-  //       'Contracts',
-  //       'Communications',
-  //       'ClinicalImpressions',
-  //       'Devices',
-  //       'DiagnosticReports',
-  //       'Goals',
-  //       'Immunizations',
-  //       'ImagingStudies',
-  //       'Locations',
-  //       'Medications',
-  //       'MedicationOrders',
-  //       'MedicationStatements',
-  //       'Organizations',
-  //       'Observations',
-  //       'Patients',
-  //       'Practitioners',
-  //       'Persons',
-  //       'Procedures',
-  //       'Questionnaires',
-  //       'QuestionnaireResponses',
-  //       'RiskAssessments',
-  //       'RelatedPersons',
-  //       'Substances',
-  //       'Sequences'
-  //     ];
-
-  //     resourceTypes.forEach(function(resourceType){
-  //       if(Mongo.Collection.get(resourceType)){
-  //         Mongo.Collection.get(resourceType).find().forEach(function(record){
-  //           await Mongo.Collection.get(resourceType).removeAsync({_id: record._id})
-  //           await Mongo.Collection.get(resourceType)._collection.removeAsync({_id: record._id})
-  //         })
-  //       }
-  //     })
-
-  //     Meteor.call('getServerStats', function(error, result){
-  //       if(result){
-  //         Session.set('datalakeStats', result);
-  //       }
-  //     });
-  //   }
-  // }
-
   function clearImportQueue(){
     logger.debug('Clearing import queue.');
 
@@ -1658,12 +1562,12 @@ export function ImportEditorBindings(props){
 
       //autoSelectFirstPatient(autoSelectFirstPatient, previewBuffer);    
       if(autoSelectFirstPatient){
-        if(get(Patients.findOne(), 'resourceType') === "Patient"){
-          Session.set('selectedPatient', Patients.findOne());
-          Session.set('selectedPatientId', get(Patients.findOne(), 'id'));
-        }  
-        if(Compositions.findOne({title: "International Patient Summary"})){
-          Session.set('textNormalForm', get(Compositions.findOne({title: "International Patient Summary"}), 'text.div'));
+        if(get(window.Patients.findOne(), 'resourceType') === "Patient"){
+          Session.set('selectedPatient', window.Patients.findOne());
+          Session.set('selectedPatientId', get(window.Patients.findOne(), 'id'));
+        } 
+        if(window.Compositions.findOne({title: "International Patient Summary"})){
+          Session.set('textNormalForm', get(window.Compositions.findOne({title: "International Patient Summary"}), 'text.div'));
         }
       }  
 
@@ -1724,15 +1628,17 @@ export function ImportEditorBindings(props){
 
     function parseBufferForPatientAndSetAsSelected(previewBuffer) {
       if (autoSelectFirstPatient) {
-        get(previewBuffer, 'entry').forEach(function (entry) {
-          if (get(entry, 'resource.resourceType') === "Patient") {
-            Session.set('selectedPatient', get(entry, 'resource'));
-            Session.set('selectedPatientId', get(entry, 'resource.id'));
-          }
-          if ((get(entry, 'resource.resourceType') === "Composition") && (get(entry, 'resource.title') === "International Patient Summary")) {
-            Session.set('textNormalForm', get(entry, 'resource.text.div', ""));
-          }          
-        });
+        if(Array.isArray(get(previewBuffer, 'entry'))){
+          previewBuffer.entry.forEach(function (entry) {
+            if (get(entry, 'resource.resourceType') === "Patient") {
+              Session.set('selectedPatient', get(entry, 'resource'));
+              Session.set('selectedPatientId', get(entry, 'resource.id'));
+            }
+            if ((get(entry, 'resource.resourceType') === "Composition") && (get(entry, 'resource.title') === "International Patient Summary")) {
+              Session.set('textNormalForm', get(entry, 'resource.text.div', ""));
+            }          
+          });
+        }        
       }
     }
   }
@@ -2082,9 +1988,9 @@ export function ImportEditorBindings(props){
 
   return(
 
-      <div id="ImportCanvas" style={{height: window.innerHeight }} >
+      <div id="ImportCanvas" style={{"height": window.innerHeight }} >
 
-        <Grid container spacing={4} justify='center' style={{width: '100%', marginBottom: '100px'}}>
+        <Grid container spacing={4} justify='center' style={{marginBottom: '100px'}}>
           <Grid item md={12} lg={columnWidth} style={{width: '100%'}}>
             <CardHeader title="Step 1 - File Scanner" />
           

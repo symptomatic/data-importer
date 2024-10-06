@@ -7,9 +7,6 @@ import { Button } from '@mui/material';
 
 import { get } from 'lodash';
 
-// import { AllergyIntolerances, CarePlans, Conditions, Consents, Contracts, ClinicalImpressions, Communications, Composition, Devices, DiagnosticReports, DocumentReferences, DocumentManifests, Encounters, Goals, Immunizations, ImagingStudies, Locations, Measures, MeasureReports, Medications, MedicationOrders, MedicationStatements, Organizations, Observations, Patients, Practitioners, Persons, Procedures, Questionnaires, QuestionnaireResponses, RiskAssessments, RelatedPersons, Sequences} from 'meteor/clinical:hl7-fhir-data-infrastructure';
-
-
 //========================================================================================================
 // Theming 
 
