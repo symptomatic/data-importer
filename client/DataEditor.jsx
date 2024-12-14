@@ -142,6 +142,7 @@ function DataEditor(props){
       } else if(['phr', 'sphr', 'applicaion/x-phr', 'ndjson', 'application/x-ndjson'].includes(fileExtension)){
         // console.log('importBuffer application/x-ndjson', importBuffer);
         console.log('importBuffer typeof', typeof importBuffer);
+        console.log('importBuffer', importBuffer);
     
         let parsedBuffer = JSON.parse(importBuffer);
     

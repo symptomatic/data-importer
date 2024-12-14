@@ -211,282 +211,6 @@ Meteor.startup(async function(){
   });
 
 
-// //============================================================================
-// // DRAG AND DROP
-
-// algorithmCount is the index where we change from default import algorithms to dynamically imported algorithms
-// i.e. it's the number of import algorithms included by default + 1
-let algorithmCount = 9;
-
-var componentConfig = {
-  allowedFiletypes: ['.json', '.jpg', '.png', '.23me', '.geojson', '.fhir', '.ccd', '.bundle', '.sphr', '.phr'],
-  iconFiletypes: ['.json', '.23me', '.geojson', '.fhir', '.ccd'],
-  showFiletypeIcon: false,
-  postUrl: '/uploadHandler',
-  //dropzoneSelector: '#dropzonePreview'
-};
-var djsConfig = {
-  autoProcessQueue: false,
-  addRemoveLinks: true,
-  createImageThumbnails: true,
-};
-var eventHandlers = {
-  // This one receives the dropzone object as the first parameter
-  // and can be used to additional work with the dropzone.js
-  // object
-  init: initCallback,
-  // All of these receive the event as first parameter:
-  drop: function(input){
-    logger.warn("Drop!", input);
-  },
-  dragstart: null,
-  dragend: null,
-  dragenter: null,
-  dragover: null,
-  dragleave: null,
-  // All of these receive the file as first parameter:
-  addedfile: function (file) {
-    logger.warn("Received a file; sending to server.");
-    logger.data('ImportEditorBindings.addedFile', {data: file}, {source: "ImportEditorBindings.jsx"});
-
-    // we're going to need the extention to figure out what kind of file parsing we're going to do
-    var extension = file.name.split('.').pop().toLowerCase();
-
-    // console.log('ImportEditorBindings.file', file)
-    // console.log('ImportEditorBindings.file.name', file.name)
-    // console.log('ImportEditorBindings.file.name.split', file.name.split('.'))
-    // console.log('ImportEditorBindings.file.name.split.pop', file.name.split('.').pop())
-    // console.log('ImportEditorBindings.file.name.split.pop.toLowerCase', file.name.split.pop.toLowerCase())
-
-    logger.debug('Extension: ' + extension);
-
-    Session.set('fileExtension', extension);
-
-    // we received a file; lets take a peek inside to figure out what to do with it
-    var reader = new FileReader();
-    const rABS = !!reader.readAsBinaryString;
-
-
-    reader.onload = function(e) {
-
-      if(reader.result){
-        logger.trace('reader.result', reader.result);
-
-        var data;
-
-        if(extension == "csv"){
-          logger.debug('Found an .csv file; loading...');
-
-          let csvData = PapaParse.parse(reader.result);
-          logger.data('ImportEditorBindings.addedFile.csvData', {data: csvData}, {source: "ImportEditorBindings.jsx"});
-
-          logger.trace('Managed to parse csv...', csvData.data)
-          Session.set('importBuffer', csvData.data);    
-          
-        } else if(extension == "xml"){
-          logger.debug('Found an .xml file; loading...');
-    
-          parseString(reader.result, {
-            attrkey: "attr",
-            mergeAttrs: true,
-            explicitRoot: true,
-            explicitArray: false,
-            ignoreAttrs: false,
-            explicitChildren: false,
-            valueProcessors: [ xml2js.processors.parseNumbers ]
-          }, function (err, rawXmlData) {
-            logger.trace('Managed to parse xml...')
-            logger.data('ImportEditorBindings.addedFile.xmlData', {data: rawXmlData}, {source: "ImportEditorBindings.jsx"});
-
-            let resourceRoot = {};
-            let xmlData = {};
-            Object.keys(rawXmlData).forEach(async function(key){
-              if(Meteor.FhirUtilities.isFhirResource(key)){
-                logger.trace('It appears we found a ' + key + ' resource in XML format.');
-                logger.trace('Lets try recursively parsing it.')
-
-                resourceRoot.resourceType = key;
-
-                xmlData = rawXmlData[key];
-              }
-            })
-
-
-
-            function recursiveParse(root, treeBranch){
-              // console.log('recursiveParse', root, treeBranch)
-
-              if(typeof treeBranch === "object"){
-                Object.keys(treeBranch).forEach(function(keyName){
-                  if(Array.isArray(treeBranch[keyName])){
-                    root[keyName] = [];
-                  } else if (typeof treeBranch[keyName] === "object") {                    
-                    root[keyName] = {};                    
-                  } else {
-                    root[keyName] = "";
-                  }
-                })  
-
-                Object.keys(treeBranch).forEach(function(keyName){
-                  if(treeBranch[keyName].hasOwnProperty('value')){
-                    if(!isNaN(Number(treeBranch[keyName].value))){
-                      root[keyName] = Number(treeBranch[keyName].value);                      
-                    } else {
-                      root[keyName] = treeBranch[keyName].value;
-                    }                    
-                  } else {
-                    recursiveParse(root[keyName], treeBranch[keyName])
-                  }
-                });
-              }
-              return root;
-            }
-
-
-
-            let newResource = recursiveParse(resourceRoot, xmlData)
-
-
-            Session.set('importBuffer', newResource);    
-          });
-
-        } else if(['json', 'fhir', 'ccd', 'bundle', 'txt'].includes(extension)){
-
-          logger.debug('Found an .json enconded file; loading...');
-          logger.data('ImportEditorBindings.addedFile.jsonData', {data: reader.result}, {source: "ImportEditorBindings.jsx"});
-
-          if(['fhir'].includes(extension)){
-            logger.trace('.json was found within a .fhir file; decrypting and decoding...');
-            var decryptedData = CryptoJS.AES.decrypt(reader.result, Meteor.userId());
-            // console.log('decryptedData', decryptedData);
-
-            var utf8Data = decryptedData.toString(CryptoJS.enc.Utf8);
-            // console.log('utf8Data', utf8Data);
-
-            var decodedData = decodeURI(utf8Data);
-            logger.data('ImportEditorBindings.addedFile.decodedData', {data: decodedData}, {source: "ImportEditorBindings.jsx"});
-
-            Session.set('importBuffer', decodedData);
-          } else {
-            let dataContent;
-            logger.trace('Parsing the .json...');
-            //  console.log('Parsing the .json...', reader.result);
-
-            if(typeof reader.result === 'string'){
-              dataContent = JSON.parse(reader.result)
-            } else {
-              dataContent = reader.result;
-            }
-
-            logger.data('ImportEditorBindings.addedFile.dataContent', {data: dataContent}, {source: "ImportEditorBindings.jsx"});
-
-            if(dataContent){
-              if(dataContent.data){
-                Session.set('importBuffer', dataContent.data);
-              } else {
-                Session.set('importBuffer', dataContent);    
-              }
-            }
-          }
-      
-          
-        } else if(extension == "geojson"){
-          if(data.type == "FeatureCollection"){
-            logger.debug('Found an .geojson file; loading...');
-  
-            Meteor.call("parseGeojson", data, function (error, result){
-              if (error){
-                logger.error("error", error);
-              }
-              if (result){
-                logger.data('ImportEditorBindings.addedFile.parseGeoJson.result', {data: result}, {source: "ImportEditorBindings.jsx"});
-              }
-            });
-          }
-        } else if(["xls", "xlsx"].includes(extension)){
-          logger.debug('Found an Excel file.  Parsing....');
-          // logger.trace('reader.result', reader.result);
-
-          const data = e.target.result;
-          const name = file.name;
-
-          // console.log('data', data);
-          // console.log('name', name);
-
-          logger.data('ImportEditorBindings.addedFile.xlsData', {data: data}, {source: "ImportEditorBindings.jsx"});
-
-
-          Meteor.call(rABS ? 'uploadS' : 'uploadU', rABS ? data : new Uint8Array(data), name, function(err, wb) {
-            if (err) throw err;
-            /* load the first worksheet */
-            const ws = wb.Sheets[wb.SheetNames[0]];
-            console.log('ws', ws)
-
-            let a1 = get(ws, 'A1');
-            console.log('a1', a1);
-
-            Session.set('importBuffer', ws);    
-          });
-
-
-
-        } else if(extension == "23andme"){
-          if(data.type == "FeatureCollection"){
-            logger.debug('Found an .23andme file; loading...');
-            
-            Meteor.call("parseGenome", reader.result, function (error, result){
-              if (error){
-                logger.error("error", error);
-              }
-              if (result){
-                logger.data('ImportEditorBindings.addedFile.parseGenome.result', {data: result}, {source: "ImportEditorBindings.jsx"});
-              }
-            });
-          }
-        } else if(["zip"].includes(extension)){
-          logger.debug('Found a .zip file; loading...');
-
-
-        } else if(extension == ".2fa"){
-          // do we encounter a file that needs special file reading access???
-          logger.error('Abort!  Found a raw genome sequence; too big to load via the user interface.');
-        } else {
-          // otherwise, we assume it's some sort of text file
-          reader.readAsText(file);      
-        }
-
-      }
-    }
-
-    if(rABS) reader.readAsBinaryString(file); else reader.readAsArrayBuffer(file);
-
-  },
-  removedfile: function(){
-    Session.set('importBuffer', null)
-  },
-  thumbnail: null,
-  error: null,
-  processing: null,
-  uploadprogress: null,
-  sending: null,
-  success: null,
-  complete: null,
-  canceled: null,
-  maxfilesreached: null,
-  maxfilesexceeded: null,
-  // All of these receive a list of files as first parameter
-  // and are only called if the uploadMultiple option
-  // in djsConfig is true:
-  processingmultiple: null,
-  sendingmultiple: null,
-  successmultiple: null,
-  completemultiple: null,
-  canceledmultiple: null,
-  // Special Events
-  totaluploadprogress: null,
-  reset: null,
-  queuecomplete: null
-};
 
 // //============================================================================
 // // Sorting Collection 
@@ -572,9 +296,7 @@ export function ImportEditorBindings(props){
   // logger.verbose('symptomatic:data-management.client.ImportEditorBindings');
   // logger.data('ImportEditorBindings.props', {data: props}, {source: "ImportEditorBindings.jsx"});
   
-  console.info('Rendering the ImportEditorBindings');
-  console.debug('symptomatic:data-management.client.ImportEditorBindings');
-  // console.data('ImportEditorBindings.props', {data: props}, {source: "ImportEditorBindings.jsx"});
+  console.debug('Rendering the ImportEditorBindings');
 
   let [tabIndex, setTabIndex] = useState(0);
   let [upstreamSync, setUpstreamSync] = useState(get(Meteor, 'settings.public.meshNetwork.upstreamSync', ''));
@@ -639,6 +361,8 @@ export function ImportEditorBindings(props){
   strigifiedImportBuffer = useTracker(function(){    
     if(Session.get("importBuffer")){
       return JSON.stringify(Session.get("importBuffer"), null, 2);
+    } else {
+      return "";
     }
   }, []);
 
@@ -658,7 +382,7 @@ export function ImportEditorBindings(props){
       if(readyToImport){        
         importNextFile();
       }
-    }, 500);  
+    }, 300);  
 
     return () => Meteor.clearInterval(queueMonitor);
   }, [readyToImport]);
@@ -716,8 +440,9 @@ export function ImportEditorBindings(props){
   function selectFiles(variable, event, value){
     logger.debug('ImportEditorBindings: Selecting files.')
 
-    fileDialog({ multiple: true, accept: ['application/json', 'application/json', 'application/json+fhir', 'application/csv', 'text/csv', 'application/x-ndjson', 'text/ndjson',  'application/phr', 'application/x-phr', 'phr', 'sphr',  'application/sphr', 'application/x-sphr',   ] }, function(fileList){
-      logger.verbose('ImportEditorBindings.selectFile().fileDialog().fileList', fileList)
+    // fileDialog({ multiple: true, accept: ['application/json', 'application/json', 'application/json+fhir', 'application/csv', 'text/csv', 'application/x-ndjson', 'text/ndjson', 'text/phr',  'application/phr', 'application/x-phr', 'phr', 'sphr',  'application/sphr', 'application/x-sphr', 'text/*', 'application/*', '*/*'  ] }, function(fileList){
+      fileDialog({ multiple: true }, function(fileList){
+      console.log('ImportEditorBindings.selectFile().fileDialog().fileList', fileList)
 
       let promises = Object.keys(fileList).map(function(fileIndex){
 
@@ -730,10 +455,11 @@ export function ImportEditorBindings(props){
               lastModifiedDate: fileList[fileIndex].lastModifiedDate,
               size: fileList[fileIndex].size,
               name: fileList[fileIndex].name,
-              type: fileList[fileIndex].type,
+              type: fileList[fileIndex].type ? fileList[fileIndex].type : fileList[fileIndex].name.split(".")[1],
               status: 'loaded'
             }
             
+            console.log('FileReader.fileList[fileIndex]', fileList[fileIndex]);
             console.log('FileReader.newQueueItem', newQueueItem);
             var content = event.target.result;   
             console.log('content', content);
@@ -743,13 +469,13 @@ export function ImportEditorBindings(props){
             
             var parsedContent;
 
-            if(fileList[fileIndex].type === "text/csv"){
+            if(newQueueItem.type === "text/csv"){
               parsedContent = PapaParse.parse(content); 
               newQueueItem.content = parsedContent.data;
-            } else if(['application/json', 'application/json+fhir'].includes(fileList[fileIndex].type)){
+            } else if(['application/json', 'application/json+fhir'].includes(newQueueItem.type)){
               parsedContent = JSON.parse(content); 
               newQueueItem.content = parsedContent;
-            } else if(['phr', 'application/phr', 'ndjson', 'application/x-ndjson', 'application/ndjson', 'application/ndjson+fhir'].includes(fileList[fileIndex].type)){
+            } else if(['phr', 'application/phr', 'ndjson', 'application/x-ndjson', 'application/ndjson', 'application/ndjson+fhir'].includes(newQueueItem.type)){
               let newlineArray = content.split('\n');
 
               console.log('newlineArray', newlineArray)
@@ -760,6 +486,7 @@ export function ImportEditorBindings(props){
                 newlineArray.forEach(function(line){
                   // console.log('line', line)
                   if(line){
+                    console.log('line', line)
                     let parsedContent = JSON.parse(line);
                     console.log('parsedContent', parsedContent)
   
@@ -1805,8 +1532,12 @@ export function ImportEditorBindings(props){
     console.log('selectImportQueueRow', item);
 
     Session.set("fileExtension", get(item, 'type'))
-    Session.set('importBuffer', get(item, 'content'));
     Session.set('lastUpdated', new Date())
+
+    // TODO: how do we get the item content?
+
+    // Session.set('importBuffer', get(item, 'content'));
+
   }  
   function openPageUrl(url){
     console.log('openPageUrl', url)
@@ -1963,10 +1694,11 @@ export function ImportEditorBindings(props){
     >Send Each to Server!</Button>)    
   }
 
-  let dataImporterNextPageUrl = get(Meteor, 'settings.public.defaults.dataImporterNextPageUrl', false)
-  if(dataImporterNextPageUrl && (Object.keys(resourcePreview).length)){    
+  let searchParams = new URLSearchParams(window.location.search);
 
-    let searchParams = new URLSearchParams(window.location.search);
+  let dataImporterNextPageUrl = get(Meteor, 'settings.public.defaults.dataImporterNextPageUrl', false)
+  if((dataImporterNextPageUrl && (Object.keys(resourcePreview).length)) || searchParams.get('next')){    
+
     if(searchParams.get('next')){
       console.log("searchParams.get('next')", searchParams.get('next'))
       dataImporterNextPageUrl = searchParams.get('next');
@@ -1980,7 +1712,7 @@ export function ImportEditorBindings(props){
       color="primary"
       variant="contained"
       fullWidth          
-      style={{marginBottom: '80px'}}      
+      style={{marginBottom: '200px'}}      
     >Next</Button>)    
   }
 

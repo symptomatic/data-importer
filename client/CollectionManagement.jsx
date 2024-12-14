@@ -24,10 +24,36 @@ import {ic_wifi_tethering} from 'react-icons-kit/md/ic_wifi_tethering'
 
 import { get } from 'lodash';
 
+// import { Icon } from 'react-icons-kit'
+// import {fire} from 'react-icons-kit/icomoon/fire'
+// import {ic_warning} from 'react-icons-kit/md/ic_warning'
+// import {envelopeO} from 'react-icons-kit/fa/envelopeO' // Correspondence 
+// import {ic_devices} from 'react-icons-kit/md/ic_devices';
+// import {userMd} from 'react-icons-kit/fa/userMd'
+// import {users} from 'react-icons-kit/fa/users'
+// import {ic_question_answer} from 'react-icons-kit/md/ic_question_answer'      
+// import {ic_transfer_within_a_station} from 'react-icons-kit/md/ic_transfer_within_a_station' // Encounters 
+// import {ic_local_pharmacy} from 'react-icons-kit/md/ic_local_pharmacy'  // Medication, MedicationStatement, MedicationOrder  
+// import {heartbeat} from 'react-icons-kit/fa/heartbeat' // Condition
+// import {erlenmeyerFlask} from 'react-icons-kit/ionicons/erlenmeyerFlask' // Substance  
+// import {hospitalO} from 'react-icons-kit/fa/hospitalO' // Hospital  
+// import {bath} from 'react-icons-kit/fa/bath'  // Procedure  
+// import {suitcase} from 'react-icons-kit/fa/suitcase' // Bundle
+// import {notepad} from 'react-icons-kit/ikons/notepad'  // CarePlan ?
+// import {iosPulseStrong} from 'react-icons-kit/ionicons/iosPulseStrong' // Pulse, Condition  
+// import {location} from 'react-icons-kit/typicons/location' // Location
+// import {eyedropper} from 'react-icons-kit/fa/eyedropper'
+// import {dashboard} from 'react-icons-kit/fa/dashboard' //Dashboard
+// import {list} from 'react-icons-kit/fa/list' //Dashboard
+// import {addressCardO} from 'react-icons-kit/fa/addressCardO'  // Address Card  
+// import {mapO} from 'react-icons-kit/fa/mapO'
+import {map} from 'react-icons-kit/fa/map'
+
 let supportedResources = [
   "AllergyIntolerance",
   "Appointment",
   "Bundle",
+  "BodyStructure",
   "CarePlan",
   "CareTeam",
   "Claim",
@@ -48,6 +74,7 @@ let supportedResources = [
   "ExplanationOfBenefit",
   "FamilyMemberHistory",
   "Goal",
+  "Group",
   "HealthcareService",
   "Immunization",
   "InsurancePlan",
@@ -57,7 +84,9 @@ let supportedResources = [
   "Measure",
   "MeasureReport",
   "Medication",
+  "MedicationAdministration",
   "MedicationOrder",
+  "MedicationRequest",
   "MedicationStatement",
   "MessageHeader",
   "Network",
@@ -80,6 +109,7 @@ let supportedResources = [
   "Schedule",
   "ServiceRequest",
   "Sequence",
+  "Specimen",
   "StructureDefinition",
   "Task",
   "ValueSet",
@@ -589,30 +619,7 @@ export function CollectionManagement(props){
   function renderIcon(resourceType){
     if(props.displayIcons){
         
-      import { Icon } from 'react-icons-kit'
-      import {fire} from 'react-icons-kit/icomoon/fire'
-      import {ic_warning} from 'react-icons-kit/md/ic_warning'
-      import {envelopeO} from 'react-icons-kit/fa/envelopeO' // Correspondence 
-      import {ic_devices} from 'react-icons-kit/md/ic_devices';
-      import {userMd} from 'react-icons-kit/fa/userMd'
-      import {users} from 'react-icons-kit/fa/users'
-      import {ic_question_answer} from 'react-icons-kit/md/ic_question_answer'      
-      import {ic_transfer_within_a_station} from 'react-icons-kit/md/ic_transfer_within_a_station' // Encounters 
-      import {ic_local_pharmacy} from 'react-icons-kit/md/ic_local_pharmacy'  // Medication, MedicationStatement, MedicationOrder  
-      import {heartbeat} from 'react-icons-kit/fa/heartbeat' // Condition
-      import {erlenmeyerFlask} from 'react-icons-kit/ionicons/erlenmeyerFlask' // Substance  
-      import {hospitalO} from 'react-icons-kit/fa/hospitalO' // Hospital  
-      import {bath} from 'react-icons-kit/fa/bath'  // Procedure  
-      import {suitcase} from 'react-icons-kit/fa/suitcase' // Bundle
-      import {notepad} from 'react-icons-kit/ikons/notepad'  // CarePlan ?
-      import {iosPulseStrong} from 'react-icons-kit/ionicons/iosPulseStrong' // Pulse, Condition  
-      import {location} from 'react-icons-kit/typicons/location' // Location
-      import {eyedropper} from 'react-icons-kit/fa/eyedropper'
-      import {dashboard} from 'react-icons-kit/fa/dashboard' //Dashboard
-      import {list} from 'react-icons-kit/fa/list' //Dashboard
-      import {addressCardO} from 'react-icons-kit/fa/addressCardO'  // Address Card  
-      import {mapO} from 'react-icons-kit/fa/mapO'
-      import {map} from 'react-icons-kit/fa/map'
+
 
       let iconToRender;
 
@@ -994,6 +1001,23 @@ export function CollectionManagement(props){
       { renderExportCheckmark(exportMethods.toggleBundlesExport.bind(this), 'Bundle') }
     </TableRow>
   }
+  let bodyStructuresRow;
+  if(determineRowVisible("BodyStructure")){
+    shouldDisplayNoDataRow = false;
+    bodyStructuresRow = <TableRow className='dataManagementRow' hover={true}>
+      { renderIcon("BodyStructure") }
+      { renderImportCheckmark(methods.toggleBodyStructures.bind(this), 'BodyStructure') }
+      <TableCell className="collection">BodyStructures</TableCell>
+      { renderPreview('BodyStructure')} 
+      { renderClientCount('BodyStructure')} 
+      { renderLocalClientCount('BodyStructure')} 
+      { renderPubSub('BodyStructure')} 
+      { renderImportButton('BodyStructures')} 
+      { renderDropButton('BodyStructure')} 
+      { renderExportButton('BodyStructures')} 
+      { renderExportCheckmark(exportMethods.toggleBodyStructuresExport.bind(this), 'BodyStructure') }
+    </TableRow>
+  }
 
   let carePlansRow;
   if(determineRowVisible("CarePlan")){
@@ -1354,6 +1378,24 @@ export function CollectionManagement(props){
     </TableRow>
   }
 
+  let groupsRow;
+  if(determineRowVisible("Group")){
+    shouldDisplayNoDataRow = false;
+    groupsRow = <TableRow className='dataManagementRow' hover={true}>
+      { renderIcon("Group") }
+      { renderImportCheckmark(methods.toggleGroups.bind(this), 'Group') }
+      <TableCell className="collection">Groups</TableCell>
+      { renderPreview('Group')} 
+      { renderClientCount('Group')} 
+      { renderLocalClientCount('Group')} 
+      { renderPubSub('Group')} 
+      { renderImportButton('Groups')} 
+      { renderDropButton('Group')} 
+      { renderExportButton('Groups')} 
+      { renderExportCheckmark(exportMethods.toggleGroupsExport.bind(this), 'Group') }
+    </TableRow>
+  }
+
   let healthcareServicesRow;
   if(determineRowVisible("HealthcareService")){
     shouldDisplayNoDataRow = false;
@@ -1517,6 +1559,24 @@ export function CollectionManagement(props){
     </TableRow>
   }
 
+  let medicationAdministrationsRow;
+  if(determineRowVisible("MedicationAdministration")){
+    shouldDisplayNoDataRow = false;
+    medicationAdministrationsRow = <TableRow className='dataManagementRow'  hover={true}>
+      { renderIcon("MedicationAdministration") }
+      { renderImportCheckmark(methods.toggleMedicationAdministrations.bind(this), 'MedicationAdministration') }
+      <TableCell className="collection">MedicationAdministrations</TableCell>
+      { renderPreview('MedicationAdministration')} 
+      { renderClientCount('MedicationAdministration')} 
+      { renderLocalClientCount('MedicationAdministration')} 
+      { renderPubSub('MedicationAdministration')}       
+      { renderImportButton('MedicationAdministrations')} 
+      { renderDropButton('MedicationAdministration')} 
+      { renderExportButton('MedicationAdministrations')} 
+      { renderExportCheckmark(exportMethods.toggleMedicationAdministrationsExport.bind(this), 'MedicationAdministration') }
+    </TableRow>
+  }
+
   let medicationOrdersRow;
   if(determineRowVisible("MedicationOrder")){
     shouldDisplayNoDataRow = false;
@@ -1532,6 +1592,24 @@ export function CollectionManagement(props){
       { renderDropButton('MedicationOrder')} 
       { renderExportButton('MedicationOrders')} 
       { renderExportCheckmark(exportMethods.toggleMedicationOrdersExport.bind(this), 'MedicationOrder') }
+    </TableRow>
+  }
+
+  let medicationRequestsRow;
+  if(determineRowVisible("MedicationRequest")){
+    shouldDisplayNoDataRow = false;
+    medicationRequestsRow = <TableRow className='dataManagementRow'  hover={true}>
+      { renderIcon("MedicationRequest") }
+      { renderImportCheckmark(methods.toggleMedicationRequests.bind(this), 'MedicationRequest') }
+      <TableCell className="collection">MedicationRequests</TableCell>
+      { renderPreview('MedicationRequest')} 
+      { renderClientCount('MedicationRequest')} 
+      { renderLocalClientCount('MedicationRequest')} 
+      { renderPubSub('MedicationRequest')}       
+      { renderImportButton('MedicationRequests')} 
+      { renderDropButton('MedicationRequest')} 
+      { renderExportButton('MedicationRequests')} 
+      { renderExportCheckmark(exportMethods.toggleMedicationRequestsExport.bind(this), 'MedicationRequest') }
     </TableRow>
   }
 
@@ -1929,6 +2007,24 @@ export function CollectionManagement(props){
     </TableRow>     
   }
 
+  let specimensRow;
+  if(determineRowVisible("Specimen")){
+    shouldDisplayNoDataRow = false;
+    specimensRow = <TableRow className='dataManagementRow'  hover={true}>
+      { renderIcon("Specimen") }
+      { renderImportCheckmark(methods.toggleSpecimens.bind(this), 'Specimen') }
+      <TableCell className="collection">Specimens</TableCell>
+      { renderPreview('Specimen')} 
+      { renderClientCount('Specimen')} 
+      { renderLocalClientCount('Specimen')} 
+      { renderPubSub('Specimen')} 
+      { renderImportButton('Specimens')} 
+      { renderDropButton('Specimen')} 
+      { renderExportButton('Specimens')} 
+      { renderExportCheckmark(exportMethods.toggleSpecimensExport.bind(this), 'Specimen') }
+    </TableRow>     
+  }
+
   let structureDefinitionsRow;
   if(determineRowVisible("StructureDefinition")){
     shouldDisplayNoDataRow = false;
@@ -2029,6 +2125,7 @@ export function CollectionManagement(props){
         { allergyIntolerancesRow }
         { appointmentsRow }
         { bundlesRow }
+        { bodyStructuresRow }
         { carePlansRow } 
         { careTeamsRow }
         { claimsRow }
@@ -2039,7 +2136,6 @@ export function CollectionManagement(props){
         { consentsRow }
         { contractsRow }
         { communicationsRow } 
-        {/* { communicationResponsesRow }  */}
         { communicationRequestsRow } 
         { devicesRow }
         { diagnosticReportsRow }
@@ -2049,6 +2145,7 @@ export function CollectionManagement(props){
         { explanationOfBenefitsRow }
         { familyMemberHistoriesRow }
         { goalsRow }
+        { groupsRow }
         { healthcareServicesRow }
         { immunizationsRow }
         { insurancePlansRow }
@@ -2059,6 +2156,8 @@ export function CollectionManagement(props){
         { measureReportsRow }
         { medicationsRow }
         { medicationOrdersRow }
+        { medicationAdministrationsRow }
+        { medicationRequestsRow }
         { medicationStatementsRow }
         { messageHeadersRow }
         { networksRow }
@@ -2080,7 +2179,8 @@ export function CollectionManagement(props){
         { searchParametersRow }
         { schedulesRow }
         { serviceRequestsRow }
-        { sequencesRow }          
+        { sequencesRow }      
+        { specimensRow }          
         { structureDefinitionsRow }              
         { tasksRow }  
         { valueSetsRow }         

@@ -4,6 +4,7 @@ import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 
 import { Button } from '@mui/material';
+import { Box } from '@mui/material';
 
 import { get } from 'lodash';
 
@@ -19,7 +20,10 @@ import {
   makeStyles
 } from '@mui/styles';
 
-  // Global Theming 
+
+//============================================================================================================================
+// THEMING
+
   // This is necessary for the Material UI component render layer
   let palette = {}
 
@@ -42,31 +46,14 @@ import {
     }
   });
 
-
-  const useTabStyles = makeStyles(theme => ({
-    west_button: {
-      cursor: 'pointer',
-      justifyContent: 'left',
-      color: palette.appBarTextColor,
-      marginLeft: '20px',
-      marginTop: '10px'
-    },
-    east_button: {
-      cursor: 'pointer',
-      justifyContent: 'left',
-      color: palette.appBarTextColor,
-      right: '20px',
-      marginTop: '15px',
-      position: 'absolute'
-    }
-  }));
-
-
+  let useTheme;
+  Meteor.startup(function(){
+    useTheme = Meteor.useTheme;
+  })
 
 
 //============================================================================================================================
-// FETCH
-
+// MAIN COMPONENT
 
 
 export function SampleDialogComponent(props){
@@ -79,11 +66,9 @@ export function SampleDialogComponent(props){
 
 Session.setDefault('editorWrapEnabled', false);
 export function ImportButtons(props){
-  const buttonClasses = useTabStyles();
 
-  function clearQueue(){
-    Session.set('importQueue', []);
-  }
+  const { theme, toggleTheme } = useTheme();
+
   function enableEditorWrap(){
     Session.toggle('editorWrapEnabled');
   }
@@ -158,37 +143,32 @@ export function ImportButtons(props){
         }
       })
       Session.set('geoJsonLayer', "");    
-
-      // Meteor.call('clearSubscriptionCursors')
     }
   }
-  // function toggleDialog(){
-  //   console.log('Toggle dialog open/close.')
-  //   Session.set('mainAppDialogJson', false);
-  //   Session.set('mainAppDialogComponent', "AboutDialog");
-  //   Session.set('lastUpdated', new Date())
-  //   Session.toggle('mainAppDialogOpen');
-  // }
 
+
+  let appBarColor = get(Meteor, 'settings.public.theme.palette.appBarColor');
+  let appBarColorDark = get(Meteor, 'settings.public.theme.palette.appBarColorDark');
+  let appBarTextColor = get(Meteor, 'settings.public.theme.palette.appBarTextColor');
+  let appBarTextColorDark = get(Meteor, 'settings.public.theme.palette.appBarTextColorDark');
+
+  let appStyle;
+  console.log('theme', theme)
+  if(theme === 'light'){
+    appStyle = {color: appBarTextColorDark};
+  } else {
+    appStyle = {color: appBarTextColor};
+  }
 
   return (
-    <MuiThemeProvider theme={muiTheme} >
-      <Button onClick={ enableEditorWrap.bind(this) } className={ buttonClasses.west_button }>
+    <Box>
+      <Button onClick={ enableEditorWrap.bind(this) } sx={appStyle}>
         Editor Wrap
       </Button>
-      <Button onClick={ clearAllClientData.bind(this) } className={ buttonClasses.west_button }>
+      <Button onClick={ clearAllClientData.bind(this) } sx={appStyle}>
         Clear All Client Data
       </Button>
-      {/* <Button onClick={ clearAllClientData.bind(this) } className={ buttonClasses.west_button }>
-        Clear All Server Data
-      </Button> */}
-      {/* <Button onClick={ clearQueue.bind(this) } className={ buttonClasses.west_button }>
-        Clear Queue
-      </Button> */}
-      {/* <Button onClick={ toggleDialog } className={ buttonClasses.east_button }>
-        Info Dialog
-      </Button> */}
-    </MuiThemeProvider>
+    </Box>
   );
 }
 

@@ -16,7 +16,7 @@ import { ImportEditorBindings } from './ImportEditorBindings';
 export function ImportPage(props){
 
   return(
-    <div id="ImportPage" style={{padding: '20px'}}>
+    <div id="ImportPage" style={{padding: '20px', height: window.innerHeight, overflow: 'scroll', marginBottom: '80px'}}>
         <ImportEditorBindings history={props.history} />
     </div>
   );
