@@ -20,15 +20,8 @@ Package.onUse(function(api) {
   api.use('react-meteor-data@3.0.1');
   api.use('http@1.0.1');    
 
-  // api.addFiles('styles/filepicker.css', 'client');
-  // api.addFiles('lib/MedicalRecordImporter.js');
-  // api.addFiles('lib/Collections.js');
-
   api.addFiles('server/methods.xlsx.js', ['server']);
   api.addFiles('server/methods.proxy.js', ['server']);
-
-  // api.export('MedicalRecordImporter');
-  // api.export('CollectionManagement')
 
   api.mainModule('index.jsx', 'client');
 });

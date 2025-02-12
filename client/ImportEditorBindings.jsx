@@ -441,7 +441,7 @@ export function ImportEditorBindings(props){
     logger.debug('ImportEditorBindings: Selecting files.')
 
     // fileDialog({ multiple: true, accept: ['application/json', 'application/json', 'application/json+fhir', 'application/csv', 'text/csv', 'application/x-ndjson', 'text/ndjson', 'text/phr',  'application/phr', 'application/x-phr', 'phr', 'sphr',  'application/sphr', 'application/x-sphr', 'text/*', 'application/*', '*/*'  ] }, function(fileList){
-      fileDialog({ multiple: true }, function(fileList){
+    fileDialog({ multiple: true }, function(fileList){
       console.log('ImportEditorBindings.selectFile().fileDialog().fileList', fileList)
 
       let promises = Object.keys(fileList).map(function(fileIndex){
@@ -1120,26 +1120,7 @@ export function ImportEditorBindings(props){
         break;
       case 13:
         console.log("Use case 13 - Bundle (Collection)")
-        if(proxyUrl){
-          let assembledUrl = proxyUrl;
-          if(has(editorContent, 'id')){
-              assembledUrl = proxyUrl + '/Bundle/' + get(editorContent, 'id');
-              console.log('PUT ' + assembledUrl)
-              HTTP.put(assembledUrl, {data: editorContent}, function(error, result){
-                  if(error){
-                      alert(JSON.stringify(error.message));
-                  }
-              })
-          } else {
-              assembledUrl = proxyUrl + '/Bundle';
-              console.log('POST ' + assembledUrl)
-              HTTP.post(assembledUrl, {data: editorContent}, function(error, result){
-                  if(error){
-                      alert(JSON.stringify(error.message));
-                  }
-              })
-          }    
-        }
+        MedicalRecordImporter.importBundleAsBundle(editorContent, get(Meteor, 'settings.public.interfaces.fhirRelay.channel.endpoint', "http://localhost:3000/baseR4"));
         break;
       
       default:
@@ -1309,6 +1290,9 @@ export function ImportEditorBindings(props){
             break;      
           case 3:  // Chicago Grocers File
             parseChicagoGrocersFile(previewBuffer);
+            break;
+          case 13:  // Bundle (Collections, Synthea)
+          MedicalRecordImporter.importBundleAsBundle(previewBuffer);
             break;
           default:
             MedicalRecordImporter.importBundle(previewBuffer);
